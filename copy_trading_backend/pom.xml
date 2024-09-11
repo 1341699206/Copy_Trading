@@ -30,6 +30,7 @@
 		<java.version>22</java.version>
 	</properties>
 	<dependencies>
+		<!-- 现有的依赖 -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -72,6 +73,14 @@
 			<version>3.0.3</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.24</version> <!-- 使用最新版本 -->
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
