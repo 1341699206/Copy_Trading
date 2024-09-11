@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class Follower {
     private RiskManagementSettings riskSettings; // 风险管理设置（如最大可接受亏损）
 
     // 策略参数
-    private Double allocationPercentage; // 资金分配比例
+    private  HashMap<Trader,Double> allocationPercentage; // 资金分配比例
     private Boolean autoAdjust; // 是否自动调整策略
 
     // 构造函数
@@ -35,7 +36,7 @@ public class Follower {
     // 带所有字段的构造函数
     public Follower(Long followerId, String name, String email, String country, Date registrationDate, Boolean isActive,
                     List<Trader> followingTraders, Double totalInvestment, Double currentBalance, Double profitLoss,
-                    RiskManagementSettings riskSettings, Double allocationPercentage, Boolean autoAdjust) {
+                    RiskManagementSettings riskSettings, HashMap<Trader,Double> allocationPercentage, Boolean autoAdjust) {
         this.followerId = followerId;
         this.name = name;
         this.email = email;
