@@ -3,35 +3,84 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import javax.persistence.*;  // 导入 JPA 相关注解
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "follower")  // 指定数据库表名
 @Getter
 @Setter
 @AllArgsConstructor  // 生成包含所有字段的构造函数
 @NoArgsConstructor   // 生成无参构造函数
 public class Follower {
 
-    // 基本信息字段
-    private Long followerId; // 跟随者的唯一标识符
-    private String name; // 跟随者的用户名或显示名称
-    private String email; // 跟随者的电子邮件
-    private String country; // 跟随者所在的国家
-    private Date registrationDate; // 注册日期
-    private Boolean isActive; // 是否活跃
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 主键生成策略
+    @Column(name = "follower_id")  // 指定列名
+    private Long followerId;
 
-    // 跟随交易相关字段
-    private List<Trader> followingTraders; // 正在跟随的交易员列表
-    private Double totalInvestment; // 跟随交易的总金额
-    private Double currentBalance; // 当前账户余额
-    private Double profitLoss; // 当前的总利润或损失
-    private RiskManagementSettings riskSettings; // 风险管理设置（如最大可接受亏损）
+    @Column(name = "name", nullable = false)  // 不可为空的列
+    private String name;
 
-    // 策略参数
-    private HashMap<Trader, Double> allocationPercentage; // 资金分配比例
-    private Boolean autoAdjust; // 是否自动调整策略
+    @Column(name = "email", nullable = false, unique = true)  // 不可为空且唯一的列
+    private String email;
 
-    // Lombok 自动生成 Getter 和 Setter 方法
+    @Column(name = "country")  // 指定列名
+    private String country;
+
+    @Column(name = "registration_date")
+    @Temporal(TemporalType.DATE)  // 指定时间类型
+    private Date registrationDate;
+
+    @Column(name = "is_active")  // 指定列名
+    private Boolean isActive;
+
+    @ManyToMany  // 多对多关系
+    @JoinTable(
+        name = "follower_trader",  // 中间表名
+        joinColumns = @JoinColumn(name = "follower_id"),  // 本表关联列
+        inverseJoinColumns = @JoinColumn(name = "trader_id")  // 对方表关联列
+    )
+    private List<Trader> followingTraders;  // 正在跟随的交易员列表
+
+    @Column(name = "total_investment")  // 总投资
+    private Double totalInvestment;
+
+    @Column(name = "current_balance")  // 当前余额
+    private Double currentBalance;
+
+    @Column(name = "profit_loss")  // 总利润或损失
+    private Double profitLoss;
+
+    @OneToOne(cascade = CascadeType.ALL)  // 一对一关系，级联所有操作
+    @JoinColumn(name = "risk_settings_id")  // 外键列名
+    private RiskManagementSettings riskSettings;  // 风险管理设置
+
+    @ElementCollection  // 映射基本类型集合
+    @CollectionTable(name = "allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))  // 集合表
+    @MapKeyColumn(name = "trader_id")  // Map的键
+    @Column(name = "percentage")  // Map的值
+    private HashMap<Long, Double> allocationPercentage;  // 资金分配比例
+
+    @Column(name = "auto_adjust")  // 是否自动调整
+    private Boolean autoAdjust;
+
+    @Column(name = "adjustment_frequency")  // 调整频率
+    private String adjustmentFrequency;
+
+    @Column(name = "adjustment_threshold")  // 调整阈值
+    private Double adjustmentThreshold;
+
+    @ElementCollection  // 映射基本类型集合
+    @CollectionTable(name = "target_allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))  // 集合表
+    @MapKeyColumn(name = "trader_id")  // Map的键
+    @Column(name = "target_percentage")  // Map的值
+    private HashMap<Long, Double> targetAllocationPercentage;  // 目标分配比例
+
+    @Column(name = "max_adjustment_amount")  // 最大调整幅度
+    private Double maxAdjustmentAmount;
 }
