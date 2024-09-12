@@ -28,7 +28,8 @@ public class RiskManagementSettings {
         
         this.isStopLossPercentage=isStopLossPercentage;
         this.stopLossPercentage=stopLossPercentage;
-        this.isStopLossThreshold=isStopLossThreshold;
+        this.isStopLossThreshold = isStopLossThreshold;
+        this.stopLossThreshold = stopLossThreshold;
         this.capitalProtection=capitalProtection;
         this.enableTrailingStop=enableTrailingStop;
     }
