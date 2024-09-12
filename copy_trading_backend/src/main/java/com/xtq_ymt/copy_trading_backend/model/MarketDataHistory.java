@@ -3,9 +3,13 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
+@AllArgsConstructor  // 自动生成包含所有字段的构造函数
+@NoArgsConstructor   // 自动生成无参构造函数
 public class MarketDataHistory {
 
     private Long id; // 历史数据记录的唯一标识符
@@ -19,22 +23,5 @@ public class MarketDataHistory {
     private Double volatility; // 市场波动率
     private Date timestamp; // 该历史数据点的时间戳
 
-    // 构造函数
-    public MarketDataHistory() {
-    }
-
-    public MarketDataHistory(String instrument, Double price, Double openPrice, Double closePrice, Double highPrice,
-                             Double lowPrice, Double volume, Double volatility, Date timestamp) {
-        this.instrument = instrument;
-        this.price = price;
-        this.openPrice = openPrice;
-        this.closePrice = closePrice;
-        this.highPrice = highPrice;
-        this.lowPrice = lowPrice;
-        this.volume = volume;
-        this.volatility = volatility;
-        this.timestamp = timestamp;
-    }
-
-    // Lombok 自动生成 Getter 和 Setter 方法
+    // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
 }

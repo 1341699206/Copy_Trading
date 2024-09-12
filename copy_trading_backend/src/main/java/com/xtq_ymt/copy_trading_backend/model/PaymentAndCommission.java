@@ -3,9 +3,13 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
+@AllArgsConstructor  // 自动生成包含所有字段的构造函数
+@NoArgsConstructor   // 自动生成无参构造函数
 public class PaymentAndCommission {
 
     // 基本支付信息字段
@@ -29,31 +33,5 @@ public class PaymentAndCommission {
     private String status; // 支付状态（如已完成、待处理、已退款、失败）
     private String description; // 交易的描述或备注信息
 
-    // 构造函数
-    public PaymentAndCommission() {
-    }
-
-    // 带所有字段的构造函数
-    public PaymentAndCommission(Long paymentId, Long followerId, Long traderId, String transactionId, Date paymentDate, 
-                                Double amount, String currency, String paymentMethod, Double commissionRate, 
-                                String commissionType, Double commissionAmount, Double platformFee, 
-                                Double totalAmount, String status, String description) {
-        this.paymentId = paymentId;
-        this.followerId = followerId;
-        this.traderId = traderId;
-        this.transactionId = transactionId;
-        this.paymentDate = paymentDate;
-        this.amount = amount;
-        this.currency = currency;
-        this.paymentMethod = paymentMethod;
-        this.commissionRate = commissionRate;
-        this.commissionType = commissionType;
-        this.commissionAmount = commissionAmount;
-        this.platformFee = platformFee;
-        this.totalAmount = totalAmount;
-        this.status = status;
-        this.description = description;
-    }
-
-    // Lombok 自动生成 Getter 和 Setter 方法
+    // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
 }

@@ -3,9 +3,13 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
+@AllArgsConstructor  // 自动生成包含所有字段的构造函数
+@NoArgsConstructor   // 自动生成无参构造函数
 public class Trader {
 
     // 基本信息字段
@@ -57,69 +61,5 @@ public class Trader {
     private Double interruptedLiveFollowerProfit; // 中断的跟随者利润
     private String performance; // 表现历史数据的JSON字符串
 
-    // 构造函数
-    public Trader() {
-    }
-
-    // 带所有字段的构造函数
-    public Trader(Long traderId, String name, String countryName, String countryIsoCode, Long zuluAccountId, 
-                  Double traderRate, Integer rateCount, Long brokerAccountId, Boolean strategyDescApproved, 
-                  Boolean publicTradeHistory, Boolean addressVerified, Boolean phoneVerified, 
-                  Boolean identificationVerified, Boolean hasLiveAccount, Boolean photoApproved, Boolean active, 
-                  Boolean loggedInRecently, Boolean videoApproved, Boolean profitSharingTraderOnly, Double leverage, 
-                  Date lastOpenTradeDate, Date lastUpdatedDate, Integer zuluRank, Double amountFollowing, Double ROI, 
-                  Double totalProfit, Double totalProfitMoney, Integer weeks, Double maximumDrawdown, 
-                  Double maximumDrawdownPercent, Integer followers, Integer viewed, Integer trades, 
-                  Integer maxOpenTrades, Integer winTradesCount, Integer winTradesCountInMoney, Double avgTradeSeconds, 
-                  Double avgPipsPerTrade, Double profitPercentage, Integer nme, Double uninterruptedLiveFollowerProfit, 
-                  Double interruptedLiveFollowerProfit, String performance) {
-        this.traderId = traderId;
-        this.name = name;
-        this.countryName = countryName;
-        this.countryIsoCode = countryIsoCode;
-        this.zuluAccountId = zuluAccountId;
-        this.traderRate = traderRate;
-        this.rateCount = rateCount;
-        this.brokerAccountId = brokerAccountId;
-        this.strategyDescApproved = strategyDescApproved;
-        this.publicTradeHistory = publicTradeHistory;
-        this.addressVerified = addressVerified;
-        this.phoneVerified = phoneVerified;
-        this.identificationVerified = identificationVerified;
-        this.hasLiveAccount = hasLiveAccount;
-        this.photoApproved = photoApproved;
-        this.active = active;
-        this.loggedInRecently = loggedInRecently;
-        this.videoApproved = videoApproved;
-        this.profitSharingTraderOnly = profitSharingTraderOnly;
-        this.leverage = leverage;
-        this.lastOpenTradeDate = lastOpenTradeDate;
-        this.lastUpdatedDate = lastUpdatedDate;
-        this.zuluRank = zuluRank;
-        this.amountFollowing = amountFollowing;
-        this.ROI = ROI;
-        this.totalProfit = totalProfit;
-        this.totalProfitMoney = totalProfitMoney;
-        this.weeks = weeks;
-        this.maximumDrawdown = maximumDrawdown;
-        this.maximumDrawdownPercent = maximumDrawdownPercent;
-        this.followers = followers;
-        this.viewed = viewed;
-        this.trades = trades;
-        this.maxOpenTrades = maxOpenTrades;
-        this.winTradesCount = winTradesCount;
-        this.winTradesCountInMoney = winTradesCountInMoney;
-        this.avgTradeSeconds = avgTradeSeconds;
-        this.avgPipsPerTrade = avgPipsPerTrade;
-        this.profitPercentage = profitPercentage;
-        this.nme = nme;
-        this.uninterruptedLiveFollowerProfit = uninterruptedLiveFollowerProfit;
-        this.interruptedLiveFollowerProfit = interruptedLiveFollowerProfit;
-        this.performance = performance;
-    }
-
-    // Getter 和 Setter 方法...
-
-    // 为每个字段生成相应的 Getter 和 Setter 方法，可以使用 IDE 自动生成。
-
+    // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
 }

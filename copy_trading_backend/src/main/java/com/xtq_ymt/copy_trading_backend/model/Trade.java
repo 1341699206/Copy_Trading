@@ -3,9 +3,13 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
+@AllArgsConstructor  // 自动生成包含所有字段的构造函数
+@NoArgsConstructor   // 自动生成无参构造函数
 public class Trade {
 
     // 基本交易信息
@@ -31,32 +35,5 @@ public class Trade {
     private Double stopLoss; // 止损
     private Double takeProfit; // 止盈
 
-    // 构造函数
-    public Trade() {
-    }
-
-    // 带所有字段的构造函数
-    public Trade(Long tradeId, Long traderId, Long followerId, String instrument, Date openTime, Date closeTime,
-                 Double openPrice, Double closePrice, String tradeType, Boolean isOpen, Double volume, Double profitLoss,
-                 Double commission, Double swap, String status, Double stopLoss, Double takeProfit) {
-        this.tradeId = tradeId;
-        this.traderId = traderId;
-        this.followerId = followerId;
-        this.instrument = instrument;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.openPrice = openPrice;
-        this.closePrice = closePrice;
-        this.tradeType = tradeType;
-        this.isOpen = isOpen;
-        this.volume = volume;
-        this.profitLoss = profitLoss;
-        this.commission = commission;
-        this.swap = swap;
-        this.status = status;
-        this.stopLoss = stopLoss;
-        this.takeProfit = takeProfit;
-    }
-
-    // Lombok 自动生成 Getter 和 Setter 方法
+    // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
 }
