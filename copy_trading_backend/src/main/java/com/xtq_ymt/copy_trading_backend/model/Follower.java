@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 @Entity
 @Table(name = "follower")  // 指定数据库表名
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Setter
 @AllArgsConstructor  // 生成包含所有字段的构造函数
 @NoArgsConstructor   // 生成无参构造函数
+@Builder  // 使用Builder模式
 public class Follower {
 
     @Id
@@ -36,8 +38,9 @@ public class Follower {
     @Temporal(TemporalType.DATE)  // 指定时间类型
     private Date registrationDate;
 
-    @Column(name = "is_active")  // 指定列名
-    private Boolean isActive;
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")  // 指定列名和默认值
+    @Builder.Default
+    private Boolean isActive = true;  // 默认值设置为true
 
     @ManyToMany  // 多对多关系
     @JoinTable(
