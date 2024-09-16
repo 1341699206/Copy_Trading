@@ -28,6 +28,9 @@ public class Follower {
     @Column(name = "name", nullable = false)  // 不可为空的列
     private String name;
 
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TradingAccount> tradingAccounts; // 与TradingAccount的一对多关系
+
     @Column(name = "email", nullable = false, unique = true)  // 不可为空且唯一的列
     private String email;
 

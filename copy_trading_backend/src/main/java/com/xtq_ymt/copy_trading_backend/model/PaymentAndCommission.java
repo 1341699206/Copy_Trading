@@ -29,6 +29,10 @@ public class PaymentAndCommission {
     @JoinColumn(name = "trader_id") // 指定外键列名
     private Trader trader; // 被跟随的交易者（如果有）
 
+    @ManyToOne // 多个支付可以关联一个交易账户
+    @JoinColumn(name = "trading_account_id", nullable = false) // 指定外键列名
+    private TradingAccount tradingAccount; // 关联的交易账户
+
     @Column(name = "transaction_id", unique = true) // 指定列名和唯一性
     private String transactionId; // 交易ID，用于外部支付平台的唯一标识
 

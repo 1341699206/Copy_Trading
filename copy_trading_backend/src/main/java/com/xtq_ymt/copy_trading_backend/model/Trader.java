@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,10 @@ public class Trader {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 主键生成策略
     @Column(name = "trader_id") // 指定列名
     private Long traderId; // 交易者的唯一标识符
+
+    @OneToMany(mappedBy = "trader", cascade = CascadeType.ALL)
+    private List<TradingAccount> tradingAccounts;
+
 
     @Column(name = "name", nullable = false) // 指定列名，并设置为非空
     private String name; // 交易者的用户名或显示名称

@@ -20,6 +20,10 @@ public class Trade {
     @Column(name = "trade_id")
     private Long tradeId; // 交易的唯一标识符
 
+    @ManyToOne // 多个交易可以对应一个交易账户
+    @JoinColumn(name = "account_id", nullable = false)
+    private TradingAccount tradingAccount; // 关联的交易账户
+    
     @ManyToOne // 多个交易可以对应一个Trader
     @JoinColumn(name = "trader_id", nullable = false)
     private Trader trader; // 关联的交易员
