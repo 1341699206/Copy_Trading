@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.math.BigDecimal; // 导入 BigDecimal
 
 @Repository
 public interface RiskManagementSettingsRepository extends JpaRepository<RiskManagementSettings, Long> {
@@ -23,13 +24,13 @@ public interface RiskManagementSettingsRepository extends JpaRepository<RiskMana
     Page<RiskManagementSettings> findByEnableTrailingStopTrue(Pageable pageable);
 
     // 查找指定的止损百分比范围内的风险管理设置（支持分页）
-    Page<RiskManagementSettings> findByStopLossPercentageBetween(Double minPercentage, Double maxPercentage, Pageable pageable);
+    Page<RiskManagementSettings> findByStopLossPercentageBetween(BigDecimal minPercentage, BigDecimal maxPercentage, Pageable pageable);
 
     // 查找指定的止损阈值范围内的风险管理设置（支持分页）
-    Page<RiskManagementSettings> findByStopLossThresholdBetween(Double minThreshold, Double maxThreshold, Pageable pageable);
+    Page<RiskManagementSettings> findByStopLossThresholdBetween(BigDecimal minThreshold, BigDecimal maxThreshold, Pageable pageable);
 
     // 根据不参与交易的锁定资金来查找风险管理设置（支持分页）
-    Page<RiskManagementSettings> findByCapitalProtectionGreaterThan(Double capitalProtection, Pageable pageable);
+    Page<RiskManagementSettings> findByCapitalProtectionGreaterThan(BigDecimal capitalProtection, Pageable pageable);
 
     // 查找启用了特定止损百分比的风险管理设置
     List<RiskManagementSettings> findByIsStopLossPercentageTrue();
@@ -41,16 +42,15 @@ public interface RiskManagementSettingsRepository extends JpaRepository<RiskMana
     List<RiskManagementSettings> findByEnableTrailingStopTrue();
 
     // 查找指定的止损百分比范围内的风险管理设置
-    List<RiskManagementSettings> findByStopLossPercentageBetween(Double minPercentage, Double maxPercentage);
+    List<RiskManagementSettings> findByStopLossPercentageBetween(BigDecimal minPercentage, BigDecimal maxPercentage);
 
     // 查找指定的止损阈值范围内的风险管理设置
-    List<RiskManagementSettings> findByStopLossThresholdBetween(Double minThreshold, Double maxThreshold);
+    List<RiskManagementSettings> findByStopLossThresholdBetween(BigDecimal minThreshold, BigDecimal maxThreshold);
 
     // 根据不参与交易的锁定资金来查找风险管理设置
-    List<RiskManagementSettings> findByCapitalProtectionGreaterThan(Double capitalProtection);
-
+    List<RiskManagementSettings> findByCapitalProtectionGreaterThan(BigDecimal capitalProtection);
 
     // 自定义查询：查找止损百分比大于某个值且锁定资金大于某个值的风险管理设置
     @Query("SELECT r FROM RiskManagementSettings r WHERE r.stopLossPercentage > :percentage AND r.capitalProtection > :protection")
-    List<RiskManagementSettings> findByComplexCondition(@Param("percentage") Double percentage, @Param("protection") Double protection);
+    List<RiskManagementSettings> findByComplexCondition(@Param("percentage") BigDecimal percentage, @Param("protection") BigDecimal protection);
 }

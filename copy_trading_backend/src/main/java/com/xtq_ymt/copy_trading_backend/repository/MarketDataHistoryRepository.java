@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
-
+import java.math.BigDecimal; // 导入 BigDecimal
 
 @Repository
 public interface MarketDataHistoryRepository extends JpaRepository<MarketDataHistory, Long> {
@@ -24,7 +24,7 @@ public interface MarketDataHistoryRepository extends JpaRepository<MarketDataHis
     Page<MarketDataHistory> findByTimestampBetween(Date startDate, Date endDate, Pageable pageable);
 
     // 分页查找在某个价格范围内的历史记录
-    Page<MarketDataHistory> findByPriceBetween(Double minPrice, Double maxPrice, Pageable pageable);
+    Page<MarketDataHistory> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
     // 自定义查询：分页查找在特定时间范围内的特定金融工具的历史记录
     @Query("SELECT m FROM MarketDataHistory m WHERE m.instrument = :instrument AND m.timestamp BETWEEN :startDate AND :endDate")

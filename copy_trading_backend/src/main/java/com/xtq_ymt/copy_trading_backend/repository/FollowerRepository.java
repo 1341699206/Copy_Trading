@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 import java.util.Date;
+import java.math.BigDecimal; // 导入 BigDecimal
 
 @Repository
 public interface FollowerRepository extends JpaRepository<Follower, Long> {
@@ -28,7 +29,7 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     Optional<Follower> findByEmail(String email);
 
     // 根据totalInvestment大于某个值查找Follower（支持分页）
-    Page<Follower> findByTotalInvestmentGreaterThan(Double amount, Pageable pageable);
+    Page<Follower> findByTotalInvestmentGreaterThan(BigDecimal amount, Pageable pageable);
 
     // 根据name查找Follower，按注册日期升序排序
     List<Follower> findByNameOrderByRegistrationDateAsc(String name);
@@ -59,7 +60,7 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     // 批量更新总投资
     @Modifying
     @Query("UPDATE Follower f SET f.totalInvestment = f.totalInvestment + :adjustment WHERE f.followerId IN :ids")
-    void adjustTotalInvestmentByIds(@Param("adjustment") Double adjustment, @Param("ids") List<Long> ids);
+    void adjustTotalInvestmentByIds(@Param("adjustment") BigDecimal adjustment, @Param("ids") List<Long> ids);
 
     // 批量删除Follower
     void deleteAllByFollowerIdIn(List<Long> ids);

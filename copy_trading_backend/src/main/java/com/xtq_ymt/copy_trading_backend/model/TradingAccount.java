@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*; // 导入 JPA 注解
+import java.math.BigDecimal; // 导入 BigDecimal
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -34,11 +35,12 @@ public class TradingAccount {
     @JoinColumn(name = "follower_id", nullable = true)
     private Follower follower; // 关联的跟随者（可空）
 
-    @Column(name = "balance", precision = 18, scale = 2, nullable = false)
-    private Double balance; // 账户余额
+    // 修改为 BigDecimal，并使用 columnDefinition
+    @Column(name = "balance", columnDefinition = "DECIMAL(18,2)", nullable = false)
+    private BigDecimal balance; // 账户余额
 
-    @Column(name = "equity", precision = 18, scale = 2, nullable = false)
-    private Double equity; // 账户权益
+    @Column(name = "equity", columnDefinition = "DECIMAL(18,2)", nullable = false)
+    private BigDecimal equity; // 账户权益
 
     @Column(name = "status", nullable = false)
     private String status; // 账户状态，例如 "Active", "Closed", "Suspended"
@@ -46,8 +48,8 @@ public class TradingAccount {
     @Column(name = "currency", length = 3, nullable = false)
     private String currency; // 账户的基础货币类型
 
-    @Column(name = "margin_level", precision = 5, scale = 2)
-    private Double marginLevel; // 保证金比例
+    @Column(name = "margin_level", columnDefinition = "DECIMAL(5,2)")
+    private BigDecimal marginLevel; // 保证金比例
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "risk_settings_id")

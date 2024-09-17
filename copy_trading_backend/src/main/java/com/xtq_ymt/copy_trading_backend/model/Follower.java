@@ -1,10 +1,10 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import javax.persistence.*;  // 导入 JPA 相关注解
-
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -12,81 +12,83 @@ import lombok.NoArgsConstructor;
 import lombok.Builder;
 
 @Entity
-@Table(name = "follower")  // 指定数据库表名
+@Table(name = "follower")
 @Getter
 @Setter
-@AllArgsConstructor  // 生成包含所有字段的构造函数
-@NoArgsConstructor   // 生成无参构造函数
-@Builder  // 使用Builder模式
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Follower {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 主键生成策略
-    @Column(name = "follower_id")  // 指定列名
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "follower_id")
     private Long followerId;
 
-    @Column(name = "name", nullable = false)  // 不可为空的列
+    @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<TradingAccount> tradingAccounts; // 与TradingAccount的一对多关系
+    private List<TradingAccount> tradingAccounts;
 
-    @Column(name = "email", nullable = false, unique = true)  // 不可为空且唯一的列
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "country")  // 指定列名
+    @Column(name = "country")
     private String country;
 
     @Column(name = "registration_date")
-    @Temporal(TemporalType.DATE)  // 指定时间类型
+    @Temporal(TemporalType.DATE)
     private Date registrationDate;
 
-    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")  // 指定列名和默认值
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     @Builder.Default
-    private Boolean isActive = true;  // 默认值设置为true
+    private Boolean isActive = true;
 
-    @ManyToMany  // 多对多关系
+    @ManyToMany
     @JoinTable(
-        name = "follower_trader",  // 中间表名
-        joinColumns = @JoinColumn(name = "follower_id"),  // 本表关联列
-        inverseJoinColumns = @JoinColumn(name = "trader_id")  // 对方表关联列
+        name = "follower_trader",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "trader_id")
     )
-    private List<Trader> followingTraders;  // 正在跟随的交易员列表
+    private List<Trader> followingTraders;
 
-    @Column(name = "total_investment")  // 总投资
-    private Double totalInvestment;
+    // 修改为 BigDecimal，并指定 columnDefinition
+    @Column(name = "total_investment", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal totalInvestment;
 
-    @Column(name = "current_balance")  // 当前余额
-    private Double currentBalance;
+    @Column(name = "current_balance", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal currentBalance;
 
-    @Column(name = "profit_loss")  // 总利润或损失
-    private Double profitLoss;
+    @Column(name = "profit_loss", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal profitLoss;
 
-    @OneToOne(cascade = CascadeType.ALL)  // 一对一关系，级联所有操作
-    @JoinColumn(name = "risk_settings_id")  // 外键列名
-    private RiskManagementSettings riskSettings;  // 风险管理设置
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "risk_settings_id")
+    private RiskManagementSettings riskSettings;
 
-    @ElementCollection  // 映射基本类型集合
-    @CollectionTable(name = "allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))  // 集合表
-    @MapKeyColumn(name = "trader_id")  // Map的键
-    @Column(name = "percentage")  // Map的值
-    private HashMap<Long, Double> allocationPercentage;  // 资金分配比例
+    // 修改 Map 的值类型为 BigDecimal，并指定 columnDefinition
+    @ElementCollection
+    @CollectionTable(name = "allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))
+    @MapKeyColumn(name = "trader_id")
+    @Column(name = "percentage", columnDefinition = "DECIMAL(5,2)")
+    private HashMap<Long, BigDecimal> allocationPercentage;
 
-    @Column(name = "auto_adjust")  // 是否自动调整
+    @Column(name = "auto_adjust", columnDefinition = "BOOLEAN")
     private Boolean autoAdjust;
 
-    @Column(name = "adjustment_frequency")  // 调整频率
+    @Column(name = "adjustment_frequency")
     private String adjustmentFrequency;
 
-    @Column(name = "adjustment_threshold")  // 调整阈值
-    private Double adjustmentThreshold;
+    @Column(name = "adjustment_threshold", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal adjustmentThreshold;
 
-    @ElementCollection  // 映射基本类型集合
-    @CollectionTable(name = "target_allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))  // 集合表
-    @MapKeyColumn(name = "trader_id")  // Map的键
-    @Column(name = "target_percentage")  // Map的值
-    private HashMap<Long, Double> targetAllocationPercentage;  // 目标分配比例
+    @ElementCollection
+    @CollectionTable(name = "target_allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))
+    @MapKeyColumn(name = "trader_id")
+    @Column(name = "target_percentage", columnDefinition = "DECIMAL(5,2)")
+    private HashMap<Long, BigDecimal> targetAllocationPercentage;
 
-    @Column(name = "max_adjustment_amount")  // 最大调整幅度
-    private Double maxAdjustmentAmount;
+    @Column(name = "max_adjustment_amount", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal maxAdjustmentAmount;
 }

@@ -17,10 +17,10 @@ public interface TradingAccountRepository extends JpaRepository<TradingAccount, 
     List<TradingAccount> findByAccountType(String accountType);
     
     // 根据关联的Trader查找交易账户
-    List<TradingAccount> findByTraderId(Long traderId);
+    List<TradingAccount> findByTrader_TraderId(Long traderId); // 更新为使用属性导航符
     
     // 根据关联的Follower查找交易账户
-    List<TradingAccount> findByFollowerId(Long followerId);
+    List<TradingAccount> findByFollower_FollowerId(Long followerId); // 更新为使用属性导航符
     
     // 根据API Key查找交易账户
     Optional<TradingAccount> findByApiKey(String apiKey);

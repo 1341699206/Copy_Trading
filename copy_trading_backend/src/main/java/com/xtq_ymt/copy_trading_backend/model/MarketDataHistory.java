@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
-import javax.persistence.*; // 导入 JPA 注解
+import jakarta.persistence.*; // 导入 JPA 注解
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,26 +24,27 @@ public class MarketDataHistory {
     @Column(name = "instrument", nullable = false) // 指定列名，不能为空
     private String instrument; // 市场工具的名称或符号，例如：EUR/USD、AAPL
 
-    @Column(name = "price") // 指定列名
-    private Double price; // 该时间点的价格
+    // 将 Double 修改为 BigDecimal，并指定 columnDefinition
+    @Column(name = "price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal price; // 该时间点的价格
 
-    @Column(name = "open_price") // 指定列名
-    private Double openPrice; // 开盘价格
+    @Column(name = "open_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal openPrice; // 开盘价格
 
-    @Column(name = "close_price") // 指定列名
-    private Double closePrice; // 收盘价格（前一交易日）
+    @Column(name = "close_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal closePrice; // 收盘价格（前一交易日）
 
-    @Column(name = "high_price") // 指定列名
-    private Double highPrice; // 最高价格
+    @Column(name = "high_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal highPrice; // 最高价格
 
-    @Column(name = "low_price") // 指定列名
-    private Double lowPrice; // 最低价格
+    @Column(name = "low_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal lowPrice; // 最低价格
 
-    @Column(name = "volume") // 指定列名
-    private Double volume; // 交易量
+    @Column(name = "volume", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal volume; // 交易量
 
-    @Column(name = "volatility") // 指定列名
-    private Double volatility; // 市场波动率
+    @Column(name = "volatility", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal volatility; // 市场波动率
 
     @Column(name = "timestamp") // 指定列名
     @Temporal(TemporalType.TIMESTAMP) // 指定时间类型为时间戳

@@ -1,6 +1,6 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
-import javax.persistence.*; // 导入 JPA 注解
+import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,44 +10,42 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
-@AllArgsConstructor  // 自动生成包含所有字段的构造函数
-@NoArgsConstructor   // 自动生成无参构造函数
-@Entity // 标识此类为 JPA 实体类
-@Table(name = "market_data") // 指定表名
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "market_data")
 public class MarketData {
 
-    @Id // 标识主键
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 主键生成策略
-    @Column(name = "id") // 指定列名
-    private Long id; // 市场数据的唯一标识符
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "instrument", nullable = false) // 指定列名，不能为空
-    private String instrument; // 市场工具的名称或符号，例如：EUR/USD、AAPL
+    @Column(name = "instrument", nullable = false)
+    private String instrument;
 
-    @Column(name = "current_price") // 指定列名
-    private Double currentPrice; // 当前价格
+    @Column(name = "current_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal currentPrice;
 
-    @Column(name = "open_price") // 指定列名
-    private Double openPrice; // 开盘价格
+    @Column(name = "open_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal openPrice;
 
-    @Column(name = "close_price") // 指定列名
-    private Double closePrice; // 收盘价格（前一交易日）
+    @Column(name = "close_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal closePrice;
 
-    @Column(name = "high_price") // 指定列名
-    private Double highPrice; // 最高价格
+    @Column(name = "high_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal highPrice;
 
-    @Column(name = "low_price") // 指定列名
-    private Double lowPrice; // 最低价格
+    @Column(name = "low_price", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal lowPrice;
 
-    @Column(name = "volume") // 指定列名
-    private Double volume; // 交易量
+    @Column(name = "volume", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal volume;
 
-    @Column(name = "volatility") // 指定列名
-    private Double volatility; // 市场波动率
+    @Column(name = "volatility", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal volatility;
 
-    @Column(name = "timestamp") // 指定列名
-    @Temporal(TemporalType.TIMESTAMP) // 指定时间类型为时间戳
-    private Date timestamp; // 数据的时间戳
-
-    // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
+    @Column(name = "timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
 }
