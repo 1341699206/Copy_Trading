@@ -93,6 +93,13 @@
 			<version>2.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.7.0</version> <!-- 如果有更新版本，请使用最新版本 -->
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
