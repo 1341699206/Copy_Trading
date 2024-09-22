@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TraderRepository extends JpaRepository<Trader, Long> {
@@ -70,4 +71,7 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     // 查找最近一段时间内没有交易的交易者（支持分页）
     @Query("SELECT t FROM Trader t WHERE t.lastOpenTradeDate < :cutoffDate")
     Page<Trader> findTradersInactiveSince(@Param("cutoffDate") Date cutoffDate, Pageable pageable);
+
+    // 根据 email 查找 Trader
+    Optional<Trader> findByEmail(String email);  // 添加这一行
 }

@@ -31,7 +31,10 @@ public class Trader {
 
     @Column(name = "password", nullable = false)  // 新增密码字段
     private String password; // 加密后的密码
-    
+
+    @Column(name = "email", nullable = false, unique = true) // 新增 email 字段，确保唯一性和非空约束
+    private String email; // 交易者的邮箱地址
+
     @Column(name = "country_name") // 指定列名
     private String countryName; // 交易者所在的国家名称
 
