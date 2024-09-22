@@ -34,6 +34,9 @@ public class Follower {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "password", nullable = false)  // 新增密码字段
+    private String password;  // 加密后的密码
+
     @Column(name = "country")
     private String country;
 
@@ -53,7 +56,6 @@ public class Follower {
     )
     private List<Trader> followingTraders;
 
-    // 修改为 BigDecimal，并指定 columnDefinition
     @Column(name = "total_investment", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal totalInvestment;
 
@@ -67,7 +69,6 @@ public class Follower {
     @JoinColumn(name = "risk_settings_id")
     private RiskManagementSettings riskSettings;
 
-    // 修改 Map 的值类型为 BigDecimal，并指定 columnDefinition
     @ElementCollection
     @CollectionTable(name = "allocation_percentage", joinColumns = @JoinColumn(name = "follower_id"))
     @MapKeyColumn(name = "trader_id")

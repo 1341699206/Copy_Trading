@@ -29,6 +29,9 @@ public class Trader {
     @Column(name = "name", nullable = false) // 指定列名，并设置为非空
     private String name; // 交易者的用户名或显示名称
 
+    @Column(name = "password", nullable = false)  // 新增密码字段
+    private String password; // 加密后的密码
+    
     @Column(name = "country_name") // 指定列名
     private String countryName; // 交易者所在的国家名称
 
