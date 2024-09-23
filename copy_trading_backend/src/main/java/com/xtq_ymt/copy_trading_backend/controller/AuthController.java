@@ -1,9 +1,9 @@
 package com.xtq_ymt.copy_trading_backend.controller;
 
+import com.xtq_ymt.copy_trading_backend.Result.AuthResult;
 import com.xtq_ymt.copy_trading_backend.dto.LoginRequest;
 import com.xtq_ymt.copy_trading_backend.dto.RegisterRequest;
 import com.xtq_ymt.copy_trading_backend.service.AuthService;
-import com.xtq_ymt.copy_trading_backend.service.AuthService.AuthResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
