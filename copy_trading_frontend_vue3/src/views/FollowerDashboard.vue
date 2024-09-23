@@ -1,12 +1,13 @@
 <template>
   <div>
+    <h1>FollowerDashboard</h1>
     <!-- 这个是空的组件 -->
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AdminDashboard'
+  name: 'FollowerDashboard'
 }
 </script>
 

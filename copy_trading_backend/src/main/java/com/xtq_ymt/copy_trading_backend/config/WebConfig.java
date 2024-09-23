@@ -3,15 +3,17 @@ package com.xtq_ymt.copy_trading_backend.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.lang.NonNull;  // 添加此行导入 @NonNull 注解
+import org.springframework.lang.NonNull;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addCorsMappings(@NonNull CorsRegistry registry) {  // 添加 @NonNull 注解
-        registry.addMapping("/**")  // 允许所有路径
-                .allowedOrigins("http://localhost:8081")  // 允许来自前端的跨域请求
-                .allowedMethods("GET", "POST", "PUT", "DELETE");  // 允许的请求方法
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:8081")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")  // 允许所有请求头
+                .allowCredentials(true);  // 允许携带凭证信息（如cookie）
     }
 }
