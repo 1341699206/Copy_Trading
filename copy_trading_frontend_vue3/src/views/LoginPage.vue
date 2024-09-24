@@ -20,7 +20,6 @@
           <option value="ADMIN">Admin</option>
         </select>
       </div>
-
       <button type="submit">Login</button>
 
       <!-- 显示登录成功或失败的消息 -->
