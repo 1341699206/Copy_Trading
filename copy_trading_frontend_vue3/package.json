@@ -11,6 +11,7 @@
     "axios": "^1.7.7",
     "copy_trading_frontend_vue3": "file:",
     "core-js": "^3.8.3",
+    "element-plus": "^2.8.3",
     "vue": "^3.2.13",
     "vue-router": "^4.0.13"
   },
@@ -21,7 +22,10 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "unplugin-auto-import": "^0.18.3",
+    "unplugin-element-plus": "^0.8.0",
+    "unplugin-vue-components": "^0.27.4"
   },
   "eslintConfig": {
     "root": true,
