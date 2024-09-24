@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- 一级路由出口 -->
     <router-view></router-view>  <!-- 渲染当前路由组件 -->
   </div>
 </template>

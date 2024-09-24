@@ -9,11 +9,15 @@ const ElementPlus = require('unplugin-element-plus/webpack');
 module.exports = defineConfig({
   transpileDependencies: true,
 
-  //导入自定义的主题色系统
   css: {
     loaderOptions: {
       scss: {
-        additionalData: `@use "@/styles/element/index.scss" as *;`,
+        //@use "@/styles/element/index.scss" as *;导入自定义的elementPlus主题色系统
+        //@use "@/styles/var.scss" as *;导入样式变量，使用变量时，可以不再需要import
+        additionalData: ` 
+          @use "@/styles/element/index.scss" as *;
+          @use "@/styles/var.scss" as *;
+        `,
       },
     },
   },
@@ -26,7 +30,7 @@ module.exports = defineConfig({
       }),
       Components({
         resolvers: [
-          // 配置Element Plus采用saas样式配色系统
+          // 配置Element Plus采用sass样式配色系统
           ElementPlusResolver({importStyle:"sass"}),
         ],
       }),
