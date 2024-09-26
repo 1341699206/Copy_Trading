@@ -3,7 +3,7 @@ import axios from "axios";
 
 
 const httpInstance = axios.create({
-    baseURL: 'http://co-trade.net',
+    baseURL: 'http://localhost:9099',
     timeout: 5000
 })
 
