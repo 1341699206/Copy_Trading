@@ -63,7 +63,7 @@ export default {
 
           // 根据用户选择的角色跳转到相应的页面
           if (this.selectedRole === "TRADER") {
-            this.$router.push('/trader');
+            this.$router.push('/trader_page');
           } else if (this.selectedRole === "FOLLOWER") {
             this.$router.push('/');
           } else if (this.selectedRole === "ADMIN") {

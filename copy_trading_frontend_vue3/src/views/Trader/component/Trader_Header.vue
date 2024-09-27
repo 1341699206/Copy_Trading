@@ -1,134 +1,135 @@
 <template>
-    <header class="app-header">
-        <div class="container">
-            <ul class="app-header-nav">
-                <li class="logo">
-                    <router-link to="/">Co-trade</router-link>
-                </li>
-                <li class="home">
-                    <router-link to="/">首页</router-link>
-                </li>
-                <li>
-                    <router-link to="/Trader">投资者</router-link>
-                </li>
-                <li>
-                    <router-link to="/Market">市场</router-link>
-                </li>
-                <li>
-                    <router-link to="/Community">社区</router-link>
-                </li>
-            </ul>
-            <div class="right">
-                <router-link to="/login"><i class="iconFont icon-login"></i>登录</router-link>              
-                <router-link to="/register"><i class="iconFont icon-register"></i>注册</router-link>            
-            </div>
+  <header class="app-header">
+    <div class="container">
+      <!-- Logo部分 -->
+      <div class="logo">
+        <router-link to="/">ZuluTrade</router-link>
+      </div>
+
+      <!-- 中间的导航部分 -->
+      <nav class="nav-menu">
+        <ul>
+          <li><router-link to="/traders">Traders</router-link></li>
+          <li><router-link to="/combos">Combos</router-link></li>
+          <li><router-link to="/markets">Markets</router-link></li>
+          <li><router-link to="/learn">Learn</router-link></li>
+          <li><router-link to="/about">About</router-link></li>
+          <li><router-link to="/social-feed">Social Feed <span class="new-label">New</span></router-link></li>
+        </ul>
+      </nav>
+
+      <!-- 右边的账户部分 -->
+      <div class="account-section">
+        <div class="icon-container">
+          <!-- 图标和国家标志 -->
+          <i class="iconFont icon-phone"></i>
+          <i class="iconFont icon-calendar"></i>
+          <i class="iconFont icon-flag"></i>
         </div>
-    </header>
+        <div class="user-account">
+          <span>My Account</span>
+          <span class="username">ethanrosekk</span>
+          <i class="iconFont icon-user"></i>
+        </div>
+      </div>
+    </div>
+  </header>
 </template>
 
-<style lang="scss" scoped>
- .app-header {
-  background: #fff;
+<script setup>
+// 不涉及复杂逻辑，暂时不需要script部分
+</script>
 
-  .container {
-    height: 60px;
-    border-style:solid;
-    border-width: 1px;
-    border-color: #000;
-    display: flex;
-    align-items: center;
-  }
+<style scoped>
+/* 整个Header的样式 */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-  .right {
-    width: 220px;
-    display: flex;
-    text-align: center;
-    padding-left: 40px;
-    border-left: 2px solid $xtxColor;
+/* container 用于限制页面宽度 */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    a {
-      width: 38px;
-      margin-right: 40px;
-      font-size: 16px;
-      line-height: 1;
+/* Logo样式 */
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff7300; /* ZuluTrade标志的橙色 */
+}
 
-      &:hover {
-        color: $xtxColor;
-      }
-    }
-  }
+.nav-menu ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
 
-  .app-header-nav {
-    width: 820px;
-    display: flex;
-    padding-left: 40px;
-    position: relative;
-    z-index: 998;
+.nav-menu ul li {
+  margin-right: 20px;
+}
 
-    .logo {
-    width: 200px;
+.nav-menu ul li a {
+  color: #333;
+  font-size: 16px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
-      a {
-        display: block;
-        height: 100%;
-        width: 100%;
-        text-indent: -9999px;
-        //background: url('@/assets/images/logo.png') no-repeat center 18px / contain;
-      }
-    }
-  
-    li {
-      margin-right: 40px;
-      width: 50px;
-      text-align: center;
-  
-      a {
-        font-size: 16px;
-        line-height: 32px;
-        height: 32px;
-        display: inline-block;
-  
-        &:hover {
-          color: $xtxColor;
-          border-bottom: 1px solid $xtxColor;
-        }
-      }
-  
-      .active {
-        color: $xtxColor;
-        border-bottom: 1px solid $xtxColor;
-      }
-    }
-  }
+.nav-menu ul li a:hover {
+  color: #ff7300; /* hover时的橙色 */
+}
 
-  .cart {
-    width: 50px;
+/* “New” 标签样式 */
+.new-label {
+  background-color: #ff7300;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+}
 
-    .curr {
-      height: 32px;
-      line-height: 32px;
-      text-align: center;
-      position: relative;
-      display: block;
+/* 右边账户部分 */
+.account-section {
+  display: flex;
+  align-items: center;
+}
 
-      .icon-cart {
-        font-size: 22px;
-      }
+.icon-container {
+  display: flex;
+  align-items: center;
+}
 
-      em {
-        font-style: normal;
-        position: absolute;
-        right: 0;
-        top: 0;
-        padding: 1px 6px;
-        line-height: 1;
-        background: $helpColor;
-        color: #fff;
-        font-size: 12px;
-        border-radius: 10px;
-        font-family: Arial;
-      }
-    }
-  }
+.icon-container i {
+  margin-right: 15px;
+  font-size: 20px;
+}
+
+.user-account {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.username {
+  margin-left: 10px;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.icon-user {
+  font-size: 18px;
+  margin-left: 5px;
 }
 </style>
