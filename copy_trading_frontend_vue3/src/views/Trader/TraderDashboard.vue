@@ -1,16 +1,16 @@
-<template>
-  <div>
-    <h1>TraderDashboard</h1>
-    <!-- 这个是空的组件 -->
-  </div>
-</template>
-
-<script>
-export default {
-  name: 'TraderDashboard'
-}
+<script setup>
+    import Trader_Header from './component/Trader_Header.vue';
+    import Trader_Footer from './component/Trader_Footer.vue';
+    
 </script>
 
-<style scoped>
-/* 如果有样式，可以加在这里 */
-</style>
+
+<template>
+    <div>
+        <Trader_Header></Trader_Header>
+        <!-- 二级路由出口 -->
+        <router-view></router-view>
+        <Trader_Footer></Trader_Footer>
+    </div>
+</template>
+

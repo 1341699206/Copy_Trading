@@ -1,19 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import LayoutPage from '@/views/Layout/LayoutPage.vue' //导入主页
-import Home from '@/views/Layout/Home/HomePage.vue' //导入主页的HOME
-import Trader from '@/views/Layout/Traders/TradersPage.vue' //导入主页的Trader
-import Market from '@/views/Layout/Market/MarketPage.vue' //导入主页的Market
-import Community from '@/views/Layout/Community/CommunityPage.vue' //导入主页的Community
+import FollowerPage from '@/views/Follower/Follower_Page.vue' //导入主页
+import Home from '@/views/Follower/Home/HomePage.vue' //导入主页的HOME
+import Trader from '@/views/Follower/Traders/TradersPage.vue' //导入主页的Trader
+import Market from '@/views/Follower/Market/MarketPage.vue' //导入主页的Market
+import Community from '@/views/Follower/Community/CommunityPage.vue' //导入主页的Community
 
 import LoginPage from '@/views/Login/LoginPage.vue';  // 导入登录页面
 import RegisterPage from '@/views/Login/RegisterPage.vue';  // 导入注册页面
 
 import TraderDashboard from '@/views/Trader/TraderDashboard.vue';  // 导入Trader的Dashboard页面
 
-import FollowerDashboard from '@/views/Follower/FollowerDashboard.vue';  // 导入Follower的Dashboard页面
 
 import AdminDashboard from '@/views/Admin/AdminDashboard.vue';  // 导入Admin的Dashboard页面
+
+
+
 
 
 const router = createRouter({
@@ -22,7 +24,7 @@ const router = createRouter({
   routes:[
     {
       path:'/',
-      component: LayoutPage,
+      component: FollowerPage,
       children:[
         {
           path:'',
@@ -55,10 +57,6 @@ const router = createRouter({
       component: TraderDashboard
     },
     {
-      path:'/follower',
-      component: FollowerDashboard
-    },
-    {
       path:'/admin',
       component: AdminDashboard
     }
@@ -66,3 +64,8 @@ const router = createRouter({
 });
 
 export default router;
+
+
+
+
+

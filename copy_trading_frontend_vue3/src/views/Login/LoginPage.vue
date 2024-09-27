@@ -63,11 +63,11 @@ export default {
 
           // 根据用户选择的角色跳转到相应的页面
           if (this.selectedRole === "TRADER") {
-            this.$router.push('/trader-dashboard');
+            this.$router.push('/trader');
           } else if (this.selectedRole === "FOLLOWER") {
-            this.$router.push('/follower-dashboard');
+            this.$router.push('/');
           } else if (this.selectedRole === "ADMIN") {
-            this.$router.push('/admin-dashboard');
+            this.$router.push('/admin');
           }
         })
         .catch((error) => {
