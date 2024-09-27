@@ -19,8 +19,9 @@
                 </li>
             </ul>
             <div class="right">
-                <router-link to="/login"><i class="iconFont icon-login"></i>登录</router-link>              
-                <router-link to="/register"><i class="iconFont icon-register"></i>注册</router-link>            
+              <ul>
+                <li></li>
+              </ul>
             </div>
         </div>
     </header>

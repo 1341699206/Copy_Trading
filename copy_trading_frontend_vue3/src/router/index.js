@@ -6,13 +6,15 @@ import Trader from '@/views/Follower/Traders/TradersPage.vue' //导入主页的T
 import Market from '@/views/Follower/Market/MarketPage.vue' //导入主页的Market
 import Community from '@/views/Follower/Community/CommunityPage.vue' //导入主页的Community
 
-import LoginPage from '@/views/Login/LoginPage.vue';  // 导入登录页面
-import RegisterPage from '@/views/Login/RegisterPage.vue';  // 导入注册页面
+import LoginsPage from '@/views/Logins/LoginsPage.vue' //导入登录页面
+import Login from '@/views/Logins/Login/LoginPage.vue' //导入登录页面的login
+import Register from '@/views/Logins/Register/RegisterPage.vue';  // 导入登录页面的register
 
 import TraderDashboard from '@/views/Trader/TraderDashboard.vue';  // 导入Trader的Dashboard页面
 
 
 import AdminDashboard from '@/views/Admin/AdminDashboard.vue';  // 导入Admin的Dashboard页面
+// import { pa } from 'element-plus/es/locale';
 
 
 
@@ -31,7 +33,7 @@ const router = createRouter({
           component: Home
         },
         {
-          path:'trader',
+          path:'traders',
           component: Trader
         },
         {
@@ -46,11 +48,17 @@ const router = createRouter({
     },
     {
       path:'/login',
-      component: LoginPage,
-    },
-    {
-      path: "/register",
-      component: RegisterPage
+      component: LoginsPage,
+      children:[
+        {
+          path:'',
+          component: Login
+        },
+        {
+          path:'/register',
+          component: Register
+        }
+      ]
     },
     {
       path:'/trader',
