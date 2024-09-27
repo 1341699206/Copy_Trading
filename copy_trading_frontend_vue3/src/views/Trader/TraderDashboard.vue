@@ -1,16 +1,16 @@
 <script setup>
-    import Trader_Header from './component/Trader_Header.vue';
-    import Trader_Footer from './component/Trader_Footer.vue';
+    import TraderHeader from './component/Trader_Header.vue';
+    import TraderFooter from './component/Trader_Footer.vue';
     
 </script>
 
 
 <template>
     <div>
-        <Trader_Header></Trader_Header>
+        <TraderHeader></TraderHeader>
         <!-- 二级路由出口 -->
         <router-view></router-view>
-        <Trader_Footer></Trader_Footer>
+        <TraderFooter></TraderFooter>
     </div>
 </template>
 

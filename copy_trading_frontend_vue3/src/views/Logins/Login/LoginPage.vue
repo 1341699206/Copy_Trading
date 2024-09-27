@@ -39,7 +39,7 @@
         ElMessage({type:'success',message:'Login successful!'})
         // 根据用户选择的角色跳转到相应的页面
         if (userInfo.value.role === "TRADER") {
-          router.replace('/trader');
+          router.replace('/trader_page');
         } else if (userInfo.value.role === "FOLLOWER") {
           router.replace('/traders');
         } else if (userInfo.value.role === "ADMIN") {

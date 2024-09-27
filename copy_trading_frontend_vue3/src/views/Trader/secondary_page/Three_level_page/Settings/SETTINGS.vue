@@ -1,9 +1,9 @@
 <template>
-  <div>HISTORY</div>
+  <div>SETTINGS</div>
 </template>
 
 <script>
 export default {
-  name: 'HISTORY',
+  name: 'SETTINGS',
 };
 </script>
