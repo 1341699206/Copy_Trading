@@ -1,7 +1,7 @@
-import hasInstance from "@/utils/http";
+import httpInstance from "@/utils/http";
 
-export function getCategory(){
-    return hasInstance({
+export function getCategory() {
+    return httpInstance({
         url:'home/category/head'
     })
 }

@@ -7,8 +7,9 @@ import Trader from '@/views/Follower/Traders/TradersPage.vue';  // 导入主页�
 import Market from '@/views/Follower/Market/MarketPage.vue';  // 导入主页的Market
 import Community from '@/views/Follower/Community/CommunityPage.vue';  // 导入主页的Community
 
-import LoginPage from '@/views/Login/LoginPage.vue';  // 导入登录页面
-import RegisterPage from '@/views/Login/RegisterPage.vue';  // 导入注册页面
+import LoginsPage from '@/views/Logins/LoginsPage.vue' //导入登录页面
+import Login from '@/views/Logins/Login/LoginPage.vue' //导入登录页面的login
+import Register from '@/views/Logins/Register/RegisterPage.vue';  // 导入登录页面的register
 
 import TraderDashboard from '@/views/Trader/TraderDashboard.vue';  // 导入Trader的Dashboard页面
 import TraderBasicInfo from '@/views/Trader/secondary_page/trader_basic_information.vue';  // 导入Trader的基本信息页面
@@ -26,6 +27,10 @@ import Trade from '@/views/Trader/secondary_page/Three_level_page/Trade/TRADE.vu
 import Ztp from '@/views/Trader/secondary_page/Three_level_page/Ztp/ZTP.vue';
 
 import AdminDashboard from '@/views/Admin/AdminDashboard.vue';  // 导入Admin的Dashboard页面
+// import { pa } from 'element-plus/es/locale';
+
+
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -39,7 +44,7 @@ const router = createRouter({
           component: Home,
         },
         {
-          path: 'trader',
+          path: 'traders',
           component: Trader,
         },
         {
@@ -47,18 +52,24 @@ const router = createRouter({
           component: Market,
         },
         {
-          path: 'community',
-          component: Community,
+          path:'community',
+          component: Community
+        }
+      ]
+    },
+    {
+      path:'/login',
+      component: LoginsPage,
+      children:[
+        {
+          path:'',
+          component: Login
         },
-      ],
-    },
-    {
-      path: '/login',
-      component: LoginPage,
-    },
-    {
-      path: '/register',
-      component: RegisterPage,
+        {
+          path:'/register',
+          component: Register
+        }
+      ]
     },
     {
       path: '/trader_page',

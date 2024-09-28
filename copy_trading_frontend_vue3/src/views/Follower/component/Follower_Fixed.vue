@@ -12,21 +12,26 @@ const { y } = useScroll(window)
             <router-link to="/">Co-trade</router-link>
         </li>
         <li class="home">
-            <router-link to="/">首页</router-link>
+            <router-link to="/">Home</router-link>
         </li>
         <li>
-            <router-link to="/Trader">投资者</router-link>
+            <router-link to="/traders">Traders</router-link>
         </li>
         <li>
-            <router-link to="/Market">市场</router-link>
+           <router-link to="/market">Market</router-link>
         </li>
         <li>
-            <router-link to="/Community">社区</router-link>
+            <router-link to="/community">Community</router-link>
         </li>
       </ul>
       <div class="right">
-        <router-link to="/login"><i class="iconFont icon-login"></i>登录</router-link>              
-        <router-link to="/register"><i class="iconFont icon-register"></i>注册</router-link>            
+          <template v-if="false">
+            <ul></ul>
+          </template>
+          <template v-else>
+            <a @click="$router.push('/login')"><i class="iconFont icon-login"></i>login</a>
+            <a @click="$router.push('/register')"><i class="iconFont icon-register"></i>register</a>
+            </template>
       </div>
     </div>
   </div>
