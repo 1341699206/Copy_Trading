@@ -39,7 +39,7 @@ public interface CopyTradingRepository extends JpaRepository<CopyTrading, Long> 
 
     // 批量更新复制交易的活跃状态
     @Modifying
-    @Query("UPDATE CopyTrading c SET c.isActive = :status WHERE c.follower.tradingAccount.accountId = :accountId")
+    @Query("UPDATE CopyTrading c SET c.isActive = :status WHERE c.followerTradingAccount.accountId = :accountId")
     void updateStatusByFollowerTradingAccountId(@Param("status") Boolean status, @Param("accountId") Long accountId);
 
     // 查找总损失小于指定值的复制交易（支持分页）
