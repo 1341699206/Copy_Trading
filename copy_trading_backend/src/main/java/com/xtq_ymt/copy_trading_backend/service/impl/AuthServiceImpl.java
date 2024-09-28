@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<Admin> admin = adminRepository.findByEmail(email);
         if (admin.isPresent()) {
             if (passwordEncoder.matches(password, admin.get().getPassword())) {
-                return Result.success("Login successful");
+                return Result.success("Login successful",admin.get());
             } else {
                 return Result.error("Password is incorrect");
             }
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<Follower> follower = followerRepository.findByEmail(email);
         if (follower.isPresent()) {
             if (passwordEncoder.matches(password, follower.get().getPassword())) {
-                return Result.success("Login successful");
+                return Result.success("Login successful",follower.get());
             } else {
                 return Result.error("Password is incorrect");
             }
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<Trader> trader = traderRepository.findByEmail(email);
         if (trader.isPresent()) {
             if (passwordEncoder.matches(password, trader.get().getPassword())) {
-                return Result.success("Login successful");
+                return Result.success("Login successful",trader.get());
             } else {
                 return Result.error("Password is incorrect");
             }

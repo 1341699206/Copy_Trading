@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 
 import FollowerPage from '@/views/Follower/Follower_Page.vue';  // 导入主页
+import FollowerDashboard from '@/views/Follower/FollowerDashboard/FollowerDashboard.vue'
 import Home from '@/views/Follower/Home/HomePage.vue';  // 导入主页的HOME
 import Trader from '@/views/Follower/Traders/TradersPage.vue';  // 导入主页的Trader
 import Market from '@/views/Follower/Market/MarketPage.vue';  // 导入主页的Market
@@ -31,10 +32,6 @@ import AdminDashboard from '@/views/Admin/AdminDashboard.vue';  // 导入Admin�
 
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 9bf04ec9297804b9244f6ba474fdfd96b95b0afd
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -48,13 +45,12 @@ const router = createRouter({
           component: Home,
         },
         {
-<<<<<<< HEAD
-          path:'traders',
-          component: Trader
-=======
+          path:'/followerDashboard',
+          component:FollowerDashboard
+        },
+        {
           path: 'traders',
           component: Trader,
->>>>>>> 9bf04ec9297804b9244f6ba474fdfd96b95b0afd
         },
         {
           path: 'market',

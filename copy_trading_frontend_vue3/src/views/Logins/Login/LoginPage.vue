@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import { loginAPI } from '@/apis/user'
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
+import {useUserStore} from '@/stores/user'
+
+const userStore =useUserStore()
 
 // 表单对象
 const userInfo = ref({
@@ -38,14 +40,14 @@ const doLogin = () => {
         userInfo.value.role = userInfo.value.role.toUpperCase()
 
         // 调用 loginAPI，并确保传递的是 userInfo.value
-        await loginAPI(userInfo.value)
+        await userStore.getUserInfo(userInfo.value)
         ElMessage({ type: 'success', message: 'Login successful!' })
 
         // 根据角色跳转页面
         if (userInfo.value.role === 'TRADER') {
           router.replace('/trader_page')
         } else if (userInfo.value.role === 'FOLLOWER') {
-          router.replace('/traders')
+          router.replace('/followerDashboard')
         } else if (userInfo.value.role === 'ADMIN') {
           router.replace('/admin')
         }
