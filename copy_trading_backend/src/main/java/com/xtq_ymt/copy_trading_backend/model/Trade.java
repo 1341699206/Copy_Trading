@@ -21,13 +21,15 @@ public class Trade {
     @Column(name = "trade_id")
     private Long tradeId; // 交易的唯一标识符
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private TradingAccount tradingAccount; // 关联的交易账户
-
+    // 保留 trader 字段
     @ManyToOne
     @JoinColumn(name = "trader_id", nullable = false)
     private Trader trader; // 关联的交易员
+
+    // 保留 tradingAccount 字段
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private TradingAccount tradingAccount; // 关联的交易账户
 
     @ManyToOne
     @JoinColumn(name = "follower_id")
