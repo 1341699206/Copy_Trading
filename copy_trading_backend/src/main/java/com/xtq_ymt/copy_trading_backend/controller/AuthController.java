@@ -1,5 +1,6 @@
 package com.xtq_ymt.copy_trading_backend.controller;
 
+import com.xtq_ymt.copy_trading_backend.Result.Country;
 import com.xtq_ymt.copy_trading_backend.Result.Result;
 import com.xtq_ymt.copy_trading_backend.dto.LoginRequest;
 import com.xtq_ymt.copy_trading_backend.dto.RegisterRequest;
@@ -61,9 +62,9 @@ public class AuthController {
     // 获取国家列表
     @GetMapping("/register/countries")
     public Result getCountries() {
-        List<Result.Country> countries = new ArrayList<>();
-        countries.add(new Result.Country("CN", "China"));
-        countries.add(new Result.Country("US", "United States"));
-        return Result.success(countries);
+        List<Country> countries = new ArrayList<>();
+        countries.add(new Country("CN", "China"));
+        countries.add(new Country("US", "United States"));
+        return Result.success("success",countries);
     }
 }
