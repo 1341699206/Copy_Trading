@@ -17,17 +17,14 @@
 .login-header {
   background: #fff;
   border-bottom: 1px solid #e4e4e4;
-
   .container {
     display: flex;
     height: 60px;
     align-items: flex-end;
     justify-content: space-between;
   }
-
   .logo {
     width: 200px;
-
     a {
       display: block;
       height: 132px;
@@ -36,7 +33,6 @@
       //background: url("@/assets/images/logo.png") no-repeat center 18px / contain;
     }
   }
-
   .sub {
     flex: 1;
     font-size: 24px;
@@ -45,12 +41,10 @@
     margin-left: 20px;
     color: #666;
   }
-
   .entry {
     width: 120px;
     margin-bottom: 22px;
     font-size: 16px;
-
     i {
       font-size: 14px;
       color: $xtxColor;

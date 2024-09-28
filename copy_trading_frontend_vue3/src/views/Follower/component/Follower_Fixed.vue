@@ -18,7 +18,7 @@ const { y } = useScroll(window)
             <router-link to="/traders">Traders</router-link>
         </li>
         <li>
-            <router-link to="/market">Market</router-link>
+           <router-link to="/market">Market</router-link>
         </li>
         <li>
             <router-link to="/community">Community</router-link>

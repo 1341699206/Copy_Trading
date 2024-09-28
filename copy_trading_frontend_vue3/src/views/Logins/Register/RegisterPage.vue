@@ -6,6 +6,7 @@ import 'element-plus/theme-chalk/el-message.css';
 import { useRouter } from 'vue-router';
 import { getCountriesAPI } from '@/apis/layout'; 
 
+// 用户注册信息
 const userInfo = ref({
   name: '',
   email: '',
@@ -39,26 +40,33 @@ const rules = {
 const countries = ref([]);
 const getCountries = async () => {
   const res = await getCountriesAPI();
-  console.log(res);
   countries.value = res.data;
 };
 
 // 启动函数
 onMounted(() => {
   getCountries();
-}); 
+});
 
 const formRef = ref(null);
 const router = useRouter();
+
+// 注册函数
 const doRegister = () => {
-  // 调用实例方法
   formRef.value.validate(async (valid) => {
     if (valid) {
-      // TODO LOGIN
-      await registerAPI(userInfo);
-      ElMessage({ type: 'success', message: 'Register successful!' });
-      // 返回登录界面
-      router.push('/login');
+      try {
+        // 调用注册 API 并传递 userInfo 的值
+        await registerAPI(userInfo.value);
+        ElMessage({ type: 'success', message: 'Register successful!' });
+        // 成功后跳转到登录页面
+        router.push('/login');
+      } catch (error) {
+        // 处理错误
+        ElMessage({ type: 'error', message: 'Registration failed: ' + error.response.data });
+      }
+    } else {
+      ElMessage({ type: 'error', message: 'Please fill out the form correctly!' });
     }
   });
 }
@@ -70,17 +78,17 @@ const doRegister = () => {
 
     <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="top" label-width="60px" status-icon>
       <!-- 输入 Name -->
-      <el-form-item label="name"> 
+      <el-form-item label="name" prop="name"> 
         <el-input v-model="userInfo.name" id="name" />
       </el-form-item>
 
       <!-- 输入 Email -->
-      <el-form-item label="email"> 
+      <el-form-item label="email" prop="email"> 
         <el-input v-model="userInfo.email" id="email" />
       </el-form-item>
 
       <!-- 输入密码 -->
-      <el-form-item label="password"> 
+      <el-form-item label="password" prop="password"> 
         <el-input type="password" v-model="userInfo.password" id="password" />
       </el-form-item>
 
@@ -101,16 +109,12 @@ const doRegister = () => {
           </el-option>
         </el-select>
       </el-form-item>
-      
+
+      <!-- 注册按钮 -->
+      <el-button @click="doRegister">Register</el-button>
+      <el-button @click="$router.push('/login')">Already have an account? Login here</el-button>
+
     </el-form>
-
-    <!-- 注册 -->
-    <el-button @click="doRegister">Register</el-button>
-    <el-button @click="$router.push('/login')">Already have an account? Login here</el-button>
-
-    <!-- 显示注册成功或失败的消息 -->
-    <p v-if="successMessage" class="success">{{ successMessage }}</p>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
   </div>
 </template>

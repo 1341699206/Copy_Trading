@@ -31,7 +31,10 @@ import AdminDashboard from '@/views/Admin/AdminDashboard.vue';  // 导入Admin�
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9bf04ec9297804b9244f6ba474fdfd96b95b0afd
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
@@ -45,8 +48,13 @@ const router = createRouter({
           component: Home,
         },
         {
+<<<<<<< HEAD
           path:'traders',
           component: Trader
+=======
+          path: 'traders',
+          component: Trader,
+>>>>>>> 9bf04ec9297804b9244f6ba474fdfd96b95b0afd
         },
         {
           path: 'market',

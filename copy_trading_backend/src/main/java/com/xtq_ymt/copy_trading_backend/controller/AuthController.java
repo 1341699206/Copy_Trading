@@ -1,7 +1,5 @@
 package com.xtq_ymt.copy_trading_backend.controller;
 
-import com.xtq_ymt.copy_trading_backend.Result.AuthResult;
-import com.xtq_ymt.copy_trading_backend.Result.Country;
 import com.xtq_ymt.copy_trading_backend.Result.Result;
 import com.xtq_ymt.copy_trading_backend.dto.LoginRequest;
 import com.xtq_ymt.copy_trading_backend.dto.RegisterRequest;
@@ -11,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; 
+import java.util.List;
 import java.util.ArrayList;
 
 @RestController
@@ -24,51 +22,48 @@ public class AuthController {
 
     // 登录端点
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Result> login(@RequestBody LoginRequest loginRequest) {
         // 调用 AuthService 中的 authenticate 方法
-        AuthResult authResult = authService.authenticate(
+        Result authResult = authService.authenticate(
             loginRequest.getEmail(),
             loginRequest.getPassword(),
             loginRequest.getRole()
         );
 
-        // 根据 AuthResult 返回不同的状态码和消息
-        if (authResult.isSuccess()) {
-            return ResponseEntity.ok(authResult.getMessage()); // 登录成功
-        } else {
-            return ResponseEntity.status(401).body(authResult.getMessage()); // 登录失败，返回详细错误消息
-        }
+        // 返回带有 Result 结构的响应
+        return ResponseEntity.ok(authResult);
     }
 
     // 注册端点
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<Result> register(@RequestBody RegisterRequest registerRequest) {
         try {
-            boolean isRegistered = authService.register(
+            // 添加密码长度验证
+            if (registerRequest.getPassword().length() < 6 || registerRequest.getPassword().length() > 14) {
+                return ResponseEntity.status(400).body(Result.error("Password length must be between 6 and 14 characters."));
+            }
+
+            Result registrationResult = authService.register(
                 registerRequest.getName(),
                 registerRequest.getEmail(),
                 registerRequest.getPassword(),
                 registerRequest.getRole(),
                 registerRequest.getCountry()
             );
-
-            if (isRegistered) {
-                return ResponseEntity.ok("Registration successful");
-            } else {
-                return ResponseEntity.status(400).body("Registration failed: User already exists or invalid data");
-            }
+            return ResponseEntity.ok(registrationResult);
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body(Result.error(e.getMessage()));
         }
     }
 
-    //获取国家列表
+
+    // 获取国家列表
     @GetMapping("/register/countries")
-    public Result getCountries(){
-        List<Country> countries=new ArrayList<>();
-        countries.add(new Country("CN", "China"));
-        return new Result().success(countries);
+    public Result getCountries() {
+        List<Result.Country> countries = new ArrayList<>();
+        countries.add(new Result.Country("CN", "China"));
+        countries.add(new Result.Country("US", "United States"));
+        return Result.success(countries);
     }
-    
 }
