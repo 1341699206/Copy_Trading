@@ -2,16 +2,20 @@ package com.xtq_ymt.copy_trading_backend.controller;
 
 import com.xtq_ymt.copy_trading_backend.Result.Country;
 import com.xtq_ymt.copy_trading_backend.Result.Result;
+import com.xtq_ymt.copy_trading_backend.Result.User;
 import com.xtq_ymt.copy_trading_backend.dto.LoginRequest;
 import com.xtq_ymt.copy_trading_backend.dto.RegisterRequest;
 import com.xtq_ymt.copy_trading_backend.service.AuthService;
+import com.xtq_ymt.copy_trading_backend.utils.JwtUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
@@ -31,8 +35,15 @@ public class AuthController {
             loginRequest.getRole()
         );
 
+        //
+        if(authResult.getCode()==1){
+            Map<String,Object> claims= new HashMap<>();
+            claims.put("email",loginRequest.getEmail());
+            String token=JwtUtil.genToken(claims);
+            return ResponseEntity.ok(Result.success(authResult.getMsg(),new User(authResult.getData(), token)));    
+        }
         // 返回带有 Result 结构的响应
-        return ResponseEntity.ok(authResult);
+        return ResponseEntity.status(400).body(authResult);
     }
 
     // 注册端点

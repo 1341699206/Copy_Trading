@@ -1,38 +1,74 @@
 <script setup>
-import {useScroll} from '@vueuse/core'
-const { y } = useScroll(window)
-
+  import {useScroll} from '@vueuse/core'
+  const { y } = useScroll(window)
+  
+  import {useUserStore} from '@/stores/user'
+  const userStore=useUserStore()
 </script>
 
 <template>
   <div class="app-header-sticky" :class="{show: y > 78 }">
     <div class="container">
-      <ul class="app-header-nav">
-        <li class="logo">
-            <router-link to="/">Co-trade</router-link>
-        </li>
-        <li class="home">
-            <router-link to="/">Home</router-link>
-        </li>
-        <li>
-            <router-link to="/traders">Traders</router-link>
-        </li>
-        <li>
-           <router-link to="/market">Market</router-link>
-        </li>
-        <li>
-            <router-link to="/community">Community</router-link>
-        </li>
-      </ul>
-      <div class="right">
-          <template v-if="false">
-            <ul></ul>
-          </template>
-          <template v-else>
-            <a @click="$router.push('/login')"><i class="iconFont icon-login"></i>login</a>
-            <a @click="$router.push('/register')"><i class="iconFont icon-register"></i>register</a>
-            </template>
-      </div>
+      <template v-if="userStore.userInfo.token">
+        <div class="left">
+          <ul>
+            <li class="logo">
+                <router-link to="/">Co-trade</router-link>
+            </li>
+            <li class="home">
+                <router-link to="/followerDashboard">Dashboard</router-link>
+            </li>
+            <li>
+                <router-link to="/traders">Traders</router-link>
+            </li>
+            <li>
+                <router-link to="/market">Market</router-link>
+            </li>
+            <li>
+                <router-link to="/community">Community</router-link>
+            </li>
+          </ul>
+        </div>
+        <div class="right">
+          <ul>
+            <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.user.name}}</a></li>
+            <li>
+              <el-popconfirm title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
+                <template #reference>
+                  <a href="javascript:;">log out</a>
+                </template>
+              </el-popconfirm>
+            </li>
+          </ul>
+        </div>
+      </template>
+      <template v-else>
+        <div class="left">
+        <ul class="app-header-nav">
+          <li class="logo">
+              <router-link to="/">Co-trade</router-link>
+          </li>
+          <li class="home">
+              <router-link to="/">Home</router-link>
+          </li>
+          <li>
+              <router-link to="/traders">Traders</router-link>
+          </li>
+          <li>
+              <router-link to="/market">Market</router-link>
+          </li>
+          <li>
+              <router-link to="/community">Community</router-link>
+          </li>
+        </ul>
+        </div>
+        <div class="right">
+          <ul>
+            <li><a @click="$router.push('/login')"><i class="iconFont icon-login"></i>login</a></li>
+            <li><a @click="$router.push('/register')"><i class="iconFont icon-register"></i>register</a></li>
+          </ul>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -60,65 +96,71 @@ const { y } = useScroll(window)
     opacity: 1;
   }
 
+
   .container {
     display: flex;
-    align-items: center;
+    justify-content: space-between; /* 左右两侧对齐 */
+    align-items: center; /* 垂直居中 */
+    padding: 0 20px; /* 左右内边距 */
   }
 
-  .logo {
-    width: 200px;
-    height: 80px;
-    //background: url("@/assets/images/logo.png") no-repeat right 2px;
-    background-size: 160px auto;
+  .left {
+    ul {
+      display: flex; /* 横排显示 */
+      align-items: center; 
+      margin-left: 20px; /*使所有左侧标签向右侧移动。*/
+      padding: 0; /* 去掉内边距 */
+      list-style: none; /* 去掉点 */
+
+      li {
+        margin-right: 80px; /* 间距 */
+        padding: 20px 0; /* 上下距离统一 */
+        
+        .logo {
+          font-size: 24px; /* Logo字体大小 */
+          font-weight: bold; /* 加粗 */
+          color: #333; /* Logo颜色 */
+          width: 120px; /* 设置 logo 宽度 */
+          //background: url("@/assets/images/logo.png") no-repeat right 2px;
+          background-size: 160px auto;
+        }
+
+        a {
+          text-decoration: none; /* 去掉下划线 */
+          color: black;
+          font-size: 18px;
+          line-height: 1;
+
+          &:hover {
+            color: $xtxColor; /* 悬停时改变颜色 */
+          }
+        }
+      }
+    }
   }
 
   .right {
-    width: 220px;
-    display: flex;
-    text-align: center;
-    padding-left: 40px;
-    border-left: 2px solid $xtxColor;
+    ul {
+      display: flex; /* 横排显示 */
+      align-items: center;
+      padding: 0; /* 去掉内边距 */
+      list-style: none; /* 去掉点 */
 
-    a {
-      width: 38px;
-      margin-right: 40px;
-      font-size: 16px;
-      line-height: 1;
+      li {
+        margin-left: 30px; /* 间距 */
+        padding: 20px 0; /* 上下距离统一 */
 
-      &:hover {
-        color: $xtxColor;
+        a {
+          text-decoration: none; /* 去掉下划线 */
+          font-size: 16px;
+          color: black;
+          line-height: 1;
+
+          &:hover {
+            color: $xtxColor; /* 悬停时改变颜色 */
+          }
+        }
       }
-    }
-  }
-}
-
-.app-header-nav {
-  width: 820px;
-  display: flex;
-  padding-left: 40px;
-  position: relative;
-  z-index: 998;
-
-  li {
-    margin-right: 40px;
-    width: 50px;
-    text-align: center;
-
-    a {
-      font-size: 16px;
-      line-height: 32px;
-      height: 32px;
-      display: inline-block;
-
-      &:hover {
-        color: $xtxColor;
-        border-bottom: 1px solid $xtxColor;
-      }
-    }
-
-    .active {
-      color: $xtxColor;
-      border-bottom: 1px solid $xtxColor;
     }
   }
 }

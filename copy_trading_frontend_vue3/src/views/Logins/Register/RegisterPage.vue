@@ -63,7 +63,6 @@ const doRegister = () => {
         router.push('/login');
       } catch (error) {
         // 处理错误
-        ElMessage({ type: 'error', message: 'Registration failed: ' + error.response.data });
       }
     } else {
       ElMessage({ type: 'error', message: 'Please fill out the form correctly!' });

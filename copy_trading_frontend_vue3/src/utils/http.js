@@ -8,7 +8,6 @@ const httpInstance = axios.create({
 })
 
 //拦截器
-
 // axios请求拦截器
 httpInstance.interceptors.request.use(config =>{
     return config
@@ -19,10 +18,9 @@ httpInstance.interceptors.response.use(res=>res.data,e=>{
     //统一错误提示
     ElMessage({
         type:'warning',
-        message: e.response.data
+        message: e.response.data.msg
     })
-
-    return Promise.reject(e)
+    return Promise.reject(e);
 })
 
 export default httpInstance

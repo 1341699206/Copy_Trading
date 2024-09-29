@@ -23,6 +23,6 @@ public class Result {
 
     // 操作失败并带有错误信息
     public static Result error(String msg) {
-        return new Result(0, msg, null);
+        return new Result(0, msg, msg);
     }
 }
