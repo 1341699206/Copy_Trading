@@ -19,11 +19,17 @@ public interface MarketDataRepository extends JpaRepository<MarketData, Long> {
     // 根据市场工具名称查找MarketData（支持分页）
     Page<MarketData> findByInstrument(String instrument, Pageable pageable);
 
+    // 根据symbol查找MarketData（支持分页）
+    Page<MarketData> findBySymbol(String symbol, Pageable pageable);
+
     // 根据时间戳查找在某个时间范围内的MarketData（支持分页）
     Page<MarketData> findByTimestampBetween(Date startDate, Date endDate, Pageable pageable);
 
     // 查找指定市场工具名称和在某个时间范围内的MarketData（支持分页）
     Page<MarketData> findByInstrumentAndTimestampBetween(String instrument, Date startDate, Date endDate, Pageable pageable);
+
+    // 根据symbol和时间范围查找MarketData（支持分页）
+    Page<MarketData> findBySymbolAndTimestampBetween(String symbol, Date startDate, Date endDate, Pageable pageable);
 
     // 查找最高价格大于指定值的MarketData
     List<MarketData> findByHighPriceGreaterThan(BigDecimal highPrice);
@@ -41,6 +47,15 @@ public interface MarketDataRepository extends JpaRepository<MarketData, Long> {
     @Query("SELECT m FROM MarketData m WHERE m.instrument = :instrument AND m.timestamp BETWEEN :startDate AND :endDate")
     Page<MarketData> findHistoryByInstrumentAndDateRange(
         @Param("instrument") String instrument,
+        @Param("startDate") Date startDate,
+        @Param("endDate") Date endDate,
+        Pageable pageable
+    );
+
+    // 自定义查询：根据symbol查找MarketData
+    @Query("SELECT m FROM MarketData m WHERE m.symbol = :symbol AND m.timestamp BETWEEN :startDate AND :endDate")
+    Page<MarketData> findHistoryBySymbolAndDateRange(
+        @Param("symbol") String symbol,
         @Param("startDate") Date startDate,
         @Param("endDate") Date endDate,
         Pageable pageable
