@@ -14,10 +14,16 @@ export const useUserStore =defineStore('user',()=>{
         userInfo.value=res.data
     }
 
+    //退出登录时，清除用户信息
+    const clearUserInfo=()=>{
+        userInfo.value={}
+    }
+
     //以对象格式吧state和action return
     return{
         userInfo,
-        getUserInfo
+        getUserInfo,
+        clearUserInfo
     }
 },{
     persist: true,

@@ -1,6 +1,7 @@
 // axios基础封装
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useUserStore } from "@/stores/user";
 
 const httpInstance = axios.create({
     baseURL: 'http://localhost:9099',
@@ -10,6 +11,13 @@ const httpInstance = axios.create({
 //拦截器
 // axios请求拦截器
 httpInstance.interceptors.request.use(config =>{
+    //从pinia获取token数据
+    const userStore =useUserStore()
+    //拼接token数据
+    const token = userStore.userInfo.token
+    if(token){
+        config.headers.Authorization= `Bearer ${token}`
+    }
     return config
 },e=>Promise.reject(e))
 

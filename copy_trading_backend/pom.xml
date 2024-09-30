@@ -87,12 +87,6 @@
             <version>3.18.2</version>
         </dependency>
 
-        <!-- jwt单元测试的坐标 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>
