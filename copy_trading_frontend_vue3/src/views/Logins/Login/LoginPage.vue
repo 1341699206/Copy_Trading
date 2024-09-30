@@ -53,7 +53,6 @@ const doLogin = () => {
         }
       } catch (error) {
         // 处理登录失败的情况
-        ElMessage({ type: 'error', message: 'Login failed: ' + error.response.data })
       }
     } else {
       ElMessage({ type: 'error', message: 'Please fill out the form correctly!' })
