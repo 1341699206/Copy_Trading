@@ -4,6 +4,15 @@
   
   import {useUserStore} from '@/stores/user'
   const userStore=useUserStore()
+  import {useRouter} from 'vue-router'
+  const router =useRouter()
+  //回调函数，完成退出登录操作
+  const confirm =()=>{
+    //清除用户信息
+    userStore.clearUserInfo()
+    //跳转回到登录页
+    router.push('/login')
+  }
 </script>
 
 <template>
@@ -33,7 +42,7 @@
           <ul>
             <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.user.name}}</a></li>
             <li>
-              <el-popconfirm title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
+              <el-popconfirm @confirm="confirm" title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
                 <template #reference>
                   <a href="javascript:;">log out</a>
                 </template>
@@ -138,24 +147,7 @@
     }
   }
 
-  .right {
-    width: 220px;
-    display: flex;
-    text-align: center;
-    padding-left: 40px;
-    border-left: 2px solid $xtxColor;
-
-    a {
-      width: 38px;
-      margin-right: 40px;
-      font-size: 16px;
-      line-height: 1;
-
-      &:hover {
-        color: $xtxColor;
-      }
-    }
-  }
+  
 }
 
   .right {

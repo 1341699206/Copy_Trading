@@ -1,3 +1,33 @@
+<script setup>
+    import { ref, onMounted } from 'vue';
+    import DashboardHeader from './component/DashboardHeader.vue';
+    import PersonalColumn from './component/PersonalColumn.vue'; 
+    import AccountDialog from './component/AccountDialog.vue';
+    import { useUserStore } from '@/stores/user';
+    
+    const userStore = useUserStore();
+    const showDialog = ref(false);
+    
+    // 强制创建第一个账户
+    const createFirstAccount = () => {
+        // 检测当前登录是否有账户
+        if (userStore.userInfo.user.tradingAccounts.length === 0) {
+            showDialog.value = true;
+        }
+    };
+    
+    // 启动函数
+    onMounted(() => {
+        createFirstAccount();
+    });
+</script>
+
 <template>
-    <div></div>
+    <div>
+        <el-button></el-button>
+        <personal-column></personal-column>
+        <dashboard-header></dashboard-header>
+    </div>
+
+    <account-dialog :show="showDialog"></account-dialog>
 </template>

@@ -1,6 +1,15 @@
 <script setup>
   import {useUserStore} from '@/stores/user'
   const userStore=useUserStore()
+  import {useRouter} from 'vue-router'
+  const router =useRouter()
+  //回调函数，完成退出登录操作
+  const confirm =()=>{
+    //清除用户信息
+    userStore.clearUserInfo()
+    //跳转回到登录页
+    router.push('/login')
+  }
 </script>
 
 <template>
@@ -32,7 +41,7 @@
               <a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.user.name}}</a>
             </li>
             <li>
-              <el-popconfirm title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
+              <el-popconfirm @confirm="confirm" title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
                 <template #reference>
                   <a href="javascript:;">log out</a>
                 </template>
@@ -76,8 +85,6 @@
 .app-header {
   background: #ffffff; /* 白色背景 */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影 */
-
-
   .container {
     height: 60px; /* 高度 */
     display: flex;
@@ -85,13 +92,11 @@
     align-items: center; /* 垂直居中 */
     padding: 0 20px; /* 内边距 */
   }
-
   .left {
     ul {
       display: flex; /* 横排显示 */
       list-style: none; /* 去掉点 */
       padding: 0; /* 去掉内边距 */
-
       li {
         margin-right: 80px; /* 标签间距 */
         
@@ -100,7 +105,6 @@
           font-size: 18px; /* 增大字体 */
           color: #333; /* 字体颜色 */
           transition: color 0.3s; /* 添加过渡效果 */
-
           &:hover {
             color: $xtxColor; /* 悬停时改变颜色 */
           }
@@ -108,7 +112,6 @@
       }
     }
   }
-
   .right {
     ul {
       display: flex; /* 横排显示 */
@@ -117,22 +120,18 @@
       
       li {
         margin-left: 30px; /* 标签间距 */
-
         a {
           text-decoration: none; /* 去掉下划线 */
           font-size: 16px; /* 字体大小 */
           color: black; /* 黑色文本 */
           transition: color 0.3s; /* 添加过渡效果 */
-
           &:hover {
             color: $xtxColor; /* 悬停时改变颜色 */
           }
         }
       }
-  
     }
   }
-
   .logo {
     a {
       width: 120px; /* 设置 logo 宽度 */
