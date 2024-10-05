@@ -17,13 +17,13 @@ public interface MarketDataHistoryRepository extends JpaRepository<MarketDataHis
     // 分页查找特定金融工具的所有历史记录
     Page<MarketDataHistory> findByInstrument(String instrument, Pageable pageable);
 
-    // 根据symbol查找所有历史记录（支持分页）
+    // 根据 symbol 查找所有历史记录（支持分页）
     Page<MarketDataHistory> findBySymbol(String symbol, Pageable pageable);
 
     // 分页查找特定金融工具在某个时间段内的历史记录
     Page<MarketDataHistory> findByInstrumentAndTimestampBetween(String instrument, Date startDate, Date endDate, Pageable pageable);
 
-    // 根据symbol和时间范围查找历史记录（支持分页）
+    // 根据 symbol 和时间范围查找历史记录（支持分页）
     Page<MarketDataHistory> findBySymbolAndTimestampBetween(String symbol, Date startDate, Date endDate, Pageable pageable);
 
     // 分页查找在指定时间段内的所有历史记录
@@ -41,7 +41,7 @@ public interface MarketDataHistoryRepository extends JpaRepository<MarketDataHis
         Pageable pageable
     );
 
-    // 自定义查询：根据symbol查找历史记录
+    // 自定义查询：根据 symbol 查找历史记录
     @Query("SELECT m FROM MarketDataHistory m WHERE m.symbol = :symbol AND m.timestamp BETWEEN :startDate AND :endDate")
     Page<MarketDataHistory> findHistoryBySymbolAndDateRange(
         @Param("symbol") String symbol,
@@ -49,5 +49,8 @@ public interface MarketDataHistoryRepository extends JpaRepository<MarketDataHis
         @Param("endDate") Date endDate,
         Pageable pageable
     );
+    
+    // 新增功能：根据 symbol 删除特定时间范围内的历史数据
+    @Query("DELETE FROM MarketDataHistory m WHERE m.symbol = :symbol AND m.timestamp BETWEEN :startDate AND :endDate")
+    void deleteHistoryBySymbolAndTimestampBetween(@Param("symbol") String symbol, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
-

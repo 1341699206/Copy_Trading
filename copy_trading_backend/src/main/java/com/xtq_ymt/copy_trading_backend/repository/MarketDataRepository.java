@@ -11,25 +11,22 @@ import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.Date;
 import java.util.List;
-import java.math.BigDecimal; // 确保导入 BigDecimal
+import java.math.BigDecimal;
 
 @Repository
 public interface MarketDataRepository extends JpaRepository<MarketData, Long> {
 
+    // 根据 symbol 查找 MarketData，无需分页，因为 symbol 是唯一的
+    MarketData findBySymbol(String symbol);
+
     // 根据市场工具名称查找MarketData（支持分页）
     Page<MarketData> findByInstrument(String instrument, Pageable pageable);
-
-    // 根据symbol查找MarketData（支持分页）
-    Page<MarketData> findBySymbol(String symbol, Pageable pageable);
 
     // 根据时间戳查找在某个时间范围内的MarketData（支持分页）
     Page<MarketData> findByTimestampBetween(Date startDate, Date endDate, Pageable pageable);
 
     // 查找指定市场工具名称和在某个时间范围内的MarketData（支持分页）
     Page<MarketData> findByInstrumentAndTimestampBetween(String instrument, Date startDate, Date endDate, Pageable pageable);
-
-    // 根据symbol和时间范围查找MarketData（支持分页）
-    Page<MarketData> findBySymbolAndTimestampBetween(String symbol, Date startDate, Date endDate, Pageable pageable);
 
     // 查找最高价格大于指定值的MarketData
     List<MarketData> findByHighPriceGreaterThan(BigDecimal highPrice);
@@ -38,7 +35,7 @@ public interface MarketDataRepository extends JpaRepository<MarketData, Long> {
     List<MarketData> findByVolumeLessThan(BigDecimal volume);
 
     // 查找市场波动率大于指定值的MarketData
-    List<MarketData> findByVolatilityGreaterThan(BigDecimal volatility); // 修改参数类型为 BigDecimal
+    List<MarketData> findByVolatilityGreaterThan(BigDecimal volatility);
 
     // 按时间戳降序排序，查找最近的MarketData（分页）
     Page<MarketData> findAllByOrderByTimestampDesc(Pageable pageable);
@@ -52,7 +49,7 @@ public interface MarketDataRepository extends JpaRepository<MarketData, Long> {
         Pageable pageable
     );
 
-    // 自定义查询：根据symbol查找MarketData
+    // 自定义查询：根据 symbol 查找 MarketData
     @Query("SELECT m FROM MarketData m WHERE m.symbol = :symbol AND m.timestamp BETWEEN :startDate AND :endDate")
     Page<MarketData> findHistoryBySymbolAndDateRange(
         @Param("symbol") String symbol,
