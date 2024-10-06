@@ -58,8 +58,8 @@ onMounted(() => {
       <!-- 账户币种 -->
       <el-form-item prop="currency" label="currency">
         <el-select v-model="accountInfo.currency" placeholder="Please set currency">
-          <el-option v-for="currency in currencies" :key="currency.code" :value="currency.code">
-            {{ currency.name }}
+          <el-option v-for="currency in currencies" :key="currency" :value="currency">
+            {{ currency }}
           </el-option>
         </el-select>
       </el-form-item>
