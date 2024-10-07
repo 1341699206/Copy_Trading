@@ -19,6 +19,9 @@ import java.math.BigDecimal; // 导入 BigDecimal
 @Repository
 public interface FollowerRepository extends JpaRepository<Follower, Long> {
 
+    //根据id查找Follower
+    Optional<Follower> findByFollowerId(Long followerId);
+
     // 根据name查找Follower（支持分页）
     Page<Follower> findByName(String name, Pageable pageable);
 
@@ -51,6 +54,8 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
 
     // 批量删除所有不活跃的Follower
     void deleteByIsActiveFalse();
+
+    // 
 
     // 批量激活或停用Follower
     @Modifying
