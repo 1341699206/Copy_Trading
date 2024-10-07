@@ -1,9 +1,13 @@
 <template>
-  <div>TRADE</div>
+  <div>
+
+  </div>
 </template>
 
-<script>
-export default {
-  name: 'TRADE',
-};
+<script setup>
+
 </script>
+
+<style scoped>
+/* 你可以在这里加入页面的样式 */
+</style>

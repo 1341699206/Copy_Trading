@@ -36,7 +36,10 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
     @Scheduled(fixedRate = 3600000) // 每1小时执行一次
     @Override
     public void fetchAndStoreMarketData() {
-        for (String symbol : symbols) {
+        int requestsPerMinute = 0; // 记录每分钟请求次数
+        
+        for (int i = 0; i < symbols.length; i++) {
+            String symbol = symbols[i];
             try {
                 Stock stock = YahooFinance.get(symbol + "=X");
                 if (stock != null && stock.getQuote() != null) {
@@ -80,6 +83,19 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
                 }
             } catch (IOException e) {
                 logger.error("Error fetching market data for symbol: " + symbol, e);
+            }
+
+            // 控制每分钟请求数不超过2次
+            requestsPerMinute++;
+            if (requestsPerMinute >= 2) {
+                try {
+                    logger.info("Reached 2 requests, waiting 1 minute before proceeding...");
+                    Thread.sleep(60000); // 暂停1分钟
+                    requestsPerMinute = 0; // 重置请求计数
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.error("Thread interrupted during wait", e);
+                }
             }
         }
     }

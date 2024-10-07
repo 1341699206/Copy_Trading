@@ -7,6 +7,9 @@ import com.xtq_ymt.copy_trading_backend.service.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class MarketDataServiceImpl implements MarketDataService {
 
@@ -28,7 +31,22 @@ public class MarketDataServiceImpl implements MarketDataService {
                 marketData.getTimestamp()
             );
         }
-        // 如果没有找到该 symbol 对应的数据，则可以返回 null 或抛出异常
+        // 如果没有找到该 symbol 对应的数据，则返回 null
         return null;
+    }
+
+    // 新增方法：获取所有可用的市场数据
+    public List<MarketDataDTO> getAllAvailableMarketData() {
+        List<MarketData> marketDataList = marketDataRepository.findAll(); // 获取所有实时市场数据
+        return marketDataList.stream().map(marketData -> {
+            return new MarketDataDTO(
+                marketData.getSymbol(),
+                marketData.getInstrument(),
+                marketData.getCurrentPrice(),
+                marketData.getHighPrice(),
+                marketData.getLowPrice(),
+                marketData.getTimestamp()
+            );
+        }).collect(Collectors.toList());
     }
 }
