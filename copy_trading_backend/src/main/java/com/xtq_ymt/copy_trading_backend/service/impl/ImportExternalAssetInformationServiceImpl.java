@@ -34,7 +34,7 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
 
     private final Random random = new Random();
 
-    @Scheduled(fixedRate = 60000) // 每分钟执行一次
+    @Scheduled(fixedRate = 600000) // 单位毫秒
     @Override
     public void fetchAndStoreMarketData() {
         Date currentTime = new Date();
@@ -48,12 +48,12 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
                 BigDecimal volume = BigDecimal.valueOf(1000 + (5000 - 1000) * random.nextDouble()).setScale(8, RoundingMode.HALF_UP);
                 BigDecimal volatility = BigDecimal.valueOf(random.nextDouble()).setScale(8, RoundingMode.HALF_UP);
 
-                // 查找或创建 MarketData 实例
-                MarketData marketData = marketDataRepository.findBySymbol(symbol);
+                // 查找或创建 MarketData 实例，基于 instrument（symbol 仍保留在其他字段中）
+                MarketData marketData = marketDataRepository.findById(symbol).orElse(null);
                 if (marketData == null) {
                     marketData = new MarketData();
-                    marketData.setSymbol(symbol);
-                    marketData.setInstrument(symbol);
+                    marketData.setInstrument(symbol); // 设置 instrument 作为主键
+                    marketData.setSymbol("Major FX");  // 统一设置 symbol 字段
                 }
 
                 // 更新 MarketData 实例
@@ -67,11 +67,11 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
 
                 // 保存 MarketData 到数据库
                 marketDataRepository.save(marketData);
-                logger.info("MarketData saved for symbol: " + symbol);
+                logger.info("MarketData saved for instrument: " + symbol);
 
                 // 记录历史数据
                 MarketDataHistory marketDataHistory = new MarketDataHistory();
-                marketDataHistory.setSymbol(symbol);
+                marketDataHistory.setSymbol("Major FX");
                 marketDataHistory.setInstrument(symbol);
                 marketDataHistory.setPrice(currentPrice);
                 marketDataHistory.setHighPrice(highPrice);
@@ -82,9 +82,9 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
 
                 // 保存 MarketDataHistory 到数据库
                 marketDataHistoryRepository.save(marketDataHistory);
-                logger.info("MarketDataHistory saved for symbol: " + symbol);
+                logger.info("MarketDataHistory saved for instrument: " + symbol);
             } catch (Exception e) {
-                logger.error("Error generating market data for symbol: " + symbol, e);
+                logger.error("Error generating market data for instrument: " + symbol, e);
             }
         }
     }

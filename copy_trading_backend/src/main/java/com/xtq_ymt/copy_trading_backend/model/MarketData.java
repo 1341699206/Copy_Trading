@@ -14,17 +14,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor // 自动生成全参构造函数
 @NoArgsConstructor  // 自动生成无参构造函数
 @Entity  // 表示这个类是一个 JPA 实体
-@Table(name = "market_data", uniqueConstraints = {@UniqueConstraint(columnNames = {"symbol"})}) // symbol 设置唯一约束
+@Table(name = "market_data", uniqueConstraints = {@UniqueConstraint(columnNames = {"instrument"})}) // instrument 设置唯一约束
 public class MarketData {
 
-    // symbol 作为主键，用来唯一标识市场数据，避免重复
+    // instrument 作为主键，用来唯一标识市场数据
     @Id
+    @Column(name = "instrument", nullable = false)
+    private String instrument;  // 金融工具的名称（例如股票代码、货币对）
+
+    // symbol 不再是主键，但仍用于表示金融工具的符号
     @Column(name = "symbol", nullable = false)
     private String symbol;  // 金融工具的符号，例如：EURUSD=X
-
-    // 金融工具的名称（例如股票代码、货币对）
-    @Column(name = "instrument", nullable = false)
-    private String instrument;
 
     // 当前价格
     @Column(name = "current_price", columnDefinition = "DECIMAL(18,8)")
