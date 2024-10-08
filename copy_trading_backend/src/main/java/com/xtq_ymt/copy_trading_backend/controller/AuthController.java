@@ -21,10 +21,8 @@ import java.util.HashMap;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:8081")  // 允许从前端地址访问
 public class AuthController {
-
     @Autowired
     private AuthService authService;
-
     // 登录端点
     @PostMapping("/login")
     public ResponseEntity<Result> login(@RequestBody LoginRequest loginRequest) {
@@ -35,14 +33,13 @@ public class AuthController {
             loginRequest.getRole()
         );
 
-//
+        //
         if(authResult.getCode()==1){
             Map<String,Object> claims= new HashMap<>();
             claims.put("email",loginRequest.getEmail());
             String token=JwtUtil.genToken(claims);
             return ResponseEntity.ok(Result.success(authResult.getMsg(),new User(authResult.getData(), token)));    
         }
-
         // 返回带有 Result 结构的响应
         return ResponseEntity.status(400).body(authResult);
     }
@@ -55,7 +52,6 @@ public class AuthController {
             if (registerRequest.getPassword().length() < 6 || registerRequest.getPassword().length() > 14) {
                 return ResponseEntity.status(400).body(Result.error("Password length must be between 6 and 14 characters."));
             }
-
             Result registrationResult = authService.register(
                 registerRequest.getName(),
                 registerRequest.getEmail(),
@@ -64,13 +60,10 @@ public class AuthController {
                 registerRequest.getCountry()
             );
             return ResponseEntity.ok(registrationResult);
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(Result.error(e.getMessage()));
         }
     }
-
-
     // 获取国家列表
     @GetMapping("/register/countries")
     public Result getCountries() {

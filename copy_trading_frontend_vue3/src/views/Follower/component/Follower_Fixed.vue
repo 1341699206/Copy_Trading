@@ -81,8 +81,6 @@
     </div>
   </div>
 </template>
-
-
 <style scoped lang='scss'>
 .app-header-sticky {
   width: 100%;
@@ -97,21 +95,18 @@
   // 状态一：往上平移自身高度 + 完全透明
   transform: translateY(-100%);
   opacity: 0;
-
   // 状态二：移除平移 + 完全不透明
   &.show {
     transition: all 0.3s linear;
     transform: none;
     opacity: 1;
   }
-
   .container {
     display: flex;
     justify-content: space-between; /* 左右两侧对齐 */
     align-items: center; /* 垂直居中 */
     padding: 0 20px; /* 左右内边距 */
   }
-
   .left {
     ul {
       display: flex; /* 横排显示 */
@@ -119,7 +114,6 @@
       margin-left: 20px; /*使所有左侧标签向右侧移动。*/
       padding: 0; /* 去掉内边距 */
       list-style: none; /* 去掉点 */
-
       li {
         margin-right: 80px; /* 间距 */
         padding: 20px 0; /* 上下距离统一 */
@@ -132,47 +126,38 @@
           //background: url("@/assets/images/logo.png") no-repeat right 2px;
           background-size: 160px auto;
         }
-
         a {
           text-decoration: none; /* 去掉下划线 */
           color: black;
           font-size: 18px;
           line-height: 1;
-
-           &:hover {
-            color: $xtxColor; /* 悬停时改变颜色 */
-          }
-        }
-      }
-    }
-  }
-
-  
-}
-
-  .right {
-    ul {
-      display: flex; /* 横排显示 */
-      align-items: center;
-      padding: 0; /* 去掉内边距 */
-      list-style: none; /* 去掉点 */
-
-      li {
-        margin-left: 30px; /* 间距 */
-        padding: 20px 0; /* 上下距离统一 */
-
-        a {
-          text-decoration: none; /* 去掉下划线 */
-          font-size: 16px;
-          color: black;
-          line-height: 1;
-
           &:hover {
             color: $xtxColor; /* 悬停时改变颜色 */
           }
         }
       }
     }
-
   }
+  .right {
+    ul {
+      display: flex; /* 横排显示 */
+      align-items: center;
+      padding: 0; /* 去掉内边距 */
+      list-style: none; /* 去掉点 */
+      li {
+        margin-left: 30px; /* 间距 */
+        padding: 20px 0; /* 上下距离统一 */
+        a {
+          text-decoration: none; /* 去掉下划线 */
+          font-size: 16px;
+          color: black;
+          line-height: 1;
+          &:hover {
+            color: $xtxColor; /* 悬停时改变颜色 */
+          }
+        }
+      }
+    }
+  }
+}
 </style>

@@ -16,6 +16,9 @@ import java.util.Optional;
 @Repository
 public interface TraderRepository extends JpaRepository<Trader, Long> {
 
+    //根据id查找Trader
+    Optional<Trader> findByTraderId(Long traderId);
+    
     // 根据交易者名称查找（支持分页）
     Page<Trader> findByName(String name, Pageable pageable);
 

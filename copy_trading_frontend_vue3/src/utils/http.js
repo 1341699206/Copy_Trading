@@ -10,7 +10,6 @@ const httpInstance = axios.create({
 })
 
 //拦截器
-
 // axios请求拦截器
 httpInstance.interceptors.request.use(config => {
     //从pinia获取token数据

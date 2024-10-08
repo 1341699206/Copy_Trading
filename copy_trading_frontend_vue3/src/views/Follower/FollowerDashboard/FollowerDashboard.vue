@@ -7,6 +7,10 @@
     
     const userStore = useUserStore();
     const showDialog = ref(false);
+
+    const closeDialog=()=>{
+        showDialog.value=false;
+    }
     
     // 强制创建第一个账户
     const createFirstAccount = () => {
@@ -29,5 +33,5 @@
         <dashboard-header></dashboard-header>
     </div>
 
-    <account-dialog :show="showDialog"></account-dialog>
+    <account-dialog :show="showDialog" @close="closeDialog"></account-dialog>
 </template>
