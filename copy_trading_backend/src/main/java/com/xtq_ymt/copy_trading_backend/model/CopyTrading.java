@@ -24,15 +24,13 @@ public class CopyTrading {
     @Column(name = "copy_trading_id")
     private Long copyTradingId;
 
-    // 跟随者的交易账户
     @ManyToOne
-    @JoinColumn(name = "follower_account_id", nullable = false)
-    private TradingAccount followerTradingAccount;
+    @JoinColumn(name = "follower_id", nullable = false)
+    private Follower follower;
 
-    // 交易员的交易账户
     @ManyToOne
-    @JoinColumn(name = "trader_account_id", nullable = false)
-    private TradingAccount traderTradingAccount;
+    @JoinColumn(name = "trader_id", nullable = false)
+    private Trader trader;
 
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
