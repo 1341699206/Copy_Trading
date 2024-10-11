@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import DashboardHeader from "./component/DashboardHeader.vue";
+import DashboardHeader from "./component/Body/component/DashboardHeader.vue";
 import PersonalColumn from "./component/PersonalColumn.vue";
 import AccountDialog from "./component/AccountDialog.vue";
 

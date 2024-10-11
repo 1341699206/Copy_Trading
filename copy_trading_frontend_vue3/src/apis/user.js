@@ -1,5 +1,11 @@
 import request from "@/utils/http";
 
+export const renovateAPI=() =>{
+    return request({
+        url:'/api/renovate'
+    })
+}
+
 export const loginAPI=({email,password,role}) =>{
     return request({
         url:'/api/login',

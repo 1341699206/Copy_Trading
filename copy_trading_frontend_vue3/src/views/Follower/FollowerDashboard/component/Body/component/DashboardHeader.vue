@@ -1,32 +1,27 @@
 <script setup>
-
 const emit = defineEmits(["update-content"]);
 
 const updateContent = (item) => {
   emit("update-content", item); // 通过 emit 向父组件发送事件
 };
 </script>
-
 <template>
-  <div class="index">
-    <ul class="app-header-nav">
-      <li>
-        <el-button text @click="updateContent('forex')">Forex</el-button>
-      </li>
-      <li>
-        <el-button text @click="updateContent('stocks')">Stocks</el-button>
-      </li>
-      <li>
-        <el-button text @click="updateContent('crypto')">CyptoCFD</el-button>
-      </li>
-      <li>
-        <el-button text @click="updateContent('indices')">Indices</el-button>
-      </li>
-      <li>
-        <el-button text @click="updateContent('commodities')">Commodities</el-button>
-      </li>
-    </ul>
-  </div>
+    <div class="index">
+        <ul class="nav">
+            <li>
+                <el-button text @click="updateContent('portfolio')">Portfolio</el-button>
+            </li>
+            <li>
+                <el-button text @click="updateContent('overview')">Overview</el-button>
+            </li>
+            <li>
+                <el-button text @click="updateContent('advancedStats')">Advanced Stats</el-button>
+            </li>
+            <li>
+                <el-button text @click="updateContent('copiers')">Copiers</el-button>
+            </li>
+        </ul>
+    </div>
 </template>
 
 <style lang="scss" scoped>
@@ -34,7 +29,7 @@ const updateContent = (item) => {
   width: 100%; /* 横向占满父容器宽度 */
   padding: 10px; /* 上下内边距 */
 
-  .app-header-nav {
+  .nav {
     display: flex; /* 横排显示 */
     list-style: none; /* 去掉点 */
     padding: 0; /* 去掉内边距 */

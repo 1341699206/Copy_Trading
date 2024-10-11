@@ -6,9 +6,16 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+import { renovateAPI } from '@/apis/user';
 export default {
   name: 'App',
 };
+// 启动函数
+onMounted(() => {
+  renovateAPI()
+});
+
 </script>
 
 <style>

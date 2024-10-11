@@ -1,3 +1,8 @@
 <template>
-<div></div>
+  <div class="title">
+    Markets
+  </div>
+  <div class="search">
+    
+  </div>
 </template>

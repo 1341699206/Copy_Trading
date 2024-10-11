@@ -25,7 +25,6 @@ const accountInfo = reactive({
   currency: "",
   balance: 0,
 });
-console.info();
 
 //限制规则
 const rules = {
