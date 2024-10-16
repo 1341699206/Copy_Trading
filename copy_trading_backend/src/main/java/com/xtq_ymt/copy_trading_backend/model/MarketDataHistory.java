@@ -21,6 +21,9 @@ public class MarketDataHistory {
     @Column(name = "id") // 指定列名
     private Long id; // 历史数据记录的唯一标识符
 
+    @Column(name = "symbol", nullable = false)
+    private String symbol;
+    
     @Column(name = "instrument", nullable = false) // 指定列名，不能为空
     private String instrument; // 市场工具的名称或符号，例如：EUR/USD、AAPL
 
@@ -52,3 +55,4 @@ public class MarketDataHistory {
 
     // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
 }
+
