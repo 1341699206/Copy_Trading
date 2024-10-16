@@ -14,6 +14,7 @@
 <script>
 import { useMarketDataStore } from '@/stores/marketDataStore';
 import TradeCard from './component/TradeCard.vue';
+import { onMounted, onBeforeUnmount, computed } from 'vue'; // 引入生命周期钩子和 computed
 
 export default {
   name: 'TRADE',
@@ -23,16 +24,25 @@ export default {
   setup() {
     const marketDataStore = useMarketDataStore();
     
-    // 获取可用资产列表
-    const availableAssets = marketDataStore.availableAssets;
+    // 使用 computed 确保 availableAssets 的响应性
+    const availableAssets = computed(() => marketDataStore.availableAssets);
 
-    // 在挂载时获取市场数据
-    marketDataStore.fetchAvailableMarketData();
+    // 在组件挂载时启动定时任务
+    onMounted(() => {
+      console.log('Component mounted, starting auto update');
+      marketDataStore.startAutoUpdate(); // 开启定时任务
+    });
+
+    // 在组件卸载时停止定时任务
+    onBeforeUnmount(() => {
+      console.log('Component before unmount, stopping auto update');
+      marketDataStore.stopAutoUpdate(); // 停止定时任务，防止内存泄漏
+    });
 
     return {
       availableAssets
     };
-  },
+  }
 };
 </script>
 

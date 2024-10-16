@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api")
@@ -72,4 +73,11 @@ public class AuthController {
         countries.add(new Country("US", "United States"));
         return Result.success("success",countries);
     }
+
+    // 页面刷新函数
+    @GetMapping("/renovate")
+    public Result getMethodName() {
+        return Result.success(""); 
+    }
+
 }
