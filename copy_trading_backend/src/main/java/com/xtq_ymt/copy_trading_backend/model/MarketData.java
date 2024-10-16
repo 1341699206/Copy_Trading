@@ -8,59 +8,44 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-// Lombok 注解，自动生成 Getter, Setter 和构造函数
 @Getter
 @Setter
-@AllArgsConstructor // 自动生成全参构造函数
-@NoArgsConstructor  // 自动生成无参构造函数
-@Entity  // 表示这个类是一个 JPA 实体
-@Table(name = "market_data", uniqueConstraints = {@UniqueConstraint(columnNames = {"instrument"})}) // instrument 设置唯一约束
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "market_data")
 public class MarketData {
 
-    // instrument 作为主键，用来唯一标识市场数据
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "instrument", nullable = false)
-    private String instrument;  // 金融工具的名称（例如股票代码、货币对）
+    private String instrument;
 
-    // symbol 不再是主键，但仍用于表示金融工具的符号
-    @Column(name = "symbol", nullable = false)
-    private String symbol;  // 金融工具的符号，例如：EURUSD=X
-
-    // 当前价格
     @Column(name = "current_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal currentPrice;
 
-    // 开盘价格
     @Column(name = "open_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal openPrice;
 
-    // 收盘价格
     @Column(name = "close_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal closePrice;
 
-    // 最高价格
     @Column(name = "high_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal highPrice;
 
-    // 最低价格
     @Column(name = "low_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal lowPrice;
 
-    // 成交量
     @Column(name = "volume", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal volume;
 
-    // 波动率
     @Column(name = "volatility", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal volatility;
 
-    // 获取数据的时间戳
     @Column(name = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp; // 市场数据的时间戳
-
-    // 最后更新时间，用于标识数据更新的时间
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt; // 数据最后一次更新的时间
+    private Date timestamp;
 }
