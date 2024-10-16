@@ -3,6 +3,8 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
 import router from '@/router'
+import { useUserStore } from "@/stores/user";
+import router from '@/router'
 
 const httpInstance = axios.create({
     baseURL: 'http://localhost:9099',

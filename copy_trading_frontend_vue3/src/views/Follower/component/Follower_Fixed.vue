@@ -84,8 +84,6 @@
     </div>
   </div>
 </template>
-
-
 <style scoped lang='scss'>
 .app-header-sticky {
   width: 100%;
@@ -100,7 +98,6 @@
   // 状态一：往上平移自身高度 + 完全透明
   transform: translateY(-100%);
   opacity: 0;
-
   // 状态二：移除平移 + 完全不透明
   &.show {
     transition: all 0.3s linear;

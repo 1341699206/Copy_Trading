@@ -19,7 +19,7 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
-    
+
     // 获取支持的币种
     @GetMapping("/currencies")
     public Result getCurrencies() {

@@ -18,15 +18,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:8081")  // 允许从前端地址访问
 public class AuthController {
-
     @Autowired
     private AuthService authService;
-
     // 登录端点
     @PostMapping("/login")
     public ResponseEntity<Result> login(@RequestBody LoginRequest loginRequest) {
@@ -56,7 +53,6 @@ public class AuthController {
             if (registerRequest.getPassword().length() < 6 || registerRequest.getPassword().length() > 14) {
                 return ResponseEntity.status(400).body(Result.error("Password length must be between 6 and 14 characters."));
             }
-
             Result registrationResult = authService.register(
                 registerRequest.getName(),
                 registerRequest.getEmail(),
@@ -65,13 +61,10 @@ public class AuthController {
                 registerRequest.getCountry()
             );
             return ResponseEntity.ok(registrationResult);
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(Result.error(e.getMessage()));
         }
     }
-
-
     // 获取国家列表
     @GetMapping("/register/countries")
     public Result getCountries() {
@@ -86,5 +79,5 @@ public class AuthController {
     public Result getMethodName() {
         return Result.success(""); 
     }
-    
+
 }

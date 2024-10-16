@@ -3,7 +3,6 @@
     import TopPerforming from './component/TopPerforming.vue'
     import EachTopPerforming from './component/EachTopPerforming.vue'
     import MonthlyRising from './component/MonthlyRising.vue'
-
 </script>
 
 <template>
