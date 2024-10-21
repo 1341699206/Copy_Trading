@@ -25,10 +25,14 @@ httpInstance.interceptors.request.use(config =>{
 // axios响应拦截器
 httpInstance.interceptors.response.use(res=>res.data,e=>{
     const userStore =useUserStore()
+
+    // 优先从后端返回的 Result 中提取 msg 字段作为错误提示
+    const errorMessage = e.response?.data?.msg || e.response?.data?.error || 'Unknown error';
+
     //统一错误提示
     ElMessage({
         type:'warning',
-        message: e.response.data.msg
+        message: errorMessage
     })
 
     //token失效处理

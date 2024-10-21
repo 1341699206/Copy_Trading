@@ -1,6 +1,10 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.*;
 import java.math.BigDecimal; // 导入 BigDecimal
 import lombok.Getter;
@@ -14,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "trade") // 指定数据库表名为 "trade"
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "tradeId")
 public class Trade {
 
     @Id

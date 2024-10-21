@@ -34,7 +34,7 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
 
     private final Random random = new Random();
 
-    @Scheduled(fixedRate = 10000) // 单位毫秒
+    @Scheduled(fixedRate = 10000+1564*4864) // 单位毫秒
     @Override
     public void fetchAndStoreMarketData() {
         Date currentTime = new Date();

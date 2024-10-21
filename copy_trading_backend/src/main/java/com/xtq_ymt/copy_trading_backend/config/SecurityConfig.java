@@ -16,9 +16,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // 禁用 CSRF（如果需要）
             .cors(cors -> cors.configure(http)) // 启用 CORS
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/register", "/api/login", "/api/register/countries", "/account/currencies", "/api/market-data/available").permitAll() 
+                .requestMatchers("/api/register", "/api/login", "/api/register/countries", "/api/market-data/available").permitAll() 
                         // 允许未认证的访问
                 .requestMatchers(request -> request.getHeader("Authorization") != null).permitAll() //允许所有携带请求头的访问
+                .requestMatchers("/ws/**").permitAll() // 允许 WebSocket 连接
                 .anyRequest().authenticated() // 其他请求需要认证
             );
         return http.build();

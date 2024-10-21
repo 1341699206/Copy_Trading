@@ -2,6 +2,10 @@ package com.xtq_ymt.copy_trading_backend.model;
 
 import jakarta.persistence.*; // 导入 JPA 注解
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import java.util.Date;
 import java.math.BigDecimal; // 导入 BigDecimal
 import lombok.Getter;
@@ -15,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor   // 自动生成无参构造函数
 @Entity // 标识该类为JPA实体
 @Table(name = "trader") // 指定表名
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "traderId")
 public class Trader {
 
     // 基本信息字段

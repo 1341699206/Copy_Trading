@@ -1,21 +1,23 @@
 <template>
   <div id="app">
     <!-- 一级路由出口 -->
-    <router-view></router-view>  <!-- 渲染当前路由组件 -->
+    <router-view></router-view>
+    <!-- 渲染当前路由组件 -->
   </div>
 </template>
 
 <script>
-import { onMounted } from 'vue';
-import { renovateAPI } from '@/apis/user';
+import { onMounted } from "vue";
+import { useTokenRefresh } from '@/utils/tokenRefresh';
 export default {
-  name: 'App',
+  name: "App",
+  setup() {
+    const { refreshToken } = useTokenRefresh();
+    onMounted(() => {
+      refreshToken();
+    });
+  },
 };
-// 启动函数
-onMounted(() => {
-  renovateAPI()
-});
-
 </script>
 
 <style>

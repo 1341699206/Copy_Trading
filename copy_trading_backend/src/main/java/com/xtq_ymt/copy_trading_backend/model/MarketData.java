@@ -3,6 +3,10 @@ package com.xtq_ymt.copy_trading_backend.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -15,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor  // 自动生成无参构造函数
 @Entity  // 表示这个类是一个 JPA 实体
 @Table(name = "market_data", uniqueConstraints = {@UniqueConstraint(columnNames = {"instrument"})}) // instrument 设置唯一约束
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "instrument")
 public class MarketData {
 
     // instrument 作为主键，用来唯一标识市场数据

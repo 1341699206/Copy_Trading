@@ -7,7 +7,7 @@ import AccountDialog from "./component/AccountDialog.vue";
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 
-const showDialog = ref(true);
+const showDialog = ref(false);
 const closeDialog=()=>{
     showDialog.value=false;
 }
@@ -15,7 +15,7 @@ const closeDialog=()=>{
 //强制创建第一个账户
 const createFirstAccount = () => {
   //检测当前登录是否有账户
-  if (userStore.userInfo.user.tradingAccounts === []) {
+  if (userStore.userInfo.user.tradingAccounts.length === 0) {
     showDialog.value = true;
   }
 };

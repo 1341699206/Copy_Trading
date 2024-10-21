@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
 import {useUserStore} from '@/stores/user'
+import { connectWebSocket } from '@/service/websocket'; // 引入 WebSocket 模块 登录时连接WebSocket
 
 const userStore =useUserStore()
 
@@ -43,13 +44,19 @@ const doLogin = () => {
         await userStore.getUserInfo(userInfo.value)
         ElMessage({ type: 'success', message: 'Login successful!' })
 
-        // 根据角色跳转页面
+        // 根据角色跳转页面 并连接Websocket
         if (userInfo.value.role === 'TRADER') {
           router.replace('/trader_page')
+          //连接Websocket
+          connectWebSocket(userInfo.value.role+':'+userStore.userInfo.user.traderId)
         } else if (userInfo.value.role === 'FOLLOWER') {
           router.replace('/followerDashboard')
+          //连接Websocket
+          connectWebSocket(userInfo.value.role+':'+userStore.userInfo.user.followerId)
         } else if (userInfo.value.role === 'ADMIN') {
           router.replace('/admin')
+          //连接Websocket
+          connectWebSocket(userInfo.value.role+':'+userStore.userInfo.user.adminId)
         }
       } catch (error) {
         // 处理登录失败的情况

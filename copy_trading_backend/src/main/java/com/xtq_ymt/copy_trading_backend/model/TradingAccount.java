@@ -8,12 +8,16 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "trading_account") // 指定数据库表名为 "trading_account"
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "accountId")
 public class TradingAccount {
 
     // 主键 ID，自增生成策略
