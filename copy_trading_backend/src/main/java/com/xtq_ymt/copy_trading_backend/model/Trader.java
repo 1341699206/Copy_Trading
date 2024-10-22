@@ -28,6 +28,11 @@ public class Trader {
     @Column(name = "trader_id") // 指定列名
     private Long traderId; // 交易者的唯一标识符
 
+    // 当前账户
+    @ManyToOne
+    @JoinColumn(name = "current_account_id", referencedColumnName = "account_id")
+    private TradingAccount currentAccount;  // 追随者的当前账户
+
     @OneToMany(mappedBy = "trader", cascade = CascadeType.ALL)
     private List<TradingAccount> tradingAccounts;
 

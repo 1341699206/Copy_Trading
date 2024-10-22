@@ -35,6 +35,11 @@ public class Follower {
     @Column(name = "name", nullable = false)
     private String name;  // 追随者的名字
 
+    // 当前账户
+    @ManyToOne
+    @JoinColumn(name = "current_account_id", referencedColumnName = "account_id")
+    private TradingAccount currentAccount;  // 追随者的当前账户
+
     // 追随者与多个交易账户之间的一对多关系
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<TradingAccount> tradingAccounts;  // 该追随者的交易账户列表

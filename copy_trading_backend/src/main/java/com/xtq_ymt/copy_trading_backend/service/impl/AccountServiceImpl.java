@@ -55,6 +55,9 @@ public class AccountServiceImpl implements AccountService {
                 tradingAccount.setFollower(follower);
                 follower.getTradingAccounts().add(tradingAccount);
 
+                // 如果没有当前账户,就设置创建的账户为当前账户
+                if(follower.getCurrentAccount()==null) follower.setCurrentAccount(tradingAccount);
+
                 // 补齐其他数据
                 tradingAccount.setEquity(BigDecimal.valueOf(account.getBalance()));
                 tradingAccount.setRealisedPNL(BigDecimal.valueOf(0));
@@ -71,6 +74,9 @@ public class AccountServiceImpl implements AccountService {
                 Trader trader = traderRepository.findByTraderId(account.getId()).get();
                 tradingAccount.setTrader(trader);
                 trader.getTradingAccounts().add(tradingAccount);
+
+                // 如果没有当前账户,就设置创建的账户为当前账户
+                if(trader.getCurrentAccount()==null) trader.setCurrentAccount(tradingAccount);
 
                 // 补齐其他数据
                 tradingAccount.setEquity(BigDecimal.valueOf(account.getBalance()));

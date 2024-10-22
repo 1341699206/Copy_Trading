@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import DashboardHeader from "./component/Body/component/DashboardHeader.vue";
 import PersonalColumn from "./component/PersonalColumn.vue";
+import DashboardBody from "./component/Body/DashboardBody.vue"
 import AccountDialog from "./component/AccountDialog.vue";
 
 import { useUserStore } from "@/stores/user";
@@ -28,7 +28,7 @@ onMounted(() => {
 <template>
   <div>
     <personal-column></personal-column>
-    <dashboard-header></dashboard-header>
+    <dashboard-body></dashboard-body>
   </div>
 
   <account-dialog :show="showDialog" @close="closeDialog"></account-dialog>
