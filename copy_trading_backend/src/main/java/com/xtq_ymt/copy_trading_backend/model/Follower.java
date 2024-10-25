@@ -3,7 +3,7 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;  // 更新：将 HashMap 改为 Map 接口
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -74,6 +74,15 @@ public class Follower {
         inverseJoinColumns = @JoinColumn(name = "trader_id")
     )
     private List<Trader> followingTraders;  // 追随者正在跟随的交易员列表
+
+    // 追随者与多个交易账户之间的多对多关系，映射表 follower_trading_account
+    @ManyToMany
+    @JoinTable(
+        name = "follower_trading_account",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    private List<TradingAccount> followingAccounts;  // 追随者正在跟随的交易账户列表
 
     // 总投资金额，精度为 18 位整数，8 位小数
     @Column(name = "total_investment", columnDefinition = "DECIMAL(18,8)")

@@ -37,6 +37,14 @@ public class CopyTrading {
     @JoinColumn(name = "trader_id", nullable = false)
     private Trader trader;
 
+    @ManyToOne
+    @JoinColumn(name = "follower_account_id", nullable = false)
+    private TradingAccount followerAccount; // 更改命名以保持一致性
+
+    @ManyToOne
+    @JoinColumn(name = "trader_account_id", nullable = false)
+    private TradingAccount traderAccount; // 更改命名以保持一致性
+
     @Column(name = "start_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;

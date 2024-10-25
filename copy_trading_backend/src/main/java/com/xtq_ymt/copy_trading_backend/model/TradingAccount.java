@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -99,6 +100,10 @@ public class TradingAccount {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt; // 更新时间
+
+    // 关联的跟随者与交易账户的多对多关系
+    @ManyToMany(mappedBy = "followingAccounts")
+    private List<Follower> followers; // 跟随该交易账户的追随者列表
 
     // 预存时自动设置创建时间
     @PrePersist

@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
-import java.math.BigDecimal; // 导入 BigDecimal
+import java.math.BigDecimal;
 
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
@@ -21,6 +21,12 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
 
     // 根据 Follower ID 查找所有交易（分页）
     Page<Trade> findByFollower_FollowerId(Long followerId, Pageable pageable);
+
+    // 根据 Trader 的交易账户查找交易记录
+    List<Trade> findByTraderAccount_AccountNumber(String accountNumber);
+
+    // 根据 Follower 的交易账户查找交易记录（如果是跟单交易）
+    List<Trade> findByFollowerAccount_AccountNumber(String accountNumber);
 
     // 根据是否开仓查找交易（分页）
     Page<Trade> findByIsOpen(Boolean isOpen, Pageable pageable);

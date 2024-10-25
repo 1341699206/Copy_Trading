@@ -172,4 +172,8 @@ public class Trader {
 
     @Column(name = "performance", columnDefinition = "TEXT")
     private String performance; // 表现历史数据的JSON字符串
+
+    // 多对多关系，跟随者与交易员之间的关系
+    @ManyToMany(mappedBy = "followingTraders")
+    private List<Follower> followersList; // 跟随者列表
 }

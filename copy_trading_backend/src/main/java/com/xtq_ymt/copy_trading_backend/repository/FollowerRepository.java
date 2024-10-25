@@ -55,8 +55,6 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     // 批量删除所有不活跃的Follower
     void deleteByIsActiveFalse();
 
-    // 
-
     // 批量激活或停用Follower
     @Modifying
     @Query("UPDATE Follower f SET f.isActive = :status WHERE f.followerId IN :ids")
@@ -77,4 +75,12 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     @Modifying
     @Query("UPDATE Follower f SET f.riskSettings = :newSettings WHERE f.followerId IN :ids")
     void updateRiskSettingsByIds(@Param("newSettings") RiskManagementSettings newSettings, @Param("ids") List<Long> ids);
+
+    // 查找正在跟随特定交易员的所有Follower
+    @Query("SELECT f FROM Follower f JOIN f.followingTraders t WHERE t.traderId = :traderId")
+    List<Follower> findByFollowingTrader(@Param("traderId") Long traderId);
+
+    // 查找特定交易员和特定Follower之间的跟随关系
+    @Query("SELECT f FROM Follower f JOIN f.followingTraders t WHERE f.followerId = :followerId AND t.traderId = :traderId")
+    Optional<Follower> findByFollowerIdAndTraderId(@Param("followerId") Long followerId, @Param("traderId") Long traderId);
 }

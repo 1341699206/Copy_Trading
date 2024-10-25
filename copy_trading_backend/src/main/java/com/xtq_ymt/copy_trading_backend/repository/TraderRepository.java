@@ -76,5 +76,9 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     Page<Trader> findTradersInactiveSince(@Param("cutoffDate") Date cutoffDate, Pageable pageable);
 
     // 根据 email 查找 Trader
-    Optional<Trader> findByEmail(String email);  // 添加这一行
+    Optional<Trader> findByEmail(String email);
+
+    // 查找与特定追随者有关联的交易者
+    @Query("SELECT t FROM Trader t JOIN t.followers f WHERE f.followerId = :followerId")
+    List<Trader> findTradersByFollowerId(@Param("followerId") Long followerId);
 }
