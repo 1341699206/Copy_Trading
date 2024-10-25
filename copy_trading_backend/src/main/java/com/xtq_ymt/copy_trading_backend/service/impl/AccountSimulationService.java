@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import java.util.UUID;
+
 @Service
 public class AccountSimulationService {
 
@@ -48,21 +50,28 @@ public class AccountSimulationService {
             trader.setName("Trader" + i);
             trader.setEmail("trader" + i + "@example.com");
             trader.setCountryName(COUNTRIES[random.nextInt(COUNTRIES.length)]); // 从国家列表中随机选择
+            trader.setPassword("111111"); // 设置初始密码
             traders.add(trader);
         }
         traderRepository.saveAll(traders);
 
-        // 为每个 Trader 生成 TradingAccount 并设置初始资金
+        // 为每个 Trader 生成多个 Demo TradingAccount 并设置初始资金
         for (Trader trader : traders) {
-            TradingAccount account = new TradingAccount();
-            account.setTrader(trader);
-            account.setAccountNumber("T" + random.nextInt(100000));  // 随机生成一个账户编号
-            account.setAccountType("Real");  // 设置账户类型
-            account.setBalance(new BigDecimal("10000.00"));  // 设置初始余额
-            account.setEquity(new BigDecimal("10000.00"));  // 设置初始权益
-            account.setStatus("Active");  // 设置账户状态
-            account.setCurrency("USD");  // 设置账户货币
-            tradingAccountRepository.save(account);
+            int numAccounts = random.nextInt(3) + 1; // 每个 Trader 随机创建 1-3 个交易账户
+            for (int j = 0; j < numAccounts; j++) {
+                TradingAccount account = new TradingAccount();
+                account.setTrader(trader);
+                account.setAccountNumber("T" + UUID.randomUUID().toString());  // 使用 UUID 生成唯一的账户编号
+                account.setAccountType("Demo");  // 设置账户类型为 Demo
+                account.setBalance(new BigDecimal("10000.00"));  // 设置初始余额
+                account.setEquity(new BigDecimal("10000.00"));  // 设置初始权益
+                account.setMargin(new BigDecimal("2000.00"));  // 设置初始保证金
+                account.setFreeMargin(new BigDecimal("8000.00")); // 设置初始可用保证金
+                account.setRealisedPNL(BigDecimal.ZERO); // 设置初始已实现盈亏为 0
+                account.setStatus("Active");  // 设置账户状态
+                account.setCurrency("USD");  // 设置账户货币
+                tradingAccountRepository.save(account);
+            }
         }
 
         // 生成模拟 Follower
@@ -71,21 +80,28 @@ public class AccountSimulationService {
             follower.setName("Follower" + i);
             follower.setEmail("follower" + i + "@example.com");
             follower.setCountry(COUNTRIES[random.nextInt(COUNTRIES.length)]); // 从国家列表中随机选择
+            follower.setPassword("111111"); // 设置初始密码
             followers.add(follower);
         }
         followerRepository.saveAll(followers);
 
-        // 为每个 Follower 生成 TradingAccount 并设置初始资金
+        // 为每个 Follower 生成多个 Demo TradingAccount 并设置初始资金
         for (Follower follower : followers) {
-            TradingAccount account = new TradingAccount();
-            account.setFollower(follower);
-            account.setAccountNumber("F" + random.nextInt(100000));  // 随机生成一个账户编号
-            account.setAccountType("Demo");  // 设置账户类型
-            account.setBalance(new BigDecimal("5000.00"));  // 设置初始余额
-            account.setEquity(new BigDecimal("5000.00"));  // 设置初始权益
-            account.setStatus("Active");  // 设置账户状态
-            account.setCurrency("USD");  // 设置账户货币
-            tradingAccountRepository.save(account);
+            int numAccounts = random.nextInt(3) + 1; // 每个 Follower 随机创建 1-3 个交易账户
+            for (int j = 0; j < numAccounts; j++) {
+                TradingAccount account = new TradingAccount();
+                account.setFollower(follower);
+                account.setAccountNumber("F" + UUID.randomUUID().toString());  // 使用 UUID 生成唯一的账户编号
+                account.setAccountType("Demo");  // 设置账户类型为 Demo
+                account.setBalance(new BigDecimal("5000.00"));  // 设置初始余额
+                account.setEquity(new BigDecimal("5000.00"));  // 设置初始权益
+                account.setMargin(new BigDecimal("1000.00"));  // 设置初始保证金
+                account.setFreeMargin(new BigDecimal("4000.00")); // 设置初始可用保证金
+                account.setRealisedPNL(BigDecimal.ZERO); // 设置初始已实现盈亏为 0
+                account.setStatus("Active");  // 设置账户状态
+                account.setCurrency("USD");  // 设置账户货币
+                tradingAccountRepository.save(account);
+            }
         }
     }
 }

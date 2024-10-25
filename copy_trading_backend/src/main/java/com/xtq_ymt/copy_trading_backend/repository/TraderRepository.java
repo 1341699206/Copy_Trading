@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.repository;
 
 import com.xtq_ymt.copy_trading_backend.model.Trader;
+import com.xtq_ymt.copy_trading_backend.model.TradingAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -79,6 +80,10 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     Optional<Trader> findByEmail(String email);
 
     // 查找与特定追随者有关联的交易者
-    @Query("SELECT t FROM Trader t JOIN t.followers f WHERE f.followerId = :followerId")
+    @Query("SELECT t FROM Trader t JOIN t.followersList f WHERE f.followerId = :followerId")
     List<Trader> findTradersByFollowerId(@Param("followerId") Long followerId);
+
+    // 查找某个 Trader 的交易账户有哪些 Follower 的交易账户在跟随
+    @Query("SELECT DISTINCT fa FROM TradingAccount fa JOIN fa.followers f JOIN f.tradingAccounts ta WHERE ta.trader = :trader")
+    List<TradingAccount> findFollowerAccountsByTrader(@Param("trader") Trader trader);
 }

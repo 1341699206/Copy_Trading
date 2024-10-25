@@ -2,6 +2,8 @@ package com.xtq_ymt.copy_trading_backend.repository;
 
 import com.xtq_ymt.copy_trading_backend.model.TradingAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,20 +13,22 @@ import java.util.Optional;
 public interface TradingAccountRepository extends JpaRepository<TradingAccount, Long> {
 
     /**
-     * 根据账户状态查找交易账户
+     * 根据账户状态查找交易账户（支持分页）
      * 
      * @param status 账户的状态（例如 "Active", "Closed"）
-     * @return 匹配状态的交易账户列表
+     * @param pageable 分页信息
+     * @return 匹配状态的交易账户分页列表
      */
-    List<TradingAccount> findByStatus(String status);
+    Page<TradingAccount> findByStatus(String status, Pageable pageable);
 
     /**
-     * 根据账户类型查找交易账户
+     * 根据账户类型查找交易账户（支持分页）
      * 
      * @param accountType 账户的类型（例如 "Demo", "Real"）
-     * @return 匹配类型的交易账户列表
+     * @param pageable 分页信息
+     * @return 匹配类型的交易账户分页列表
      */
-    List<TradingAccount> findByAccountType(String accountType);
+    Page<TradingAccount> findByAccountType(String accountType, Pageable pageable);
 
     /**
      * 根据 Trader ID 查找关联的交易账户
@@ -57,4 +61,14 @@ public interface TradingAccountRepository extends JpaRepository<TradingAccount, 
      * @return 与给定账户编号对应的交易账户
      */
     Optional<TradingAccount> findByAccountNumber(String accountNumber);
+
+    /**
+     * 根据账户状态和账户类型查找交易账户（支持分页）
+     * 
+     * @param status 账户状态
+     * @param accountType 账户类型
+     * @param pageable 分页信息
+     * @return 匹配状态和类型的交易账户分页列表
+     */
+    Page<TradingAccount> findByStatusAndAccountType(String status, String accountType, Pageable pageable);
 }

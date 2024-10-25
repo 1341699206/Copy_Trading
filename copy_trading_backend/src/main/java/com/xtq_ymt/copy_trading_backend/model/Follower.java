@@ -131,3 +131,4 @@ public class Follower {
     @Column(name = "max_adjustment_amount", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal maxAdjustmentAmount;  // 自动调整的最大金额
 }
+

@@ -177,3 +177,4 @@ public class Trader {
     @ManyToMany(mappedBy = "followingTraders")
     private List<Follower> followersList; // 跟随者列表
 }
+

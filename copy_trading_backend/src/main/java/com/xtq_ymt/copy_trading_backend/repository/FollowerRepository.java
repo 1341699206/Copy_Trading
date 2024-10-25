@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 import java.util.Date;
-import java.math.BigDecimal; // 导入 BigDecimal
+import java.math.BigDecimal;
 
 @Repository
 public interface FollowerRepository extends JpaRepository<Follower, Long> {
@@ -83,4 +83,8 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     // 查找特定交易员和特定Follower之间的跟随关系
     @Query("SELECT f FROM Follower f JOIN f.followingTraders t WHERE f.followerId = :followerId AND t.traderId = :traderId")
     Optional<Follower> findByFollowerIdAndTraderId(@Param("followerId") Long followerId, @Param("traderId") Long traderId);
+
+    // 根据交易账户查找跟随的交易员
+    @Query("SELECT t FROM Follower f JOIN f.followingAccounts a JOIN a.trader t WHERE a.accountId = :accountId")
+    List<Follower> findFollowersByTradingAccount(@Param("accountId") Long accountId);
 }

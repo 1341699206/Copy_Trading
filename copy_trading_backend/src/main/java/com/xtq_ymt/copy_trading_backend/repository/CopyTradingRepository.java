@@ -60,3 +60,4 @@ public interface CopyTradingRepository extends JpaRepository<CopyTrading, Long> 
     @Query("SELECT c FROM CopyTrading c WHERE c.isActive = :isActive AND c.totalProfit > :profit")
     List<CopyTrading> findActiveWithProfitGreaterThan(@Param("isActive") Boolean isActive, @Param("profit") BigDecimal profit);
 }
+
