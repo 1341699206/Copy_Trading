@@ -30,7 +30,7 @@ const handleSell = () => {
 
     <!-- 名称部分 -->
     <div class="name">
-      {{ props.item.instrument||" " }}
+      {{ props.item.instrument }}
     </div>
 
     <!-- 数据展示部分 -->

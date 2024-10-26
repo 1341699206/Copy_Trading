@@ -4,12 +4,18 @@ import router from './router'; // 引入 router
 import axios from 'axios';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 // 设置 axios 的基础 URL 为后端服务器地址
 axios.defaults.baseURL = 'http://localhost:9099';
 
 // 创建 Vue 应用实例
 const app = createApp(App);
+
+//引入icon
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
 
 // 配置全局 axios
 app.config.globalProperties.$axios = axios;

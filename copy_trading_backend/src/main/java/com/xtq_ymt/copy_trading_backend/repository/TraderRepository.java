@@ -1,5 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.repository;
 
+import java.time.LocalDate;
+
 import com.xtq_ymt.copy_trading_backend.model.Trader;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,7 +18,7 @@ import java.util.Optional;
 @Repository
 public interface TraderRepository extends JpaRepository<Trader, Long> {
 
-    //根据id查找Trader
+    // 根据id查找Trader
     Optional<Trader> findByTraderId(Long traderId);
 
     // 根据交易者名称查找（支持分页）
@@ -55,8 +57,16 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     // 查找最近登录的交易者（支持分页）
     List<Trader> findByLoggedInRecentlyTrue(Pageable pageable);
 
-    // 查找按投资回报率（ROI）排序的前10名交易者
-    List<Trader> findTop10ByOrderByROIDesc();
+    // 查询历史回报率排序前 n 的交易者（无时间限制）
+    @Query("SELECT t FROM Trader t ORDER BY t.roi DESC")
+    List<Trader> findTopByOrderByROIDesc(Pageable pageable);
+
+    // 查找特定时间段内回报率（ROI）排序前 n 的交易者
+    @Query("SELECT t FROM Trader t WHERE t.date >= :startDate AND t.date <= :endDate ORDER BY t.roi DESC")
+    List<Trader> findTopByOrderByROIDesc(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            Pageable pageable);
 
     // 查找在特定日期范围内活跃的交易者
     @Query("SELECT t FROM Trader t WHERE t.lastUpdatedDate BETWEEN :startDate AND :endDate")
@@ -76,5 +86,5 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     Page<Trader> findTradersInactiveSince(@Param("cutoffDate") Date cutoffDate, Pageable pageable);
 
     // 根据 email 查找 Trader
-    Optional<Trader> findByEmail(String email);  // 添加这一行
+    Optional<Trader> findByEmail(String email); // 添加这一行
 }

@@ -137,6 +137,12 @@ public class Trader {
     @Column(name = "followers")
     private Integer followers; // 跟随者数量
 
+    @OneToMany(mappedBy = "trader", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MarketData> collectedMarketData; // 收藏的市场数据
+
+    @OneToMany(mappedBy = "trader", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Follower> collectedFollowers; // 被follower收藏
+
     @Column(name = "viewed")
     private Integer viewed; // 被浏览的总次数
 
