@@ -51,8 +51,10 @@ public class AccountSimulationService {
             trader.setEmail("trader" + i + "@example.com");
             trader.setCountryName(COUNTRIES[random.nextInt(COUNTRIES.length)]); // 从国家列表中随机选择
             trader.setPassword("111111"); // 设置初始密码
+            trader.setActive(true); // 设置交易员为激活状态
             traders.add(trader);
         }
+
         traderRepository.saveAll(traders);
 
         // 为每个 Trader 生成多个 Demo TradingAccount 并设置初始资金

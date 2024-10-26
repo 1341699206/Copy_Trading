@@ -77,6 +77,10 @@ public class TradingAccount {
     @Column(name = "margin_level", columnDefinition = "DECIMAL(5,2)")
     private BigDecimal marginLevel; // 保证金比例
 
+    // 新增杠杆字段，用于存储账户杠杆倍数
+    @Column(name = "leverage", columnDefinition = "DECIMAL(5,2)", nullable = false)
+    private BigDecimal leverage; // 杠杆倍数
+
     // 关联的风险管理设置
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "risk_settings_id")
@@ -117,4 +121,3 @@ public class TradingAccount {
         this.updatedAt = new Date();
     }
 }
-

@@ -4,6 +4,7 @@ import com.xtq_ymt.copy_trading_backend.model.*;
 import com.xtq_ymt.copy_trading_backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +34,7 @@ public class TradeSimulationService {
     private CopyTradingRepository copyTradingRepository;
 
     @Autowired
-    private MarketDataRepository marketDataRepository;  // 添加 MarketDataRepository 依赖
+    private MarketDataRepository marketDataRepository;
 
     private static final String[] INSTRUMENTS = {
         "EURJPY", "EURCHF", "CADJPY", "EURUSD", "USDCAD", "GBPUSD", "USDJPY", "EURGBP", "USDCHF", "GBPJPY",
@@ -45,18 +46,22 @@ public class TradeSimulationService {
     /**
      * 为每个Trader生成交易记录并更新CopyTrading跟单数据
      */
+    @Transactional
     public void generateTradesAndCopyTrading() {
         logger.info("开始生成交易和跟单数据");
         List<Trader> traders = traderRepository.findAll();
         List<Follower> followers = followerRepository.findAll();
 
         for (Trader trader : traders) {
-            // Trader交易账户
-            TradingAccount traderAccount = trader.getCurrentAccount();
-            if (traderAccount == null) {
+            // Trader的所有交易账户
+            List<TradingAccount> traderAccounts = trader.getTradingAccounts();
+            if (traderAccounts == null || traderAccounts.isEmpty()) {
                 logger.warn("交易员 {} 没有有效的交易账户，跳过交易生成", trader.getName());
                 continue;
             }
+
+            // 随机选择一个交易账户
+            TradingAccount traderAccount = traderAccounts.get(random.nextInt(traderAccounts.size()));
 
             // 生成Trader的交易记录（带有合理的开仓和平仓时间间隔）
             Trade traderTrade = createTrade(trader, traderAccount, true);
@@ -66,16 +71,16 @@ public class TradeSimulationService {
             // 为每个follower生成跟单记录
             for (Follower follower : followers) {
                 // 检查该follower是否在跟随该trader
-                CopyTrading copyTrading = getOrCreateCopyTrading(follower, trader, follower.getCurrentAccount());
-                if (copyTrading == null) {
-                    logger.warn("跟随者 {} 没有有效的跟单关系，跳过", follower.getName());
+                List<TradingAccount> followerAccounts = follower.getTradingAccounts();
+                if (followerAccounts == null || followerAccounts.isEmpty()) {
+                    logger.warn("跟随者 {} 没有有效的交易账户，跳过交易生成", follower.getName());
                     continue;
                 }
 
-                // Follower的交易账户
-                TradingAccount followerAccount = follower.getCurrentAccount();
-                if (followerAccount == null) {
-                    logger.warn("跟随者 {} 没有有效的交易账户，跳过交易生成", follower.getName());
+                TradingAccount followerAccount = followerAccounts.get(random.nextInt(followerAccounts.size()));
+                CopyTrading copyTrading = getOrCreateCopyTrading(follower, trader, followerAccount);
+                if (copyTrading == null) {
+                    logger.warn("跟随者 {} 没有有效的跟单关系，跳过", follower.getName());
                     continue;
                 }
 
@@ -98,7 +103,7 @@ public class TradeSimulationService {
      */
     private Trade createTrade(Trader trader, TradingAccount account, boolean isOriginalTrade) {
         Trade trade = new Trade();
-        trade.setTraderAccount(account);  // Trader的账户
+        trade.setTraderAccount(account);
         trade.setTrader(trader);
 
         // 获取市场数据
@@ -109,7 +114,6 @@ public class TradeSimulationService {
             trade.setClosePrice(marketData.getClosePrice());
             logger.info("使用市场数据为交易员 {} 创建交易: {}", trader.getName(), marketData);
         } else {
-            // 如果没有市场数据，随机生成价格
             trade.setInstrument(INSTRUMENTS[random.nextInt(INSTRUMENTS.length)]);
             trade.setOpenPrice(generateRandomPrice());
             trade.setClosePrice(generateRandomPrice());
@@ -120,12 +124,12 @@ public class TradeSimulationService {
         trade.setProfitLoss(calculateProfitLoss(trade.getOpenPrice(), trade.getClosePrice(), trade.getVolume()));
         trade.setCommission(new BigDecimal("2.00"));
         trade.setTradeType(isOriginalTrade ? "ORIGINAL" : "COPY");
-        trade.setIsOpen(false); // 设置交易已关闭状态
+        trade.setIsOpen(false);
 
         // 设置开仓和平仓时间，增加合理的间隔
         Date openTime = new Date();
         trade.setOpenTime(openTime);
-        Date closeTime = new Date(openTime.getTime() + TimeUnit.MINUTES.toMillis(random.nextInt(5) + 1)); // 随机生成1到5分钟的间隔
+        Date closeTime = new Date(openTime.getTime() + TimeUnit.MINUTES.toMillis(random.nextInt(5) + 1));
         trade.setCloseTime(closeTime);
 
         logger.info("创建交易记录: {}", trade);
@@ -147,7 +151,7 @@ public class TradeSimulationService {
         CopyTrading copyTrading = CopyTrading.builder()
             .follower(follower)
             .trader(trader)
-            .followerAccount(followerAccount) // Bind follower account
+            .followerAccount(followerAccount)
             .allocation(new BigDecimal("5000.00"))
             .startDate(new Date())
             .isActive(true)
