@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.repository;
 
 import com.xtq_ymt.copy_trading_backend.model.Trade;
+import com.xtq_ymt.copy_trading_backend.model.TradeActionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,7 +33,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     Page<Trade> findByIsOpen(Boolean isOpen, Pageable pageable);
 
     // 查找特定交易类型的交易（例如：买入/卖出）
-    List<Trade> findByTradeType(String tradeType);
+    List<Trade> findByTradeType(TradeActionType tradeType);
 
     // 查找在某个时间范围内的所有交易（分页）
     Page<Trade> findByOpenTimeBetween(Date startDate, Date endDate, Pageable pageable);
@@ -60,7 +61,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     List<Trade> findByTrader_TraderIdAndOpenTimeBetween(@Param("traderId") Long traderId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     // 查找指定交易员特定类型的交易（分页）
-    Page<Trade> findByTrader_TraderIdAndTradeType(Long traderId, String tradeType, Pageable pageable);
+    Page<Trade> findByTrader_TraderIdAndTradeType(Long traderId, TradeActionType tradeType, Pageable pageable);
 
     // 查找指定金融工具在特定日期范围内的交易
     @Query("SELECT t FROM Trade t WHERE t.instrument = :instrument AND t.openTime BETWEEN :startDate AND :endDate")
@@ -76,4 +77,10 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     // 获取某个时间段内所有未平仓交易
     @Query("SELECT t FROM Trade t WHERE t.isOpen = true AND t.openTime BETWEEN :startDate AND :endDate")
     List<Trade> findOpenTradesWithinDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    // 查找在特定杠杆范围内的所有交易
+    List<Trade> findByLeverageBetween(BigDecimal minLeverage, BigDecimal maxLeverage);
+
+    // 查找使用特定保证金的交易
+    List<Trade> findByMarginUsedGreaterThan(BigDecimal minMargin);
 }

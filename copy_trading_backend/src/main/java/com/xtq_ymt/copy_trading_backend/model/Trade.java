@@ -55,19 +55,24 @@ public class Trade {
     @Temporal(TemporalType.TIMESTAMP)
     private Date closeTime; // Closing time
 
-    @Column(name = "open_price", columnDefinition = "DECIMAL(18,8)")
+    @Column(name = "open_price", nullable = false, columnDefinition = "DECIMAL(18,8)")
     private BigDecimal openPrice; // Opening price
 
     @Column(name = "close_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal closePrice; // Closing price
 
-    @Column(name = "trade_type", nullable = false)
-    private String tradeType; // Trade type (e.g., buy/sell)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trade_action_type", nullable = false)
+    private TradeActionType tradeActionType; // Buy/Sell or Long/Short
 
-    @Column(name = "is_open", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trade_nature", nullable = false)
+    private TradeNature tradeNature; // Original or Copy
+
+    @Column(name = "is_open", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isOpen = true; // Whether trade is still open
 
-    @Column(name = "volume", columnDefinition = "DECIMAL(18,8)")
+    @Column(name = "volume", nullable = false, columnDefinition = "DECIMAL(18,8)")
     private BigDecimal volume; // Trade volume
 
     @Column(name = "profit_loss", columnDefinition = "DECIMAL(18,8)")
@@ -85,6 +90,12 @@ public class Trade {
     @Column(name = "take_profit", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal takeProfit; // Take profit level
 
+    @Column(name = "margin_used", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal marginUsed; // Margin used for this trade
+
+    @Column(name = "leverage", columnDefinition = "DECIMAL(10,2)")
+    private BigDecimal leverage; // Leverage used for this trade
+
     @PrePersist
     protected void onCreate() {
         if (openTime == null) {
@@ -96,6 +107,10 @@ public class Trade {
     protected void onUpdate() {
         if (!isOpen && closeTime == null) {
             closeTime = new Date();
+            if (openPrice != null && closePrice != null) {
+                // Profit/Loss = (Close Price - Open Price) * Volume
+                profitLoss = closePrice.subtract(openPrice).multiply(volume);
+            }
         }
     }
 }

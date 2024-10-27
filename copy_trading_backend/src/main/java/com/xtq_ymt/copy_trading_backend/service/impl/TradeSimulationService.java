@@ -123,8 +123,9 @@ public class TradeSimulationService {
         trade.setVolume(new BigDecimal("1.00"));
         trade.setProfitLoss(calculateProfitLoss(trade.getOpenPrice(), trade.getClosePrice(), trade.getVolume()));
         trade.setCommission(new BigDecimal("2.00"));
-        trade.setTradeType(isOriginalTrade ? "ORIGINAL" : "COPY");
-        trade.setIsOpen(false);
+        trade.setTradeNature(isOriginalTrade ? TradeNature.ORIGINAL : TradeNature.COPY);
+        trade.setTradeActionType(random.nextBoolean() ? TradeActionType.BUY : TradeActionType.SELL); // 随机选择买入或卖出
+
 
         // 设置开仓和平仓时间，增加合理的间隔
         Date openTime = new Date();

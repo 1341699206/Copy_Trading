@@ -120,4 +120,5 @@ public class TradingAccount {
     protected void onUpdate() {
         this.updatedAt = new Date();
     }
+
 }

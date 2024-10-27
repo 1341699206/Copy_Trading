@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,4 +72,12 @@ public interface TradingAccountRepository extends JpaRepository<TradingAccount, 
      * @return 匹配状态和类型的交易账户分页列表
      */
     Page<TradingAccount> findByStatusAndAccountType(String status, String accountType, Pageable pageable);
+
+    /**
+     * 查找可用保证金大于指定值的交易账户
+     *
+     * @param availableMargin 最小可用保证金
+     * @return 满足可用保证金要求的交易账户列表
+     */
+    List<TradingAccount> findByAvailableMarginGreaterThan(BigDecimal availableMargin);
 }
