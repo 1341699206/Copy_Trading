@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,22 +58,24 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     List<Trader> findByLoggedInRecentlyTrue(Pageable pageable);
 
     // 查询历史回报率排序前 n 的交易者（无时间限制）
-    @Query("SELECT t FROM Trader t ORDER BY t.roi DESC")
+    @Query("SELECT t FROM Trader t ORDER BY t.ROI DESC")
     List<Trader> findTopByOrderByROIDesc(Pageable pageable);
 
-    // 查找特定时间段内回报率（ROI）排序前 n 的交易者
-    @Query("SELECT t FROM Trader t WHERE t.date >= :startDate AND t.date <= :endDate ORDER BY t.roi DESC")
-    List<Trader> findTopByOrderByROIDesc(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            Pageable pageable);
+    //暂时未处理的待定逻辑
+
+    // // 查找特定时间段内回报率（ROI）排序前 n 的交易者
+    // @Query("SELECT t FROM Trader t WHERE t.date >= :startDate AND t.date <= :endDate ORDER BY t.roi DESC")
+    // List<Trader> findTopByOrderByROIDesc(
+    //         @Param("startDate") LocalDate startDate,
+    //         @Param("endDate") LocalDate endDate,
+    //         Pageable pageable);
 
     // 查找在特定日期范围内活跃的交易者
     @Query("SELECT t FROM Trader t WHERE t.lastUpdatedDate BETWEEN :startDate AND :endDate")
-    List<Trader> findActiveTradersWithinDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    List<Trader> findActiveTradersWithinDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     // 根据最近更新日期查找（支持分页）
-    Page<Trader> findByLastUpdatedDateBetween(Date startDate, Date endDate, Pageable pageable);
+    Page<Trader> findByLastUpdatedDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
     // 根据交易者排名查找前N名（支持分页）
     Page<Trader> findByZuluRankLessThanEqual(Integer rank, Pageable pageable);
@@ -83,7 +85,7 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
 
     // 查找最近一段时间内没有交易的交易者（支持分页）
     @Query("SELECT t FROM Trader t WHERE t.lastOpenTradeDate < :cutoffDate")
-    Page<Trader> findTradersInactiveSince(@Param("cutoffDate") Date cutoffDate, Pageable pageable);
+    Page<Trader> findTradersInactiveSince(@Param("cutoffDate") LocalDateTime cutoffDate, Pageable pageable);
 
     // 根据 email 查找 Trader
     Optional<Trader> findByEmail(String email); // 添加这一行

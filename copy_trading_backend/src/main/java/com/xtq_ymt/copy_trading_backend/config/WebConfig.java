@@ -18,7 +18,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).excludePathPatterns("/api/register", "/api/login", "/api/register/countries", "/api/market-data/available");
+        registry.addInterceptor(loginInterceptor).excludePathPatterns("/api/register", "/api/login",
+                "/api/register/countries", "/api/market-data/available",
+                "/api/market-data/market","/follower/traders");
     }
 
     @Override
@@ -26,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:8081")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")  // 允许所有请求头
-                .allowCredentials(true);  // 允许携带凭证信息（如cookie）
+                .allowedHeaders("*") // 允许所有请求头
+                .allowCredentials(true); // 允许携带凭证信息（如cookie）
     }
 }

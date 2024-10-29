@@ -8,10 +8,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",
     "copy_trading_frontend_vue3": "file:",
     "core-js": "^3.8.3",
+    "echarts": "^5.5.1",
     "element-plus": "^2.8.3",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.2",

@@ -29,7 +29,9 @@ export const createAccountAPI=({id,role,accountNumber,accountType,currency,balan
 
 // 获取ROI 前top.N的交易者
 export const getTopTraders=({quantity,timePeriod})=>{
+    // 动态构建请求 URL
+  const url =`/follower/traders?quantity=${quantity}` + (timePeriod ? `&timePeriod=${timePeriod}` : '')
     return request({
-        url:`/traders?quantity=${quantity}&timePeriod=${timePeriod||null}`
+        url:url
     })
 }

@@ -4,6 +4,7 @@ import com.xtq_ymt.copy_trading_backend.Result.Result;
 import com.xtq_ymt.copy_trading_backend.dto.MarketDataDTO;
 import com.xtq_ymt.copy_trading_backend.service.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,4 +56,15 @@ public class MarketDataController {
             return Result.error("No available market data found");
         }
     }
+
+    // 获取一项具体的市场数据
+    @GetMapping("/market")
+    public ResponseEntity<Result> getMarketData(
+            @RequestParam(name = "id") String instrument,
+            @RequestParam(name = "timePeriod", required = false) Integer timePeriod) {
+        Result result=marketDataService.getMarketDataDetail(instrument,timePeriod);
+        if(result.getCode()==0) return ResponseEntity.status(400).body(result);
+        else return ResponseEntity.ok(result);
+    }
+    
 }

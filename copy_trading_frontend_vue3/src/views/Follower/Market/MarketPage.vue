@@ -1,14 +1,30 @@
 <script setup>
-    import MarketHeader from './component/MarketHeader.vue'
-    import MarketDivision from './component/MarketDivision/MarketDivision.vue'
-    import DisplayBoard from './component/DisplayBoard.vue'
+import { ref, provide } from "vue";
+import MarketHeader from "./component/MarketHeader.vue";
+import MarketDivision from "./component/MarketDivision/MarketDivision.vue";
+import DisplayBoard from "./component/DisplayBoard.vue";
+
+const selectedItem = ref(null);
+
+// 定义更新选中数据项的函数
+const selectItem = (item) => {
+  selectedItem.value = item;
+};
+
+// 使用 provide 提供 `selectedItem` 和 `selectItem` 方法
+provide("selectedItem", selectedItem);
+provide("selectItem", selectItem);
 </script>
 
 <template>
   <market-header></market-header>
   <div class="market-container">
     <market-division class="left-side"></market-division>
-    <display-board class="right-side"></display-board>
+    <display-board
+      v-if="selectedItem"
+      :item="selectedItem"
+      class="right-side"
+    ></display-board>
   </div>
 </template>
 
@@ -21,7 +37,7 @@
 
 .left-side {
   flex: 2; /* 左侧占1份宽度 */
-  border: 2px solid #4CAF50; /* 绿色边框 */
+  border: 2px solid #4caf50; /* 绿色边框 */
   padding: 10px; /* 内边距 */
   margin-right: 20px; /* 增加左右两部分之间的距离 */
   border-radius: 10px; /* 设置圆角边框 */
@@ -30,7 +46,7 @@
 
 .right-side {
   flex: 3; /* 右侧占2份宽度 */
-  border: 2px solid #2196F3; /* 蓝色边框 */
+  border: 2px solid #2196f3; /* 蓝色边框 */
   padding: 10px; /* 内边距 */
   border-radius: 10px; /* 设置圆角边框 */
   box-sizing: border-box; /* 包含内边距和边框 */

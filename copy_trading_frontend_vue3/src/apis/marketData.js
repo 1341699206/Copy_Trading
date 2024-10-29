@@ -9,6 +9,15 @@ export const fetchMarketDataAPI = () => {
 // 其他与市场数据相关的 API 调用可以放在这里
 // export const anotherMarketDataAPI = () => { ... };
 
+// 获取指定market的数据
+export const getMarketDataAPI=({instrument,timePeriod})=>{
+  // 动态构建请求 URL
+  const url = `/api/market-data/market?id=${instrument}` + (timePeriod ? `&timePeriod=${timePeriod}` : '');
+  return request({
+    url: url
+  })
+}
+
 // 卖出操作
 export const sellAPI=({id,value})=>{
   return request({

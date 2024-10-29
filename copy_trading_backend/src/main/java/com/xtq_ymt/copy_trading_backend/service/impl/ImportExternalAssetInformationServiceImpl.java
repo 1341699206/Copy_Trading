@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
@@ -37,7 +37,7 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
     @Scheduled(fixedRate = 10000+1564*4864) // 单位毫秒
     @Override
     public void fetchAndStoreMarketData() {
-        Date currentTime = new Date();
+        LocalDateTime currentTime = LocalDateTime.now();
 
         for (String symbol : symbols) {
             try {

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.Modifying;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.math.BigDecimal;
 
@@ -20,10 +20,10 @@ public interface MarketDataRepository extends JpaRepository<MarketData, String> 
     List<MarketData> findBySymbol(String symbol);
 
     // 根据时间戳查找在某个时间范围内的 MarketData（支持分页）
-    Page<MarketData> findByTimestampBetween(Date startDate, Date endDate, Pageable pageable);
+    Page<MarketData> findByTimestampBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
     // 查找指定市场工具名称和在某个时间范围内的 MarketData（支持分页）
-    Page<MarketData> findByInstrumentAndTimestampBetween(String instrument, Date startDate, Date endDate, Pageable pageable);
+    Page<MarketData> findByInstrumentAndTimestampBetween(String instrument, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
     // 查找最高价格大于指定值的 MarketData
     List<MarketData> findByHighPriceGreaterThan(BigDecimal highPrice);
@@ -41,8 +41,8 @@ public interface MarketDataRepository extends JpaRepository<MarketData, String> 
     @Query("SELECT m FROM MarketData m WHERE m.instrument = :instrument AND m.timestamp BETWEEN :startDate AND :endDate")
     Page<MarketData> findHistoryByInstrumentAndDateRange(
         @Param("instrument") String instrument,
-        @Param("startDate") Date startDate,
-        @Param("endDate") Date endDate,
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate,
         Pageable pageable
     );
 
@@ -50,13 +50,13 @@ public interface MarketDataRepository extends JpaRepository<MarketData, String> 
     @Query("SELECT m FROM MarketData m WHERE m.symbol = :symbol AND m.timestamp BETWEEN :startDate AND :endDate")
     Page<MarketData> findHistoryBySymbolAndDateRange(
         @Param("symbol") String symbol,
-        @Param("startDate") Date startDate,
-        @Param("endDate") Date endDate,
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate,
         Pageable pageable
     );
 
     // 批量删除在指定时间范围内的 MarketData
     @Modifying
     @Query("DELETE FROM MarketData m WHERE m.timestamp BETWEEN :startDate AND :endDate")
-    void deleteByTimestampBetween(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    void deleteByTimestampBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

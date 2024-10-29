@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.service.impl;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
         follower.setEmail(email);
         follower.setPassword(password);
         follower.setCountry(country);
-        follower.setRegistrationDate(new Date());
+        follower.setRegistrationDate(LocalDate.now());
 
         // 保存 Follower 到数据库
         followerRepository.save(follower);
@@ -135,7 +136,7 @@ public class AuthServiceImpl implements AuthService {
         trader.setEmail(email);
         trader.setPassword(password);
         trader.setCountryIsoCode(country);
-        trader.setLastUpdatedDate(new Date());
+        trader.setLastUpdatedDate(LocalDateTime.now());
 
         // 保存 Trader 到数据库
         traderRepository.save(trader);

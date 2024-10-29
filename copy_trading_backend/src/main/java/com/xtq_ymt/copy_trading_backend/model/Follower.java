@@ -1,9 +1,10 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;  // 更新：将 HashMap 改为 Map 接口
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -59,21 +60,39 @@ public class Follower {
     // 注册日期，日期类型，映射到数据库中的日期格式
     @Column(name = "registration_date")
     @Temporal(TemporalType.DATE)
-    private Date registrationDate;  // 追随者的注册日期
+    private LocalDate registrationDate;  // 追随者的注册日期
 
     // 是否活跃，默认为 true
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     @Builder.Default
     private Boolean isActive = true;  // 追随者是否活跃，默认为活跃
 
-    // 追随者与多个交易员之间的多对多关系，映射表 follower_trader
-    @ManyToMany
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(
-        name = "follower_trader",
+        name = "follower_market_data", // 中间表名称
+        joinColumns = @JoinColumn(name = "follower_id"), // follower 外键列
+        inverseJoinColumns = @JoinColumn(name = "market_data_id") // marketData 外键列
+    )
+    private Set<MarketData> collectedMarketData;
+
+    // 收藏的 Trader 列表
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "follower_trader_favorites",  // 收藏关系的中间表名
         joinColumns = @JoinColumn(name = "follower_id"),
         inverseJoinColumns = @JoinColumn(name = "trader_id")
     )
-    private List<Trader> followingTraders;  // 追随者正在跟随的交易员列表
+    private Set<Trader> favoriteTraders;  // 追随者收藏的交易员列表
+
+    // 跟随的 Trader 列表
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "follower_trader_follows",  // 跟随关系的中间表名
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "trader_id")
+    )
+    private List<Trader> followedTraders;  // 追随者跟随的交易员列表
 
     // 总投资金额，精度为 18 位整数，8 位小数
     @Column(name = "total_investment", columnDefinition = "DECIMAL(18,8)")

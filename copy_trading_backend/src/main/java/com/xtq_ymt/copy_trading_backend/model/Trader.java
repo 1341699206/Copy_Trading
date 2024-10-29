@@ -1,12 +1,14 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import jakarta.persistence.*; // 导入 JPA 注解
+
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.math.BigDecimal; // 导入 BigDecimal
 import lombok.Getter;
 import lombok.Setter;
@@ -104,11 +106,11 @@ public class Trader {
 
     @Column(name = "last_open_trade_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastOpenTradeDate; // 最后开仓交易的时间
+    private LocalDateTime lastOpenTradeDate; // 最后开仓交易的时间
 
     @Column(name = "last_updated_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdatedDate; // 账户的最后更新日期
+    private LocalDateTime lastUpdatedDate; // 账户的最后更新日期
 
     @Column(name = "zulu_rank")
     private Integer zuluRank; // 交易者在平台上的排名
@@ -116,7 +118,7 @@ public class Trader {
     @Column(name = "amount_following", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal amountFollowing; // 跟随该交易者的总金额（美元）
 
-    @Column(name = "roi", columnDefinition = "DECIMAL(5,2)")
+    @Column(name = "ROI", columnDefinition = "DECIMAL(5,2)")
     private BigDecimal ROI; // 投资回报率
 
     @Column(name = "total_profit", columnDefinition = "DECIMAL(18,8)")
@@ -138,16 +140,29 @@ public class Trader {
     private Integer followers; // 跟随者数量
 
     @OneToMany(mappedBy = "trader", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MarketData> collectedMarketData; // 收藏的市场数据
+    private List<Trade> trades; // 交易员的交易记录
 
-    @OneToMany(mappedBy = "trader", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Follower> collectedFollowers; // 被follower收藏
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "trader_market_data", // 中间表名称
+        joinColumns = @JoinColumn(name = "trader_id"), // trader 外键列
+        inverseJoinColumns = @JoinColumn(name = "market_data_id") // marketData 外键列
+    )
+    private Set<MarketData> collectedMarketData;
+
+    // 被收藏的 Follower 列表
+    @ManyToMany(mappedBy = "favoriteTraders", cascade = CascadeType.ALL)  // 在 Follower 中映射字段
+    private Set<Follower> followersWhoFavorited;  // 收藏该 Trader 的 Follower 列表
+
+    // 被跟随的 Follower 列表
+    @ManyToMany(mappedBy = "followedTraders", cascade = CascadeType.ALL)  // 在 Follower 中映射字段
+    private Set<Follower> followersWhoFollowed;  // 跟随该 Trader 的 Follower 列表
 
     @Column(name = "viewed")
     private Integer viewed; // 被浏览的总次数
 
     @Column(name = "trades")
-    private Integer trades; // 交易总数
+    private Integer tradesAmount; // 交易总数
 
     @Column(name = "max_open_trades")
     private Integer maxOpenTrades; // 最大未平仓交易数

@@ -13,7 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.math.BigDecimal; // 导入 BigDecimal
 
 @Repository
@@ -44,7 +44,7 @@ public interface FollowerRepository extends JpaRepository<Follower, Long> {
     List<Follower> findByCountry(String country);
 
     // 查找在某个时间范围内注册的Follower
-    List<Follower> findByRegistrationDateBetween(Date startDate, Date endDate);
+    List<Follower> findByRegistrationDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     // 查找所有活跃的Follower
     List<Follower> findByIsActiveTrue();

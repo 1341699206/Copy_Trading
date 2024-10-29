@@ -2,7 +2,8 @@ package com.xtq_ymt.copy_trading_backend.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -59,14 +60,20 @@ public class MarketData {
     @Column(name = "volatility", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal volatility;
 
+    @ManyToMany(mappedBy = "collectedMarketData", cascade = CascadeType.ALL)
+    private Set<Trader> traders; //被哪些trader收藏了
+
+    @ManyToMany(mappedBy = "collectedMarketData", cascade = CascadeType.ALL)
+    private Set<Follower> followers; //被哪些follower收藏了
+
     // 获取数据的时间戳
     @Column(name = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp; // 市场数据的时间戳
+    private LocalDateTime timestamp; // 市场数据的时间戳
 
     // 最后更新时间，用于标识数据更新的时间
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt; // 数据最后一次更新的时间
+    private LocalDateTime updatedAt; // 数据最后一次更新的时间
 }
 

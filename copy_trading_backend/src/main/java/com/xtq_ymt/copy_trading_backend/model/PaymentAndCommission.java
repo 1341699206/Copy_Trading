@@ -2,7 +2,7 @@ package com.xtq_ymt.copy_trading_backend.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ public class PaymentAndCommission {
 
     @Column(name = "payment_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date paymentDate;
+    private LocalDateTime paymentDate;
 
     // 修改为 BigDecimal，并使用 columnDefinition
     @Column(name = "amount", columnDefinition = "DECIMAL(18,2)")

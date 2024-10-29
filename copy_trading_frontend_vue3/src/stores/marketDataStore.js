@@ -13,7 +13,7 @@ export const useMarketDataStore = defineStore('marketData', () => {
       const response = await fetchMarketDataAPI();
       if (response.data && response.data.code === 1) {
         availableAssets.value = response.data.data;
-        console.log('Fetched available market data:', availableAssets.value);
+        //console.log('Fetched available market data:', availableAssets.value);
       } else {
         console.warn('No market data found or unexpected response format:', response.data);
       }
@@ -27,9 +27,10 @@ export const useMarketDataStore = defineStore('marketData', () => {
     if (intervalId.value) {
       stopAutoUpdate();
     }
-    intervalId.value = setInterval(() => {
-      fetchAvailableMarketData();
-    }, 1000);
+    fetchAvailableMarketData();
+    // intervalId.value = setInterval(() => {
+    //   fetchAvailableMarketData();
+    // }, 1000);
   };
 
   // 停止定时任务

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -19,5 +19,5 @@ public class MarketDataDTO {
     private BigDecimal currentPrice; // 当前价格
     private BigDecimal highPrice;    // 最高价格
     private BigDecimal lowPrice;     // 最低价格
-    private Date timestamp;          // 时间戳
+    private LocalDateTime timestamp;          // 时间戳
 }

@@ -29,20 +29,23 @@ public class FollowerServiceImpl implements FollowerService {
         Pageable pageable = PageRequest.of(0, quantity); // 返回前 n 个交易者
         List<Trader> traders;
         if (timePeriod == null || timePeriod == 0) {
+            traders = traderRepository.findTopByOrderByROIDesc(pageable);
+        } else {
+            
             // 查询历史的情况
             LocalDate startDate = LocalDate.now().minusDays(timePeriod);// 当前日期减去指定天数
             LocalDate endDate = LocalDate.now();// 当前时间（结束时间）
 
-            traders = traderRepository.findTopByOrderByROIDesc(startDate, endDate, pageable);
-        } else {
-            traders = traderRepository.findTopByOrderByROIDesc(pageable);
+            // 未处理的待定逻辑
+            // traders = traderRepository.findTopByOrderByROIDesc(startDate, endDate, pageable);
+            traders=traderRepository.findTopByOrderByROIDesc(pageable);
         }
 
         // 导入DTO
         List<TradersDataDTO> topTraders = new ArrayList<>();
         for (Trader trader : traders) {
             TradersDataDTO traderData = new TradersDataDTO(trader.getTraderId(), trader.getName(), trader.getROI(),
-                    trader.getFollowers(), trader.getCollectedFollowers().size(), trader.getPerformance());
+                    trader.getFollowers(), trader.getFollowersWhoFavorited().size(), trader.getPerformance());
             topTraders.add(traderData);
         }
 

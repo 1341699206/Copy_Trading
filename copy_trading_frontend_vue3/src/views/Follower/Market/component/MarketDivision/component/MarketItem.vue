@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, inject } from "vue";
 
 // 定义组件的 props，接收父组件传递的 `item` 数据
 const props = defineProps({
@@ -11,18 +11,26 @@ const props = defineProps({
 
 // 可以定义按钮点击时触发的事件（例如，购买和出售的逻辑）
 const handleBuy = () => {
-  console.log('Buy clicked for',props.item);
+  console.log("Buy clicked for", props.item);
   // 你可以在这里添加实际的购买逻辑
 };
 
 const handleSell = () => {
-  console.log('Sell clicked for',props.item);
+  console.log("Sell clicked for", props.item);
   // 你可以在这里添加实际的出售逻辑
+};
+
+// 从顶层父组件中注入 `selectItem` 方法
+const selectItem = inject("selectItem");
+
+// 点击条目触发事件，将数据传递给顶层父组件
+const handleClick = () => {
+  selectItem(props.item); // 传递选中的数据项
 };
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" @click="handleClick">
     <!-- 头像部分 -->
     <div class="avatar">
       <!-- <img :src="props.item.avatarUrl" alt="avatar" /> -->
@@ -41,9 +49,7 @@ const handleSell = () => {
           <strong>Current Value:</strong> {{ item.currentPrice }}
         </li>
         <!-- 变化百分比 -->
-        <li class="change">
-          <strong>Change:</strong> {{ 0.33 }}%
-        </li>
+        <li class="change"><strong>Change:</strong> {{ 0.33 }}%</li>
       </ul>
     </div>
 
@@ -70,7 +76,7 @@ const handleSell = () => {
 
 .avatar {
   width: 40px; /* 缩小头像尺寸 */
-  height: 40px; 
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
   margin-right: 8px; /* 减少右边距 */

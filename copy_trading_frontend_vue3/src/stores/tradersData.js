@@ -3,25 +3,25 @@ import { ref } from "vue";
 import { getTopTraders } from "@/apis/follower";
 
 
-export const useTraderDataStore = defineStore('traderData', () => {
+export const useTradersDataStore = defineStore('traderData', () => {
     // 定义trader数据的state
     //top traders
     const tradersData = ref({});
 
     // 定义获取接口数据的 action 函数
-    //获取top traders
-    const getTopTradersData = async ({ quantity }) => {
-        const res = await getTopTraders({ quantity })
+    //获取top traderss
+    const getTopTradersData = async ( quantity ) => {
+        const res = await getTopTraders({ quantity:quantity })
         tradersData.value = res.data;
     }
-    const getTopOneYearTradersData = async ({ quantity }) => {
+    const getTopOneYearTradersData = async ( quantity ) => {
         const year=365;
-        const res = await getTopTraders({ quantity,year})
+        const res = await getTopTraders({ quantity:quantity,timePeriod:year})
         tradersData.value = res.data;
     }
-    const getMonthRisingTradersData = async ({ quantity }) => {
+    const getMonthRisingTradersData = async ( quantity ) => {
         const month=30;
-        const res = await getTopTraders({ quantity,month })
+        const res = await getTopTraders({ quantity,timePeriod:month })
         tradersData.value = res.data;
     }
 
