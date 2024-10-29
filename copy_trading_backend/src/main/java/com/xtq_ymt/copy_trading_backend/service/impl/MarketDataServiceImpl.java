@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,6 +85,20 @@ public class MarketDataServiceImpl implements MarketDataService {
                     marketData.getLowPrice(),
                     marketData.getTimestamp());
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public BigDecimal getCurrentPrice(String instrument) {
+        logger.info("Entering getCurrentPrice with instrument: {}", instrument);
+        Optional<MarketData> marketDataOptional = marketDataRepository.findById(instrument);
+        if (marketDataOptional.isPresent()) {
+            BigDecimal currentPrice = marketDataOptional.get().getCurrentPrice();
+            logger.info("Current price for instrument {} is: {}", instrument, currentPrice);
+            return currentPrice;
+        } else {
+            logger.warn("No market data found for instrument: {}", instrument);
+            throw new IllegalArgumentException("No market data available for the given instrument.");
+        }
     }
 
     @Override

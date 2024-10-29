@@ -27,8 +27,12 @@ public class Trade {
     private Long tradeId; // 交易的唯一标识符
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
-    private TradingAccount tradingAccount; // 关联的交易账户
+    @JoinColumn(name = "trader_account_id", nullable = false)
+    private TradingAccount traderAccount; // Trader's trading account associated with the trade
+
+    @ManyToOne
+    @JoinColumn(name = "follower_account_id")
+    private TradingAccount followerAccount; // Follower's trading account (if it's a copy trade)
 
     @ManyToOne
     @JoinColumn(name = "trader_id", nullable = false)
@@ -60,9 +64,14 @@ public class Trade {
     @Column(name = "close_price", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal closePrice; // 平仓价格
 
-    @Column(name = "trade_type", nullable = false)
-    private String tradeType; // 交易类型
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trade_action_type", nullable = false)
+    private TradeActionType tradeActionType;// 交易类型
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trade_nature", nullable = false)
+    private TradeNature tradeNature; // Original or Copy
+    
     @Column(name = "is_open", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isOpen = true; // 交易是否仍然开仓
 
@@ -82,7 +91,13 @@ public class Trade {
     private BigDecimal stopLoss; // 止损
 
     @Column(name = "take_profit", columnDefinition = "DECIMAL(18,8)")
-    private BigDecimal takeProfit; // 止盈
+    private BigDecimal takeProfit; // Take profit level
+
+    @Column(name = "margin_used", columnDefinition = "DECIMAL(18,8)")
+    private BigDecimal marginUsed; // Margin used for this trade
+
+    @Column(name = "leverage", columnDefinition = "DECIMAL(10,2)")
+    private BigDecimal leverage; // Leverage used for this trade
 
     @PrePersist
     protected void onCreate() {
@@ -95,6 +110,10 @@ public class Trade {
     protected void onUpdate() {
         if (!isOpen && closeTime == null) {
             closeTime = new Date(); // 如果交易不活跃且没有平仓时间，则设置为当前时间
+            if (openPrice != null && closePrice != null) {
+                // Profit/Loss = (Close Price - Open Price) * Volume
+                profitLoss = closePrice.subtract(openPrice).multiply(volume);
+            }
         }
     }
 }

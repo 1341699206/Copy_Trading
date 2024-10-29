@@ -94,6 +94,15 @@ public class Follower {
     )
     private List<Trader> followedTraders;  // 追随者跟随的交易员列表
 
+    // 追随者与多个交易账户之间的多对多关系，映射表 follower_trading_account
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "follower_trading_account",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+    private List<TradingAccount> followingAccounts;  // 追随者正在跟随的交易账户列表
+
     // 总投资金额，精度为 18 位整数，8 位小数
     @Column(name = "total_investment", columnDefinition = "DECIMAL(18,8)")
     private BigDecimal totalInvestment;  // 追随者的总投资金额
