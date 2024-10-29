@@ -93,7 +93,7 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     Optional<Trader> findByEmail(String email);
 
     // 查找与特定追随者有关联的交易者
-    @Query("SELECT t FROM Trader t JOIN t.followersList f WHERE f.followerId = :followerId")
+    @Query("SELECT t FROM Trader t JOIN t.followersWhoFollowed f WHERE f.followerId = :followerId")
     List<Trader> findTradersByFollowerId(@Param("followerId") Long followerId);
 
     // 查找某个 Trader 的交易账户有哪些 Follower 的交易账户在跟随

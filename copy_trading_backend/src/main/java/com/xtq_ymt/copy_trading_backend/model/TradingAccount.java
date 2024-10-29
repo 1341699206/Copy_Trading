@@ -65,6 +65,9 @@ public class TradingAccount {
     @Column(name = "free_margin", columnDefinition = "DECIMAL(18,2)", nullable = false)
     private BigDecimal freeMargin; // 可用保证金
 
+    @Column(name = "available_margin", columnDefinition = "DECIMAL(18,2)", nullable = false)
+    private BigDecimal availableMargin;
+
     // 账户状态，例如 "Active", "Closed", "Suspended"
     @Column(name = "status", nullable = false)
     private String status; // 账户状态

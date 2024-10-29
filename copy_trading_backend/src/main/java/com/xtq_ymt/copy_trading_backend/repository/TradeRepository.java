@@ -33,7 +33,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     Page<Trade> findByIsOpen(Boolean isOpen, Pageable pageable);
 
     // 查找特定交易类型的交易（例如：买入/卖出）
-    List<Trade> findByTradeType(TradeActionType tradeType);
+    List<Trade> findByTradeActionType(TradeActionType tradeType);
 
     // 查找在某个时间范围内的所有交易（分页）
     Page<Trade> findByOpenTimeBetween(Date startDate, Date endDate, Pageable pageable);
@@ -61,7 +61,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     List<Trade> findByTrader_TraderIdAndOpenTimeBetween(@Param("traderId") Long traderId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     // 查找指定交易员特定类型的交易（分页）
-    Page<Trade> findByTrader_TraderIdAndTradeType(Long traderId, TradeActionType tradeType, Pageable pageable);
+    Page<Trade> findByTrader_TraderIdAndTradeActionType(Long traderId, TradeActionType tradeType, Pageable pageable);
 
     // 查找指定金融工具在特定日期范围内的交易
     @Query("SELECT t FROM Trade t WHERE t.instrument = :instrument AND t.openTime BETWEEN :startDate AND :endDate")

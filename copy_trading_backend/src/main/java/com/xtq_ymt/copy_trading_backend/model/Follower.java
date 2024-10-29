@@ -92,7 +92,7 @@ public class Follower {
         joinColumns = @JoinColumn(name = "follower_id"),
         inverseJoinColumns = @JoinColumn(name = "trader_id")
     )
-    private List<Trader> followedTraders;  // 追随者跟随的交易员列表
+    private List<Trader> followingTraders;  // 追随者跟随的交易员列表
 
     // 追随者与多个交易账户之间的多对多关系，映射表 follower_trading_account
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)

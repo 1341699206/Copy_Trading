@@ -155,7 +155,7 @@ public class Trader {
     private Set<Follower> followersWhoFavorited;  // 收藏该 Trader 的 Follower 列表
 
     // 被跟随的 Follower 列表
-    @ManyToMany(mappedBy = "followedTraders", cascade = CascadeType.ALL)  // 在 Follower 中映射字段
+    @ManyToMany(mappedBy = "followingTraders", cascade = CascadeType.ALL)  // 在 Follower 中映射字段
     private Set<Follower> followersWhoFollowed;  // 跟随该 Trader 的 Follower 列表
 
     @Column(name = "viewed")
