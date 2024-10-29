@@ -10,7 +10,7 @@ const followerInfo = reactive({
   value: userStore.userInfo.user.totalInvestment,
   profitLoss: userStore.userInfo.user.profitLoss,
   copying: 0,
-  following: Object.keys(userStore.userInfo.user.followedTraders).length,
+  following: Object.keys(userStore.userInfo.user.followingTraders).length,
 });
 </script>
 
