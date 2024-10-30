@@ -1,38 +1,56 @@
 <script setup>
+import { inject, watch, ref, onMounted } from "vue";
+import * as echarts from "echarts";
 import { getMarketDataAPI } from "@/apis/marketData";
-import { inject, onMounted, ref } from "vue";
-import * as echarts from "echarts"; //导入制图组件
 
-const item = inject("selectedItem").value; // 注入选中项的数据
-const marketInfo = ref([]); // 初始化 marketInfo 为数组，便于存储列表数据
-const chartRef = ref(null); // 用于引用 chart 容器
+const selectedItem = inject("selectedItem");
+const item = ref(selectedItem.value); // 当前展示的项
+const marketInfo = ref([]);
+const chartRef = ref(null);
+let chart;
 
-onMounted(async () => {
-  const res = await getMarketDataAPI({ instrument: item.instrument });
-  marketInfo.value = res.data;
-  // 初始化 ECharts 实例
-  const chart = echarts.init(chartRef.value);
+// 获取市场数据并更新图表
+const fetchMarketData = async () => {
+  if (item.value && item.value.instrument) {
+    // 检查 item 是否存在
+    const res = await getMarketDataAPI({ instrument: item.value.instrument });
+    marketInfo.value = res.data;
 
-  // 设置图表选项
-  const options = {
-    xAxis: {
-      type: "category",
-      data: marketInfo.value.map((data) => data.timestamp), // 假设数据包含时间字段
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        data: marketInfo.value.map((data) => data.price), // 假设数据包含价格字段
-        type: "line",
-        smooth: true,
+    const options = {
+      xAxis: {
+        type: "category",
+        data: marketInfo.value.map((data) => data.timestamp),
       },
-    ],
-  };
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          data: marketInfo.value.map((data) => data.price),
+          type: "line",
+          smooth: true,
+        },
+      ],
+    };
 
-  // 应用选项到图表
-  chart.setOption(options);
+    chart.setOption(options);
+  }
+};
+
+// 监听 selectedItem 的变化
+watch(selectedItem, async (newVal) => {
+  item.value = newVal;
+  if (newVal) {
+    await fetchMarketData();
+  }
+});
+
+// 初始化 ECharts 图表
+onMounted(async () => {
+  chart = echarts.init(chartRef.value);
+  if (item.value) {
+    await fetchMarketData();
+  }
 });
 </script>
 
@@ -73,6 +91,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
 
   .header {
     display: flex;
@@ -145,5 +164,13 @@ onMounted(async () => {
     height: 90%;
     margin-top: -15px;
   }
+}
+.tip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* 让它填满父容器 */
+  font-size: 20px;
+  color: #999;
 }
 </style>
