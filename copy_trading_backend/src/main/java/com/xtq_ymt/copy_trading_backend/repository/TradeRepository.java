@@ -24,10 +24,10 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     Page<Trade> findByFollower_FollowerId(Long followerId, Pageable pageable);
 
     // 根据 Trader 的交易账户查找交易记录
-    List<Trade> findByTraderAccount_AccountNumber(String accountNumber);
+    List<Trade> findByTraderAccount_AccountId(Long accountId);
 
     // 根据 Follower 的交易账户查找交易记录（如果是跟单交易）
-    List<Trade> findByFollowerAccount_AccountNumber(String accountNumber);
+    List<Trade> findByFollowerAccount_AccountId(Long accountId);
 
     // 根据是否开仓查找交易（分页）
     Page<Trade> findByIsOpen(Boolean isOpen, Pageable pageable);
@@ -74,6 +74,9 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     // 查找某交易员所有未平仓的交易
     List<Trade> findByTrader_TraderIdAndIsOpenTrue(Long traderId);
 
+    // 查找某交易账户所有未平仓的交易
+    List<Trade> findByTraderAccount_AccountIdAndIsOpenTrue(Long accountId);
+
     // 获取某个时间段内所有未平仓交易
     @Query("SELECT t FROM Trade t WHERE t.isOpen = true AND t.openTime BETWEEN :startDate AND :endDate")
     List<Trade> findOpenTradesWithinDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
@@ -83,4 +86,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
 
     // 查找使用特定保证金的交易
     List<Trade> findByMarginUsedGreaterThan(BigDecimal minMargin);
+
+    // 查找特定交易账户中已平仓的交易
+    List<Trade> findByTraderAccount_AccountIdAndIsOpenFalse(Long accountId);
 }

@@ -19,16 +19,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor).excludePathPatterns("/api/register", "/api/login",
-                "/api/register/countries", "/api/market-data/available",
-                "/api/market-data/market","/follower/traders");
+                "/api/register/countries", "/api/market-data/available", "/api/market-data/market",
+                "/follower/traders", "/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs"); // 放行 Swagger 相关路径
     }
 
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8081")
+                .allowedOriginPatterns("http://localhost:8081", "http://example.com", "http://anotherdomain.com") // 添加 localhost 允许跨域访问
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*") // 允许所有请求头
                 .allowCredentials(true); // 允许携带凭证信息（如cookie）
     }
+
 }

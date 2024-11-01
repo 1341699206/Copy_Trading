@@ -20,11 +20,12 @@ provide("selectItem", selectItem);
   <market-header></market-header>
   <div class="market-container">
     <market-division class="left-side"></market-division>
-    <display-board
-      v-if="selectedItem"
-      :item="selectedItem"
-      class="right-side"
-    ></display-board>
+    <div v-if="selectedItem" class="right-side">
+      <display-board :item="selectedItem" ></display-board>
+    </div>
+    <div v-else class="right-side">
+      <h2>Please select market data to view details.</h2>
+    </div>
   </div>
 </template>
 

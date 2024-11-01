@@ -3,7 +3,6 @@ package com.xtq_ymt.copy_trading_backend.repository;
 import com.xtq_ymt.copy_trading_backend.model.Trader;
 import com.xtq_ymt.copy_trading_backend.model.TradingAccount;
 
-import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

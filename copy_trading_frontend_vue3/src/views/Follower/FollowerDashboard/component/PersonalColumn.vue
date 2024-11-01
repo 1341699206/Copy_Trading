@@ -1,17 +1,31 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
 
+// 定义 followerInfo，同时监听 userInfo 的变化
 const followerInfo = reactive({
-  id: userStore.userInfo.user.followerId,
-  name: userStore.userInfo.user.name,
-  value: userStore.userInfo.user.totalInvestment,
-  profitLoss: userStore.userInfo.user.profitLoss,
+  id: userStore.userInfo?.user?.followerId || null,
+  name: userStore.userInfo?.user?.name || "N/A",
+  value: userStore.userInfo?.user?.totalInvestment || 0,
+  profitLoss: userStore.userInfo?.user?.profitLoss || 0,
   copying: 0,
-  following: Object.keys(userStore.userInfo.user.followedTraders).length,
+  following: userStore.userInfo?.user?.followingTraders ? Object.keys(userStore.userInfo.user.followingTraders).length : 0,
 });
+
+// 如果 userInfo 发生变化，动态更新 followerInfo 的值
+watch(
+  () => userStore.userInfo,
+  (newUserInfo) => {
+    followerInfo.id = newUserInfo?.user?.followerId || null;
+    followerInfo.name = newUserInfo?.user?.name || "N/A";
+    followerInfo.value = newUserInfo?.user?.totalInvestment || 0;
+    followerInfo.profitLoss = newUserInfo?.user?.profitLoss || 0;
+    followerInfo.following = newUserInfo?.user?.followingTraders ? Object.keys(newUserInfo.user.followingTraders).length : 0;
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -42,19 +56,20 @@ const followerInfo = reactive({
 </template>
 
 <style scoped>
+/* 样式保持不变 */
 .container {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 10px; /* Reduce padding to decrease container height */
-  padding-bottom: 20px; /* Add bottom padding to create space for the separator */
+  padding: 10px;
+  padding-bottom: 20px;
 }
 
 .left-section {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Align content at the top */
+  justify-content: flex-start;
 }
 
 .right-section {
@@ -79,9 +94,9 @@ const followerInfo = reactive({
 }
 
 .trade_information {
-  margin-top: 2px; /* Reduce top margin to control spacing */
-  margin-bottom: 0; /* Ensure no margin below the content */
-  padding-bottom: 0; /* Remove padding that might cause extra space */
+  margin-top: 2px;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .trade_information ul {
@@ -93,8 +108,9 @@ const followerInfo = reactive({
 .trade_information li {
   margin-right: 20px;
 }
+
 .highlight {
-  color: orange; /* Set text color to orange */
+  color: orange;
 }
 
 .trades ul {
@@ -108,10 +124,10 @@ const followerInfo = reactive({
 }
 
 .separator {
-  margin-top: -25px; /* Add space above the separator */
+  margin-top: -25px;
   border: 1px solid #ccc;
-  width: 100%; /* Set width to 100% */
-  margin-left: auto; /* Align separator to center */
-  margin-right: auto; /* Align separator to center */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

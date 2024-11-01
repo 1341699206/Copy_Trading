@@ -1,7 +1,6 @@
 package com.xtq_ymt.copy_trading_backend.interceptor;
 
-import java.util.Map;
-
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -13,9 +12,16 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
-    @SuppressWarnings("null")
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
+        // 获取请求的 URI
+        String uri = request.getRequestURI();
+
+        // 放行 Swagger UI 和 OpenAPI 文档路径
+        if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs")) {
+            return true;
+        }
+
         // 获取相关请求头信息
         String authorizationHeader = request.getHeader("Authorization");
         
@@ -26,8 +32,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             
             // 验证 token
             try {
-                @SuppressWarnings("unused")
-                Map<String, Object> claims = JwtUtil.parseToken(token);
+                JwtUtil.parseToken(token);
                 // 放行
                 return true;
             } catch (Exception e) {

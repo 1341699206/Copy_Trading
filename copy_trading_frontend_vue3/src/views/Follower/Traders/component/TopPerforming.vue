@@ -1,16 +1,19 @@
 <script setup>
 import { useTradersDataStore } from "@/stores/tradersData";
-import { onMounted } from "vue";
+import { onMounted,computed } from "vue";
 import TraderCard from "../component/TraderCard.vue";
 
-const tradersData = useTradersDataStore();
+const tradersDataStore = useTradersDataStore();
 
+const traders=computed(() => tradersDataStore.tradersData);
 //检索的数量
 const quantity = 10;
-
+console.log("页面正常启动")
 onMounted(() => {
-  tradersData.getTopTradersData(quantity);
+  tradersDataStore.getTopTradersData(quantity);
+  console.log(traders.value)
 });
+console.log(tradersDataStore.tradersData)
 
 const scrollList = (direction) => {
   const container = document.querySelector(".list");
@@ -30,7 +33,7 @@ const scrollList = (direction) => {
     <button @click="scrollList('left')" class="scroll-btn left">‹</button>
     <div class="list">
       <trader-card
-        v-for="item in tradersData.traders"
+        v-for="item in traders"
         :key="item.traderId"
         :item="item"
       ></trader-card>
@@ -57,7 +60,7 @@ const scrollList = (direction) => {
   display: flex;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  width: 80vw; /* 设置一个合适的宽度以便展示卡片 */
+  width: 95%; /* 设置一个合适的宽度以便展示卡片 */
 }
 
 .scroll-btn {

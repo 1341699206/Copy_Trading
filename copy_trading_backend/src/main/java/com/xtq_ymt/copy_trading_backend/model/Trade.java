@@ -116,4 +116,9 @@ public class Trade {
             }
         }
     }
+
+    // 添加 getProfitLoss 方法，确保返回 BigDecimal 类型
+    public BigDecimal getProfitLoss() {
+        return profitLoss != null ? profitLoss : BigDecimal.ZERO;
+    }
 }
