@@ -3,9 +3,7 @@ package com.xtq_ymt.copy_trading_backend.interceptor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
 import com.xtq_ymt.copy_trading_backend.utils.JwtUtil;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -17,8 +15,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 获取请求的 URI
         String uri = request.getRequestURI();
 
-        // 放行 Swagger UI 和 OpenAPI 文档路径
-        if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs")) {
+        // 放行特定路径
+        if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs") || uri.equals("/account/create") || uri.equals("/account/currencies")) {
             return true;
         }
 

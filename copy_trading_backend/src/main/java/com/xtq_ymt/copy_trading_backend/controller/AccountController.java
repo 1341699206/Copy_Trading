@@ -32,9 +32,11 @@ public class AccountController {
     // 创建账户
     @PostMapping("/create")
     public ResponseEntity<Result> createAccount(@RequestBody CreateAccountRequest accountRequest){
-        Result result=accountService.createAccount(accountRequest);
-        if(result.getCode()==0){
+        Result result = accountService.createAccount(accountRequest);
+        if(result.getCode() == 0){
             return ResponseEntity.status(400).body(result);
-        }else return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.ok(result);
+        }
     }
 }

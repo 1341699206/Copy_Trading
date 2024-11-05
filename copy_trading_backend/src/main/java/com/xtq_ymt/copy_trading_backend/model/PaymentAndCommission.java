@@ -1,8 +1,9 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.*; // 导入 JPA 注解
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -38,7 +39,7 @@ public class PaymentAndCommission {
     private String transactionId;
 
     @Column(name = "payment_date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentDate;
 
     // 修改为 BigDecimal，并使用 columnDefinition

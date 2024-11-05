@@ -34,7 +34,7 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
 
     private final Random random = new Random();
 
-    @Scheduled(fixedRate = 10000) // 单位毫秒
+    @Scheduled(fixedRate = 1000000000) // 单位毫秒
     @Override
     public void fetchAndStoreMarketData() {
         LocalDateTime currentTime = LocalDateTime.now();
@@ -42,9 +42,10 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
         for (String symbol : symbols) {
             try {
                 // 模拟生成价格数据
-                BigDecimal currentPrice = BigDecimal.valueOf(100 + (500 - 100) * random.nextDouble()).setScale(8, RoundingMode.HALF_UP);
-                BigDecimal highPrice = currentPrice.add(BigDecimal.valueOf(random.nextDouble() * 10)).setScale(8, RoundingMode.HALF_UP);
-                BigDecimal lowPrice = currentPrice.subtract(BigDecimal.valueOf(random.nextDouble() * 10)).setScale(8, RoundingMode.HALF_UP);
+                BigDecimal openPrice = BigDecimal.valueOf(100 + (500 - 100) * random.nextDouble()).setScale(8, RoundingMode.HALF_UP);
+                BigDecimal currentPrice = openPrice.add(BigDecimal.valueOf((random.nextDouble() - 0.5) * 20)).setScale(8, RoundingMode.HALF_UP); // 在开盘价格附近浮动
+                BigDecimal highPrice = currentPrice.max(openPrice).add(BigDecimal.valueOf(random.nextDouble() * 10)).setScale(8, RoundingMode.HALF_UP);
+                BigDecimal lowPrice = currentPrice.min(openPrice).subtract(BigDecimal.valueOf(random.nextDouble() * 10)).setScale(8, RoundingMode.HALF_UP);
                 BigDecimal volume = BigDecimal.valueOf(1000 + (5000 - 1000) * random.nextDouble()).setScale(8, RoundingMode.HALF_UP);
                 BigDecimal volatility = BigDecimal.valueOf(random.nextDouble()).setScale(8, RoundingMode.HALF_UP);
 
@@ -57,6 +58,7 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
                 }
 
                 // 更新 MarketData 实例
+                marketData.setOpenPrice(openPrice); // 设置开盘价格
                 marketData.setCurrentPrice(currentPrice);
                 marketData.setHighPrice(highPrice);
                 marketData.setLowPrice(lowPrice);
@@ -74,6 +76,7 @@ public class ImportExternalAssetInformationServiceImpl implements ImportExternal
                 marketDataHistory.setSymbol("Major FX");
                 marketDataHistory.setInstrument(symbol);
                 marketDataHistory.setPrice(currentPrice);
+                marketDataHistory.setOpenPrice(openPrice); // 设置历史数据的开盘价格
                 marketDataHistory.setHighPrice(highPrice);
                 marketDataHistory.setLowPrice(lowPrice);
                 marketDataHistory.setVolume(volume);

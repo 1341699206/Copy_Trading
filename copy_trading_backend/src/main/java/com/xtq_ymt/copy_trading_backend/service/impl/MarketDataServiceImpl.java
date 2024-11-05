@@ -34,27 +34,27 @@ public class MarketDataServiceImpl implements MarketDataService {
     @Override
     public List<MarketDataDTO> getMarketDataBySymbol(String symbol) {
         logger.info("Entering getMarketDataBySymbol with symbol: {}", symbol);
-        // 从 repository 获取 MarketData 列表，并转换为 MarketDataDTO
+
         List<MarketData> marketDataList = marketDataRepository.findBySymbol(symbol);
 
-        // 检查是否找到了数据
         if (marketDataList == null || marketDataList.isEmpty()) {
             logger.warn("No market data found for symbol: {}", symbol);
-            return List.of(); // 返回一个空列表，而不是 null
+            return List.of();
         }
 
         logger.info("Fetched {} market data records for symbol: {}", marketDataList.size(), symbol);
 
-        // 转换为 DTO 列表并返回
         return marketDataList.stream().map(marketData -> {
             logger.info("Processing market data for instrument: {}", marketData.getInstrument());
             return new MarketDataDTO(
                     marketData.getSymbol(),
                     marketData.getInstrument(),
+                    marketData.getOpenPrice(),        // 添加 openPrice 字段
                     marketData.getCurrentPrice(),
                     marketData.getHighPrice(),
                     marketData.getLowPrice(),
-                    marketData.getTimestamp());
+                    marketData.getTimestamp()
+            );
         }).collect(Collectors.toList());
     }
 
@@ -62,28 +62,27 @@ public class MarketDataServiceImpl implements MarketDataService {
     public List<MarketDataDTO> getAllAvailableMarketData() {
         logger.info("Entering getAllAvailableMarketData");
 
-        // 获取所有实时市场数据
         List<MarketData> marketDataList = marketDataRepository.findAll();
 
-        // 新增：打印 marketDataList
         logger.info("MarketData list fetched from database: {}", marketDataList);
         if (marketDataList == null || marketDataList.isEmpty()) {
             logger.warn("No market data found in the database.");
-            return List.of(); // 返回空列表
+            return List.of();
         }
 
         logger.info("Fetched {} market data records from database.", marketDataList.size());
 
-        // 转换为 DTO 列表并返回
         return marketDataList.stream().map(marketData -> {
             logger.info("Processing market data for instrument: {}", marketData.getInstrument());
             return new MarketDataDTO(
                     marketData.getSymbol(),
                     marketData.getInstrument(),
+                    marketData.getOpenPrice(),
                     marketData.getCurrentPrice(),
                     marketData.getHighPrice(),
                     marketData.getLowPrice(),
-                    marketData.getTimestamp());
+                    marketData.getTimestamp()
+            );
         }).collect(Collectors.toList());
     }
 
@@ -103,28 +102,29 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     @Override
     public Result getMarketDataDetail(String instrument, Integer timePeriod) {
-
         List<MarketDataHistory> marketDataDetail = new ArrayList<>();
         if (timePeriod == null || timePeriod == 0) {
             marketDataDetail = marketDataHistoryRepository.findByInstrumentOrderByTimestampAsc(instrument);
         } else {
-            // 查询历史的情况
-            LocalDateTime startDate = LocalDateTime.now().minusDays(timePeriod);// 当前日期减去指定天数
-            LocalDateTime endDate = LocalDateTime.now();// 当前时间（结束时间）
+            LocalDateTime startDate = LocalDateTime.now().minusDays(timePeriod);
+            LocalDateTime endDate = LocalDateTime.now();
 
             marketDataDetail = marketDataHistoryRepository
                     .findByInstrumentAndTimestampBetweenOrderByTimestampAsc(instrument, startDate, endDate);
         }
 
-        // 转化为DTO数据
         List<MarketDataHistoryDTO> marketDataHistory = new ArrayList<>();
         for (MarketDataHistory history : marketDataDetail) {
-            MarketDataHistoryDTO historyData = new MarketDataHistoryDTO(instrument, history.getPrice(),
-                    history.getOpenPrice(), history.getClosePrice(), history.getTimestamp());
+            MarketDataHistoryDTO historyData = new MarketDataHistoryDTO(
+                    instrument,
+                    history.getPrice(),
+                    history.getOpenPrice(),
+                    history.getClosePrice(),
+                    history.getTimestamp()
+            );
             marketDataHistory.add(historyData);
         }
 
-        //返回历史数据
         return Result.success("Obtaining instrument historical data succeeded.", marketDataHistory);
     }
 }

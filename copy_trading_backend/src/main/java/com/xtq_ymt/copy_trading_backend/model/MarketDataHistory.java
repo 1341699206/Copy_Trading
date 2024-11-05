@@ -3,6 +3,7 @@ package com.xtq_ymt.copy_trading_backend.model;
 import jakarta.persistence.*; // 导入 JPA 注解
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -50,9 +51,8 @@ public class MarketDataHistory {
     private BigDecimal volatility; // 市场波动率
 
     @Column(name = "timestamp") // 指定列名
-    @Temporal(TemporalType.TIMESTAMP) // 指定时间类型为时间戳
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp; // 该历史数据点的时间戳
 
     // Lombok 将自动生成 Getter、Setter、全参构造函数和无参构造函数
 }
-

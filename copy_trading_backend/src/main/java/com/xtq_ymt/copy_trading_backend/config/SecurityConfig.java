@@ -13,16 +13,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // 禁用 CSRF（如果需要）
-                .cors(cors -> cors.configure(http)) // 启用 CORS
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/register", "/api/login", "/api/register/countries",
-                                "/api/market-data/available", "/api/market-data/market", "/follower/traders",
-                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
-                        .permitAll() // 允许未认证的访问
-                        .requestMatchers("/ws/**").permitAll() // 允许 WebSocket 连接
-                        .anyRequest().authenticated() // 其他请求需要认证
-                );
+            .csrf(csrf -> csrf.disable()) // 禁用 CSRF（如果需要）
+            .cors(cors -> cors.configure(http)) // 启用 CORS
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/api/register", 
+                    "/api/login", 
+                    "/api/register/countries",
+                    "/api/market-data/available", 
+                    "/api/market-data/market", 
+                    "/follower/traders", 
+                    "/account/currencies",
+                    "/account/create", // 添加此行，允许未认证访问
+                    "/swagger-ui.html", 
+                    "/swagger-ui/**", 
+                    "/v3/api-docs/**"
+                ).permitAll() // 允许未认证的访问
+                .requestMatchers("/ws/**").permitAll() // 允许 WebSocket 连接
+                .anyRequest().authenticated() // 其他请求需要认证
+            );
         return http.build();
     }
 

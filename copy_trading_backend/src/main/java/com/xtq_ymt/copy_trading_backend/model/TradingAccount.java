@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import java.util.Date;
+import java.time.LocalDateTime; // 使用 LocalDateTime
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Getter
@@ -27,13 +28,20 @@ public class TradingAccount {
     @Column(name = "account_id")
     private Long accountId; // 账户唯一标识符
 
-    // 账户编号，唯一且不能为空
-    @Column(name = "account_number", unique = true, nullable = false)
+    // 账户名称，不能为空
+    @Column(name = "accountName", unique = false, nullable = false)
     private String accountNumber; // 账户编号
 
     // 账户类型，如 "模拟账户" 或 "真实账户"
     @Column(name = "account_type", nullable = false)
     private String accountType; // 账户类型
+    
+    @OneToMany(mappedBy = "traderAccount", cascade = CascadeType.ALL)
+    private List<Trade> trades; // 与 Trade 的关联
+
+    // 新增盈利占比字段
+    @Column(name = "win_rate", columnDefinition = "DECIMAL(5,2)")
+    private Double winRate; // 盈利占比
 
     // 关联的交易员，可为空
     @ManyToOne
@@ -65,7 +73,7 @@ public class TradingAccount {
     @Column(name = "free_margin", columnDefinition = "DECIMAL(18,2)", nullable = false)
     private BigDecimal freeMargin; // 可用保证金
 
-    @Column(name = "available_margin", columnDefinition = "DECIMAL(18,2)", nullable = false)
+    @Column(name = "available_margin", columnDefinition = "DECIMAL(18,2)", nullable = true)
     private BigDecimal availableMargin;
 
     // 账户状态，例如 "Active", "Closed", "Suspended"
@@ -95,32 +103,52 @@ public class TradingAccount {
 
     // 最后一次交易时间
     @Column(name = "last_trade_time")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastTradeTime; // 最后一次交易时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastTradeTime; // 最后一次交易时间
 
     // 创建时间，记录账户的创建时间
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt; // 创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt; // 创建时间
 
     // 更新时间，记录每次修改时的时间
     @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt; // 更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt; // 更新时间
 
     // 关联的跟随者与交易账户的多对多关系
     @ManyToMany(mappedBy = "followingAccounts")
     private List<Follower> followers; // 跟随该交易账户的追随者列表
 
+    // 计算盈利占比的方法
+    public void calculateWinRate() {
+        if (trades == null || trades.isEmpty()) {
+            this.winRate = 0.0;
+            return;
+        }
+
+        long closedTradesCount = trades.stream().filter(trade -> trade.getDateClose() != null).count();
+        if (closedTradesCount == 0) {
+            this.winRate = 0.0;
+            return;
+        }
+
+        long winningTradesCount = trades.stream()
+                .filter(trade -> trade.getDateClose() != null && trade.getProfitUsd().compareTo(BigDecimal.ZERO) > 0)
+                .count();
+
+        this.winRate = (double) winningTradesCount / closedTradesCount * 100;
+    }
+
     // 预存时自动设置创建时间
     @PrePersist
     protected void onCreate() {
-        this.createdAt = new Date();
+        this.createdAt = LocalDateTime.now();
     }
 
     // 更新时自动设置更新时间
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 }

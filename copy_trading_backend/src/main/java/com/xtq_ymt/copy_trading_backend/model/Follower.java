@@ -3,10 +3,11 @@ package com.xtq_ymt.copy_trading_backend.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;  // 更新：将 HashMap 改为 Map 接口
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.*;
@@ -59,14 +60,13 @@ public class Follower {
 
     // 注册日期，日期类型，映射到数据库中的日期格式
     @Column(name = "registration_date")
-    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")  // 使用 yyyy-MM-dd 格式来序列化和反序列化日期
     private LocalDate registrationDate;  // 追随者的注册日期
 
     // 是否活跃，默认为 true
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     @Builder.Default
     private Boolean isActive = true;  // 追随者是否活跃，默认为活跃
-
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(

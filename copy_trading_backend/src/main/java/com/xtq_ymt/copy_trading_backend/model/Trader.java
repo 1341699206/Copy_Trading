@@ -1,13 +1,11 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import jakarta.persistence.*; // 导入 JPA 注解
-
 import java.util.List;
 import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import java.time.LocalDateTime;
 import java.math.BigDecimal; // 导入 BigDecimal
 import lombok.Getter;
@@ -105,11 +103,11 @@ public class Trader {
     private BigDecimal leverage; // 杠杆倍数
 
     @Column(name = "last_open_trade_date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastOpenTradeDate; // 最后开仓交易的时间
 
     @Column(name = "last_updated_date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdatedDate; // 账户的最后更新日期
 
     @Column(name = "zulu_rank")
