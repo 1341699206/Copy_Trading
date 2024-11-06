@@ -1,0 +1,26 @@
+{
+    "content": [
+        {
+            "zuluAccountId": 2285494,
+            "brokerAccountId": 2112245,
+            "name": "VFX2112245F",
+            "publicAccount": true,
+            "publicPage": "follower/2112245",
+            "brokerId": 163,
+            "brokerName": "Vantage",
+            "countryCode": "FR",
+            "countryNameResourceId": "france",
+            "profitPips": 99.1,
+            "profitUsd": -4181.0,
+            "profitSharing": false,
+            "profileName": "VFX2112245F"
+        }
+    ],
+    "last": true,
+    "totalElements": 1,
+    "totalPages": 1,
+    "size": 1800,
+    "number": 0,
+    "first": true,
+    "numberOfElements": 1
+}

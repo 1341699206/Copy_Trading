@@ -6,6 +6,9 @@ import com.xtq_ymt.copy_trading_backend.model.Trade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,18 +16,25 @@ import java.util.List;
 @Component
 public class TradingAccountScheduler {
 
+    private static final Logger log = LoggerFactory.getLogger(TradingAccountScheduler.class);
+
     @Autowired
     private TradingAccountRepository tradingAccountRepository;
 
     // 定时任务：每隔10秒更新所有账户的winRate
     @Scheduled(fixedRate = 10000) // 10秒执行一次
+    @Transactional
     public void updateWinRates() {
         List<TradingAccount> accounts = tradingAccountRepository.findAll();
         
+        log.info("Starting win rate update for all accounts...");
+
         for (TradingAccount account : accounts) {
             calculateWinRate(account);
             tradingAccountRepository.save(account); // 保存更新后的 winRate
         }
+
+        log.info("Win rate update completed for all accounts.");
     }
 
     /**

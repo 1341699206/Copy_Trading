@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
@@ -56,6 +57,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     List<Trade> findByCurrency(String currency);
 
     // 批量关闭特定交易（修改 isOpen 字段）
+    @Transactional
     @Modifying
     @Query("UPDATE Trade t SET t.isOpen = false, t.dateClose = CURRENT_TIMESTAMP WHERE t.tradeId IN :tradeIds")
     void closeTradesByIds(@Param("tradeIds") List<Long> tradeIds);
@@ -128,5 +130,8 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
 
     // 查找特定交易账户中已平仓的交易（分页）
     Page<Trade> findByTraderAccount_AccountIdAndIsOpenFalse(Long accountId, Pageable pageable);
+
     List<Trade> findByTraderAccount_AccountIdAndIsOpenFalse(Long accountId);
+    
+    
 }

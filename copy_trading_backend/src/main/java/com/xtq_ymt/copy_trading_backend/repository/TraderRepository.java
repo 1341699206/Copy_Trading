@@ -2,6 +2,7 @@ package com.xtq_ymt.copy_trading_backend.repository;
 
 import com.xtq_ymt.copy_trading_backend.model.Trader;
 import com.xtq_ymt.copy_trading_backend.model.TradingAccount;
+import com.xtq_ymt.copy_trading_backend.model.Follower;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -95,4 +96,8 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     // 查找某个 Trader 的交易账户有哪些 Follower 的交易账户在跟随
     @Query("SELECT DISTINCT fa FROM TradingAccount fa JOIN fa.followers f JOIN f.tradingAccounts ta WHERE ta.trader = :trader")
     List<TradingAccount> findFollowerAccountsByTrader(@Param("trader") Trader trader);
+
+    // 查找某个 Trader 的所有跟随者并按收益降序排序（支持分页）
+    @Query("SELECT f FROM Trader t JOIN t.followersWhoFollowed f WHERE t.traderId = :traderId ORDER BY f.profitLoss DESC")
+    Page<Follower> findFollowersByTraderIdSortedByProfit(@Param("traderId") Long traderId, Pageable pageable);
 }
