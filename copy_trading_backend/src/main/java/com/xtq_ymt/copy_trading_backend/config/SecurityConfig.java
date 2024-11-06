@@ -27,7 +27,8 @@ public class SecurityConfig {
                     "/account/create", // 添加此行，允许未认证访问
                     "/swagger-ui.html", 
                     "/swagger-ui/**", 
-                    "/v3/api-docs/**"
+                    "/v3/api-docs/**",
+                    "/follower/trader/**"
                 ).permitAll() // 允许未认证的访问
                 .requestMatchers("/ws/**").permitAll() // 允许 WebSocket 连接
                 .anyRequest().authenticated() // 其他请求需要认证

@@ -25,10 +25,10 @@ const selectDays = (days) => {
 
 <template>
   <div class="container">
-    <ul>
+    <ul class="button-list">
       <li v-for="option in daysOptions" :key="option.value">
         <el-button
-          :type="selectedDays === option.value ? 'primary' : 'default'"
+          :type="selectedDays.value === option.value ? 'primary' : 'default'"
           @click="selectDays(option.value)"
         >
           {{ option.label }}

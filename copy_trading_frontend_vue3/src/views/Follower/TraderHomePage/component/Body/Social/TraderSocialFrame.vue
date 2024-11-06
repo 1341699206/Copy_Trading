@@ -1,4 +1,6 @@
 
 <template>
-    这是social
+    <div>
+        这是social
+    </div>
 </template>

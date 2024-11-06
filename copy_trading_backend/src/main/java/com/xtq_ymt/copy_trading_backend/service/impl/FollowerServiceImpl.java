@@ -59,7 +59,7 @@ public class FollowerServiceImpl implements FollowerService {
                     trader.getTraderId(),
                     trader.getName(),
                     trader.getROI(),
-                    trader.getFollowers(),
+                    Optional.ofNullable(trader.getFollowers()).orElse(0),
                     trader.getFollowersWhoFavorited().size(),
                     trader.getPerformance()
             );
@@ -84,8 +84,8 @@ public class FollowerServiceImpl implements FollowerService {
             TraderBasicInfoDTO traderBasicInfoDTO = new TraderBasicInfoDTO(
                 trader.getTraderId(),
                 trader.getName(),
-                trader.getROI(),
-                trader.getFollowers(),
+                Optional.ofNullable(trader.getROI()).orElse(BigDecimal.ZERO),
+                Optional.ofNullable(trader.getFollowers()).orElse(0),
                 winRate
             );
             return Result.success("Trader basic info retrieved successfully.", traderBasicInfoDTO);
@@ -147,10 +147,10 @@ public class FollowerServiceImpl implements FollowerService {
         traderDTO.setTraderId(trader.getTraderId());
         traderDTO.setProfit(totalProfit);
         traderDTO.setTrades(closedTrades);
-        traderDTO.setMaxOpenTrades(trader.getMaxOpenTrades());
+        traderDTO.setMaxOpenTrades(trader.getMaxOpenTrades() != null ? trader.getMaxOpenTrades() : 0); 
         traderDTO.setAvgProfit(avgProfit);
         traderDTO.setWinTrades(winTrades);
-        traderDTO.setRecommendedMinInvestment(calculateRecommendedInvestment(trader));
+        traderDTO.setRecommendedMinInvestment(BigDecimal.ZERO);
         traderDTO.setMaxDrawDown(trader.getMaximumDrawdown());
         traderDTO.setAvgTradeTime(avgTradeTime);
         traderDTO.setAvgPips(avgPips);
@@ -159,7 +159,4 @@ public class FollowerServiceImpl implements FollowerService {
         return Result.success("Trader detailed info retrieved successfully.", traderDTO);
     }
 
-    private BigDecimal calculateRecommendedInvestment(Trader trader) {
-        return trader.getAmountFollowing().divide(BigDecimal.valueOf(trader.getFollowers()), RoundingMode.HALF_UP);
-    }
 }

@@ -14,7 +14,7 @@ const traderId = computed(() => props.traderBasicInf?.traderId);
 </script>
 
 <template>
-  <div>
+  <div v-if="traderBasicInf">
     <trader-introduce :id="traderId"></trader-introduce>
     <overview-chart :trader-basic-inf="traderBasicInf"></overview-chart>
   </div>

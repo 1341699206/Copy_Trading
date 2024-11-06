@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.xtq_ymt.copy_trading_backend.Result.Result;
 import com.xtq_ymt.copy_trading_backend.service.FollowerService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
+@Slf4j
 @RequestMapping("/follower")
-@CrossOrigin(origins = "http://localhost:8081")  
+@CrossOrigin(origins = "http://localhost:8081")
 public class FollowerController {
 
     @Autowired
@@ -26,7 +29,7 @@ public class FollowerController {
     public ResponseEntity<Result> getTradersData(
             @RequestParam Integer quantity,
             @RequestParam(required = false) Integer timePeriod) { // timePeriod 为可选参数
-        
+
         Result result = followerService.getTopTradersData(quantity, timePeriod);
         if (result.getCode() == 1) {
             return ResponseEntity.ok(result);
@@ -40,7 +43,6 @@ public class FollowerController {
     public ResponseEntity<Result> getTraderInfo(
             @PathVariable Long id,
             @RequestParam(required = false) Integer timePeriod) { // timePeriod 可选
-
         Result result;
         if (timePeriod != null) {
             result = followerService.getTraderDetailedInfo(id, timePeriod); // 获取详细信息

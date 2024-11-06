@@ -16,7 +16,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         String uri = request.getRequestURI();
 
         // 放行特定路径
-        if (uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs") || uri.equals("/account/create") || uri.equals("/account/currencies")) {
+        if (uri.startsWith("/follower/trader/") || uri.startsWith("/swagger-ui/") || uri.startsWith("/v3/api-docs") || uri.equals("/account/create") || uri.equals("/account/currencies")) {
             return true;
         }
 

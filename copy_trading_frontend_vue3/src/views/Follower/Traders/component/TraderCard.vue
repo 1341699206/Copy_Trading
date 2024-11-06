@@ -30,7 +30,7 @@ const formattedROI = computed(() => {
 
 <template>
   <div @click="goToTraderPage" class="clickable-card">
-    <div class="container" @click.stop>
+    <div class="container">
       <div class="avatar"></div>
       <div class="name">{{ item.name }}</div>
       <el-icon class="collection" @click.stop="collect"><Star /></el-icon>
@@ -45,6 +45,9 @@ const formattedROI = computed(() => {
 </template>
 
 <style scoped lang="scss">
+.clickable-card {
+  cursor: pointer;
+}
 .container {
   display: flex;
   flex-direction: column;

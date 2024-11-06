@@ -30,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
                 "/account/create", // 确保未拦截 /account/create
                 "/swagger-ui/**", 
                 "/v3/api-docs/**", 
-                "/v3/api-docs"
+                "/v3/api-docs",
+                "/follower/trader/**"
             ); // 放行 Swagger 相关路径
     }
 

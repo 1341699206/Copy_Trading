@@ -8,12 +8,9 @@ const tradersDataStore = useTradersDataStore();
 const traders=computed(() => tradersDataStore.tradersData);
 //检索的数量
 const quantity = 10;
-console.log("页面正常启动")
 onMounted(() => {
   tradersDataStore.getTopTradersData(quantity);
-  console.log(traders.value)
 });
-console.log(tradersDataStore.tradersData)
 
 const scrollList = (direction) => {
   const container = document.querySelector(".list");

@@ -10,46 +10,47 @@ defineProps({
 </script>
 
 <template>
-  <div class="name">
-    <ul>
-      <li>{{ item.currency }}</li>
-      <li>
-        <div class="time">{{ item.dateOpen }}</div>
-        <div class="type">{{ item.type }}</div>
-      </li>
-    </ul>
+  <div class="item">
+    <div class="name">
+      <ul>
+        <li>{{ item.currency }}</li>
+        <li>
+          <div class="time">{{ item.dateOpen }}</div>
+          <div :class="['type', item.type]">{{ item.type }}</div>
+        </li>
+      </ul>
+    </div>
+    <div class="DataClosed">{{ item.dateClose }}</div>
+    <div class="STDLots">{{ item.standardLots }}</div>
+    <div class="OpenClose">
+      <ul>
+        <li class="open">{{ item.priceOpen }}</li>
+        <li class="close">{{ item.priceClose }}</li>
+      </ul>
+    </div>
+    <div class="High">{{ item.highestProfit }}</div>
+    <div class="Low">{{ item.worstDrawdown }}</div>
+    <div class="Roll">{{ item.interest }}</div>
+    <div :class="['Profit', item.profit > 0 ? 'profit-positive' : 'profit-negative']">
+      ${{ item.profit }}<br />
+      <span :class="item.profit > 0 ? 'pips-positive' : 'pips-negative'">{{ item.pips }} pips</span>
+    </div>
+    <div class="Total">${{ item.total }}<br />{{ item.totalPips }} pips</div>
   </div>
-  <div class="DataClosed">{{ item.dateClose }}</div>
-  <div class="STDLots">{{ item.standardLots }}</div>
-  <div class="Open/Close">
-    <ul>
-      <li class="open">{{ item.priceOpen }}</li>
-      <li class="close">{{ item.priceClose }}</li>
-    </ul>
-  </div>
-  <div class="High">{{ item.highestProfit }}</div>
-  <div class="Low">{{ item.worstDrawdown }}</div>
-  <div class="Roll">{{ item.interest }}</div>
-  <div class="Profit">
-    <ul>
-        <li>{{item.profit}}</li>
-    </ul>
-  </div>
-  <div class="Total"></div>
 </template>
 
 <style lang="scss" scoped>
 .item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 2fr 1fr 1fr 1fr 2fr 2fr;
   padding: 10px;
   border-bottom: 1px solid #eee;
   align-items: center;
   font-size: 0.9rem;
   color: #333;
+  gap: 1rem;
 
-  // 币种与开仓信息
   .name {
-    flex: 2;
     ul {
       list-style: none;
       padding: 0;
@@ -84,28 +85,22 @@ defineProps({
     }
   }
 
-  // 平仓时间
-  .DataClosed {
-    flex: 2;
-    font-size: 0.8rem;
-    color: #888;
+  .DataClosed,
+  .STDLots,
+  .High,
+  .Low,
+  .Roll,
+  .Profit,
+  .Total {
     text-align: center;
   }
 
-  // 标准手数
-  .STDLots {
-    flex: 1;
-    text-align: center;
-  }
-
-  // 开盘/收盘价格
   .OpenClose {
-    flex: 2;
     ul {
       list-style: none;
       padding: 0;
       margin: 0;
-      text-align: right;
+      text-align: center;
       li {
         &:first-child {
           font-weight: bold;
@@ -119,46 +114,25 @@ defineProps({
     }
   }
 
-  // 最高盈利
-  .High {
-    flex: 1;
-    color: #4caf50;
-    font-weight: bold;
-    text-align: right;
-  }
-
-  // 最差回撤
-  .Low {
-    flex: 1;
-    color: #f44336;
-    font-weight: bold;
-    text-align: right;
-  }
-
-  // 利息
-  .Roll {
-    flex: 1;
-    text-align: center;
-    color: #333;
-  }
-
-  // 盈利
   .Profit {
-    flex: 2;
-    text-align: right;
+    text-align: center;
     font-weight: bold;
-    color: #4caf50;
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .pips-positive {
+      color: #4caf50;
+    }
+    .pips-negative {
+      color: #f44336;
+    }
+    &.profit-positive {
+      color: #4caf50;
+    }
+    &.profit-negative {
+      color: #f44336;
     }
   }
 
-  // 总利润
   .Total {
-    flex: 2;
-    text-align: right;
+    text-align: center;
     font-weight: bold;
     color: #333;
   }

@@ -88,24 +88,24 @@ export const getTraderDetailInf=({id,timePeriod}) =>{
 }
 
 // 获取某个交易的所有完成的交易数据
-export const getTraderTradesHistory=({id})=>{
-    const url=`/follower/trader/${id}/tradesHistory`
+export const getTraderTradesHistory=({id,pageSize,currentPage})=>{
+    const url=`/follower/trader/${id}/tradesHistory?pageSize=${pageSize}&currentPage=${currentPage}`
     return request({
         url:url
     })
 }
 
 // 获取某个交易的进行中的交易数据
-export const getTraderOpenPosition=({id})=>{
-    const url=`/follower/trader/${id}/openPosition`
+export const getTraderOpenPosition=({id,pageSize,currentPage})=>{
+    const url=`/follower/trader/${id}/openPosition?pageSize=${pageSize}&currentPage=${currentPage}`
     return request({
         url:url
     })
 }
 
 // 获取跟随该交易者的所有copiers
-export const getTraderCopiers=(id)=>{
-    const url=`/follower/trader/${id}/copiers`
+export const getTraderCopiers=({id,currentPage})=>{
+    const url=`/follower/trader/${id}/copiers?currentPage=${currentPage}`
     return request({
         url:url
     })

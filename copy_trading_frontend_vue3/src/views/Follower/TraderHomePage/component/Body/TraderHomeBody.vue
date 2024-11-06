@@ -15,11 +15,12 @@ defineProps({
 </script>
 
 <template>
-  <div>
+  <div v-if="traderBasicInf" class="parent-container">
     <trader-home-nav
       @update-content="selectedItem = $event"
+      class="nav-bar"
     ></trader-home-nav>
-    <div class="frame-container">
+    <div class="frame-container" >
       <trader-display-frame
         :content="selectedItem"
         :trader-basic-inf="traderBasicInf" 
@@ -39,7 +40,7 @@ defineProps({
 
 .left-side {
   flex: 7; /* 左侧占3份宽度 */
-  height: 430px;
+  height: 800px;
   border: 2px solid #4caf50; /* 绿色边框 */
   padding: 10px; /* 内边距 */
   margin-right: 40px; /* 增加左右两部分之间的距离 */
