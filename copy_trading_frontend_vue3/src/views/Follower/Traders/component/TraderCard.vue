@@ -21,11 +21,6 @@ const collect=()=>{
 
 }
 
-// 计算百分比格式的 ROI
-const formattedROI = computed(() => {
-  const roi = props.item.ROI ?? 0;
-  return `${(roi * 100).toFixed(2)}%`; // 转换为百分比并保留两位小数
-});
 </script>
 
 <template>

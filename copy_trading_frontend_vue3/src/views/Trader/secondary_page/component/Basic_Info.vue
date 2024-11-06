@@ -2,8 +2,8 @@
   <div class="basic-info-container">
     <!-- Trader头像和账户信息 -->
     <div class="trader-info">
-      <img v-if="userLoggedIn" :src="userAvatar" alt="Trader Avatar" class="avatar"/>
-      <h2 v-if="userLoggedIn">{{ firstName }} {{ lastName }}</h2>
+      <img v-if="userLoggedIn" :src="userAvatar" alt="Trader Avatar" class="avatar" />
+      <h2 v-if="userLoggedIn">{{ name }}</h2>
       <select v-if="userLoggedIn" class="trader-type" @change="handleAccountChange">
         <option v-for="account in traderAccounts" :key="account.id" :value="account.id">{{ account.name }}</option>
       </select>
@@ -20,20 +20,31 @@
         <h3>{{ stat.value }}</h3>
       </div>
       <button class="funds-button">Funds</button>
+
+      <!-- 新增的“创建交易账户”按钮 -->
+      <button class="create-account-button" @click="openDialog">创建交易账户</button>
     </div>
+
+    <!-- 账户创建对话框 -->
+    <AccountDialog :show="showDialog" @close="closeDialog" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
+import { useUserStore } from '@/stores/user';
 
-const userLoggedIn = ref(false);
-const userAvatar = ref('');
-const firstName = ref('');
-const lastName = ref('');
-const traderAccounts = ref([]);
-const selectedAccount = ref(null);
+const userStore = useUserStore();
+const router = useRouter();
+
+const userLoggedIn = computed(() => !!userStore.userInfo.user);
+const userAvatar = computed(() => generateAvatar(userStore.userInfo.user?.name || 'User'));
+const name = computed(() => userStore.userInfo.user?.name || 'N/A');
+const traderAccounts = computed(() => userStore.userInfo.user?.tradingAccounts || []);
+const showDialog = ref(false); // 控制弹窗显示
+
 const stats = ref([
   { label: 'Amount Following', value: '-' },
   { label: 'Investors', value: '0' },
@@ -48,29 +59,48 @@ const stats = ref([
   { label: 'Free Margin', value: '$0.00' },
 ]);
 
-const router = useRouter();
+// 获取用户基础信息并检查账户
+const fetchUserInfo = async () => {
+  try {
+    await userStore.getUserInfo(); // 从userStore获取用户信息
+    console.log("Fetched user info:", userStore.userInfo);
 
-// 模拟从后端获取用户信息
-onMounted(() => {
-  // 假设从后端获取登录状态及用户信息
-  const userInfo = getUserInfoFromBackend(); // 模拟API调用
-  if (userInfo) {
-    userLoggedIn.value = true;
-    firstName.value = userInfo.firstName;
-    lastName.value = userInfo.lastName;
-    userAvatar.value = userInfo.avatar;
-    traderAccounts.value = userInfo.accounts;
-    selectedAccount.value = userInfo.accounts[0]; // 默认选择第一个账户
-    updateStats(selectedAccount.value); // 更新账户的统计数据
+    // 检查是否需要弹出账户创建弹窗
+    if (traderAccounts.value.length === 0) {
+      showDialog.value = true; // 显示弹窗
+    } else {
+      // 如果有账户，更新第一个账户的信息
+      updateStats(traderAccounts.value[0]);
+    }
+  } catch (error) {
+    console.error("Failed to fetch user info:", error);
   }
-});
+};
 
+// 打开创建账户对话框
+const openDialog = () => {
+  showDialog.value = true;
+};
+
+// 关闭对话框
+const closeDialog = () => {
+  showDialog.value = false;
+};
+
+// 头像生成逻辑
+const generateAvatar = (userName) => {
+  const firstChar = userName.charAt(0).toUpperCase();
+  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="white"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="36" fill="black">${firstChar}</text></svg>`;
+};
+
+// 账户选择变化处理
 const handleAccountChange = (event) => {
   const accountId = event.target.value;
   const account = traderAccounts.value.find(acc => acc.id === accountId);
-  updateStats(account); // 根据选择的账户更新展示数据
+  if (account) updateStats(account);
 };
 
+// 更新统计数据
 const updateStats = (account) => {
   stats.value = [
     { label: 'Amount Following', value: account.amountFollowing || '-' },
@@ -79,11 +109,11 @@ const updateStats = (account) => {
     { label: 'Rank (Europe)', value: account.rankEurope || '-' },
     { label: 'Rank (USA)', value: account.rankUSA || '-' },
     { label: 'Rank (Japan)', value: account.rankJapan || '-' },
-    { label: 'Equity', value: `$${account.equity.toFixed(2)}` || '$0.00' },
-    { label: 'Balance', value: `$${account.balance.toFixed(2)}` || '$0.00' },
-    { label: 'Realized PNL', value: `$${account.realizedPNL.toFixed(2)}` || '$0.00' },
-    { label: 'Margin', value: `${account.marginPercent.toFixed(2)}% (${account.margin.toFixed(2)})` || '0.00% (0%)' },
-    { label: 'Free Margin', value: `$${account.freeMargin.toFixed(2)}` || '$0.00' },
+    { label: 'Equity', value: `$${account.equity?.toFixed(2) || '0.00'}` },
+    { label: 'Balance', value: `$${account.balance?.toFixed(2) || '0.00'}` },
+    { label: 'Realized PNL', value: `$${account.realizedPNL?.toFixed(2) || '0.00'}` },
+    { label: 'Margin', value: `${account.marginPercent?.toFixed(2) || '0.00'}% (${account.margin?.toFixed(2) || '0'})` },
+    { label: 'Free Margin', value: `$${account.freeMargin?.toFixed(2) || '0.00'}` },
   ];
 };
 
@@ -92,23 +122,14 @@ const redirectToLogin = () => {
   router.push('/login');
 };
 
-// 模拟从后端获取用户信息的函数
-const getUserInfoFromBackend = () => {
-  // 这里可以使用 Axios 或 Fetch 发起请求
-  // 示例：返回模拟的数据
-  return {
-    firstName: 'JQ',
-    lastName: 'Ethan',
-    avatar: 'path_to_avatar',
-    accounts: [
-      { id: 1, name: 'Demo Account 1', amountFollowing: '-', investors: 0, rankAll: '-', rankEurope: '-', rankUSA: '-', rankJapan: '-', equity: 5000, balance: 5000, realizedPNL: 0, marginPercent: 0, margin: 0, freeMargin: 5000 },
-      { id: 2, name: 'Real Account', amountFollowing: 10000, investors: 5, rankAll: 1, rankEurope: 1, rankUSA: 2, rankJapan: 3, equity: 100000, balance: 90000, realizedPNL: 10000, marginPercent: 2, margin: 2000, freeMargin: 98000 }
-    ]
-  };
-};
+// 生命周期钩子
+onMounted(() => {
+  fetchUserInfo(); // 页面加载时获取用户信息并检查是否需要显示创建账户弹窗
+});
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .basic-info-container {
   display: flex;
   justify-content: space-between;
@@ -182,5 +203,19 @@ const getUserInfoFromBackend = () => {
 
 .login-button:hover {
   background-color: #2980b9;
+}
+
+.create-account-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.create-account-button:hover {
+  background-color: #218838;
 }
 </style>

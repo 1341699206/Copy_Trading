@@ -1,4 +1,4 @@
-package com.xtq_ymt.copy_trading_backend.service.impl;
+/*package com.xtq_ymt.copy_trading_backend.service.impl;
 
 import com.xtq_ymt.copy_trading_backend.model.*;
 import com.xtq_ymt.copy_trading_backend.repository.*;
@@ -45,7 +45,7 @@ public class TradeSimulationService {
 
     /**
      * 为每个Trader生成交易记录并更新CopyTrading跟单数据
-     */
+     
     @Transactional
     public void generateTradesAndCopyTrading() {
         logger.info("开始生成交易和跟单数据");
@@ -100,7 +100,7 @@ public class TradeSimulationService {
 
     /**
      * 创建交易记录
-     */
+     
     private Trade createTrade(Trader trader, TradingAccount account, boolean isOriginalTrade) {
         Trade trade = new Trade();
         trade.setTraderAccount(account);
@@ -140,7 +140,8 @@ public class TradeSimulationService {
 
     /**
      * 获取或创建CopyTrading跟单记录
-     */
+     
+    
     private CopyTrading getOrCreateCopyTrading(Follower follower, Trader trader, TradingAccount followerAccount) {
         Optional<CopyTrading> optionalCopyTrading = copyTradingRepository
                 .findByFollowerFollowerIdAndTraderTraderIdAndFollowerAccountAccountId(
@@ -167,7 +168,7 @@ public class TradeSimulationService {
 
     /**
      * 计算收益或损失
-     */
+     
     private BigDecimal calculateProfitLoss(BigDecimal openPrice, BigDecimal closePrice, BigDecimal volume) {
         BigDecimal profitLoss = closePrice.subtract(openPrice).multiply(volume);
         logger.info("计算收益/损失: 开盘价={}, 收盘价={}, 成交量={}, 盈亏={} ", openPrice, closePrice, volume, profitLoss);
@@ -176,7 +177,7 @@ public class TradeSimulationService {
 
     /**
      * 更新CopyTrading的收益和损失信息
-     */
+     
     private void updateCopyTradingResults(CopyTrading copyTrading, Trade trade) {
         BigDecimal newProfit = copyTrading.getTotalProfit().add(trade.getProfitLoss());
         copyTrading.setTotalProfit(newProfit);
@@ -192,7 +193,7 @@ public class TradeSimulationService {
 
     /**
      * 生成随机价格
-     */
+     
     private BigDecimal generateRandomPrice() {
         BigDecimal price = BigDecimal.valueOf(1.10 + (1.30 - 1.10) * random.nextDouble()).setScale(5,
                 RoundingMode.HALF_UP);
@@ -200,3 +201,5 @@ public class TradeSimulationService {
         return price;
     }
 }
+
+*/

@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 public class TradeServiceImpl implements TradeService {
@@ -33,8 +34,11 @@ public class TradeServiceImpl implements TradeService {
         TradingAccount account = tradingAccountRepository.findById(request.getAccountId())
                 .orElseThrow(() -> new IllegalArgumentException("交易账户未找到"));
 
+        // 从账户中获取杠杆
+        BigDecimal leverage = account.getLeverage();
+
         // 检查保证金是否足够
-        BigDecimal requiredMargin = calculateRequiredMargin(request.getVolume(), request.getLeverage());
+        BigDecimal requiredMargin = calculateRequiredMargin(request.getVolume(), leverage);
         if (account.getFreeMargin().compareTo(requiredMargin) < 0) {
             throw new IllegalArgumentException("保证金不足以开仓");
         }
@@ -45,15 +49,14 @@ public class TradeServiceImpl implements TradeService {
         // 创建交易记录
         Trade trade = new Trade();
         trade.setTraderAccount(account);
-        trade.setInstrument(request.getInstrument());
-        trade.setOpenPrice(openPrice);
-        trade.setOpenTime(new Date());
-        trade.setIsOpen(true);
-        trade.setVolume(request.getVolume());
-        trade.setLeverage(request.getLeverage());
-        trade.setTradeNature(TradeNature.ORIGINAL);
-        trade.setTradeActionType(request.getActionType());
-        trade.setMarginUsed(requiredMargin);
+        trade.setCurrency(request.getInstrument()); // 使用 Currency 字段
+        trade.setPriceOpen(openPrice); // 使用 Price_Open 字段
+        trade.setDateOpen(LocalDateTime.now(ZoneId.systemDefault())); // 使用 LocalDateTime 类型的 Date_Open 字段
+        trade.setType(request.getActionType()); // 使用 Type 字段
+        trade.setStandardLots(request.getVolume()); // 使用 Standard_Lots 字段
+        trade.setProfitUsd(BigDecimal.ZERO); // 初始化利润为 0
+        trade.setProviderTicket("sample_ticket"); // 示例票据编号，实际可根据需求生成
+        trade.setBrokerTicket("sample_broker_ticket"); // 示例经纪商票据编号
 
         // 保存交易记录
         tradeRepository.save(trade);
@@ -72,27 +75,27 @@ public class TradeServiceImpl implements TradeService {
         Trade trade = tradeRepository.findById(request.getTradeId())
                 .orElseThrow(() -> new IllegalArgumentException("交易未找到"));
 
-        if (!trade.getIsOpen()) {
+        // 确认交易是开放状态
+        if (trade.getDateClose() != null) {
             throw new IllegalArgumentException("该交易已被关闭");
         }
 
         // 获取当前市场价格
-        BigDecimal closePrice = marketDataService.getCurrentPrice(trade.getInstrument());
+        BigDecimal closePrice = marketDataService.getCurrentPrice(trade.getCurrency());
 
         // 更新交易记录
-        trade.setClosePrice(closePrice);
-        trade.setCloseTime(new Date());
-        trade.setIsOpen(false);
+        trade.setPriceClose(closePrice); // 使用 Price_Close 字段
+        trade.setDateClose(LocalDateTime.now(ZoneId.systemDefault())); // 使用 LocalDateTime 类型的 Date_Close 字段
 
         // 计算盈利或亏损
-        BigDecimal profitLoss = calculateProfitLoss(trade.getOpenPrice(), closePrice, trade.getVolume());
-        trade.setProfitLoss(profitLoss);
+        BigDecimal profitLoss = calculateProfitLoss(trade.getPriceOpen(), closePrice, trade.getStandardLots());
+        trade.setProfitUsd(profitLoss); // 使用 Profit_USD 字段
         tradeRepository.save(trade);
 
         // 更新账户余额
         TradingAccount account = trade.getTraderAccount();
         account.setBalance(account.getBalance().add(profitLoss));
-        account.setFreeMargin(account.getFreeMargin().add(trade.getMarginUsed()));
+        account.setFreeMargin(account.getFreeMargin().add(trade.getStandardLots())); // 释放保证金
         tradingAccountRepository.save(account);
 
         return trade;

@@ -1,6 +1,5 @@
 package com.xtq_ymt.copy_trading_backend.repository;
 
-
 import com.xtq_ymt.copy_trading_backend.model.TradingAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
@@ -38,16 +37,16 @@ public interface TradingAccountRepository extends JpaRepository<TradingAccount, 
      * @param traderId 交易员的 ID
      * @return 关联到该 Trader ID 的交易账户列表
      */
-    List<TradingAccount> findByTrader_TraderId(Long traderId); // 使用属性导航符号 "_"
-    
+    List<TradingAccount> findByTrader_TraderId(Long traderId);
+
     /**
      * 根据 Follower ID 查找关联的交易账户
      * 
      * @param followerId 跟随者的 ID
      * @return 关联到该 Follower ID 的交易账户列表
      */
-    List<TradingAccount> findByFollower_FollowerId(Long followerId); // 使用属性导航符号 "_"
-    
+    List<TradingAccount> findByFollower_FollowerId(Long followerId);
+
     /**
      * 根据 API Key 查找唯一的交易账户
      * 
@@ -55,7 +54,7 @@ public interface TradingAccountRepository extends JpaRepository<TradingAccount, 
      * @return 与给定 API Key 对应的交易账户
      */
     Optional<TradingAccount> findByApiKey(String apiKey);
-    
+
     /**
      * 根据账户编号查找交易账户
      * 

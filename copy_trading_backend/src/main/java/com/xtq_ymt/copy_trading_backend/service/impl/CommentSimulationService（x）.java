@@ -1,3 +1,4 @@
+/*
 package com.xtq_ymt.copy_trading_backend.service.impl;
 
 import com.xtq_ymt.copy_trading_backend.model.SocialFeatures;
@@ -29,7 +30,7 @@ public class CommentSimulationService {
 
     /**
      * Generates random comments for traders and their followers.
-     */
+     
     public void generateRandomComments() {
         List<Trader> traders = traderRepository.findAll();
         List<Follower> followers = followerRepository.findAll();
@@ -47,7 +48,7 @@ public class CommentSimulationService {
 
     /**
      * Generates random comments made by traders themselves.
-     */
+     
     private void generateTraderComments(Trader trader, String[] sampleComments) {
         for (int i = 0; i < 3; i++) {
             SocialFeatures comment = new SocialFeatures();
@@ -62,7 +63,7 @@ public class CommentSimulationService {
 
     /**
      * Generates random comments made by followers on traders.
-     */
+     
     private void generateFollowerComments(Trader trader, List<Follower> followers, String[] sampleComments) {
         for (int j = 0; j < 5; j++) {
             Follower follower = followers.get(random.nextInt(followers.size()));
@@ -78,3 +79,5 @@ public class CommentSimulationService {
         }
     }
 }
+
+*/

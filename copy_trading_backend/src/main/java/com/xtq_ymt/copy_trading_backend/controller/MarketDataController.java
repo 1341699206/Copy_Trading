@@ -27,11 +27,11 @@ public class MarketDataController {
     @GetMapping
     public Result getMarketData(@RequestParam String symbol) {
         logger.info("Received request to get market data for symbol: {}", symbol);
-        List<MarketDataDTO> dataList = marketDataService.getMarketDataBySymbol(symbol); // 更新为返回 List
+        List<MarketDataDTO> dataList = marketDataService.getMarketDataBySymbol(symbol); // 返回包含 openPrice 的数据
         if (dataList != null && !dataList.isEmpty()) {
             logger.info("Successfully fetched market data for symbol: {}", symbol);
-            logger.debug("Market data list details: {}", dataList);
-            return Result.success("Data fetched successfully", dataList); // 返回 List
+            logger.debug("Market data list details with openPrice: {}", dataList); // 包含 openPrice 信息
+            return Result.success("Data fetched successfully", dataList);
         } else {
             logger.warn("No data found for symbol: {}", symbol);
             return Result.error("No data found for symbol: " + symbol);
@@ -42,12 +42,12 @@ public class MarketDataController {
     @GetMapping("/available")
     public Result getAllAvailableMarketData() {
         logger.info("Received request to get all available market data");
-        List<MarketDataDTO> dataList = marketDataService.getAllAvailableMarketData();
+        List<MarketDataDTO> dataList = marketDataService.getAllAvailableMarketData(); // 返回包含 openPrice 的数据
         logger.info("After calling marketDataService.getAllAvailableMarketData()");
-        logger.debug("Data list received by Controller: {}", dataList);
+        logger.debug("Data list with openPrice received by Controller: {}", dataList);
         if (!dataList.isEmpty()) {
             logger.info("Successfully fetched all available market data");
-            logger.debug("Market data list details: {}", dataList);
+            logger.debug("Market data list details with openPrice: {}", dataList);
             Result result = Result.success("Available market data fetched successfully", dataList);
             logger.debug("Result object to be returned: {}", result);
             return result;
@@ -62,9 +62,11 @@ public class MarketDataController {
     public ResponseEntity<Result> getMarketData(
             @RequestParam(name = "id") String instrument,
             @RequestParam(name = "timePeriod", required = false) Integer timePeriod) {
-        Result result=marketDataService.getMarketDataDetail(instrument,timePeriod);
-        if(result.getCode()==0) return ResponseEntity.status(400).body(result);
-        else return ResponseEntity.ok(result);
+        Result result = marketDataService.getMarketDataDetail(instrument, timePeriod); // 返回包含 openPrice 的数据
+        if (result.getCode() == 0) {
+            return ResponseEntity.status(400).body(result);
+        } else {
+            return ResponseEntity.ok(result);
+        }
     }
-    
 }

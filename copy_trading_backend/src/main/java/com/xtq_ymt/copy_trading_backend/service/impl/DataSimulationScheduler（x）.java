@@ -1,3 +1,4 @@
+/*
 package com.xtq_ymt.copy_trading_backend.service.impl;
 
 import com.xtq_ymt.copy_trading_backend.service.ImportExternalAssetInformationService;
@@ -28,3 +29,5 @@ public class DataSimulationScheduler {
         commentSimulationService.generateRandomComments();
     }
 }
+
+*/

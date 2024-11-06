@@ -3,8 +3,6 @@ package com.xtq_ymt.copy_trading_backend.repository;
 import com.xtq_ymt.copy_trading_backend.model.Trader;
 import com.xtq_ymt.copy_trading_backend.model.TradingAccount;
 
-import java.time.LocalDate;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -63,14 +61,12 @@ public interface TraderRepository extends JpaRepository<Trader, Long> {
     @Query("SELECT t FROM Trader t ORDER BY t.ROI DESC")
     List<Trader> findTopByOrderByROIDesc(Pageable pageable);
 
-    //暂时未处理的待定逻辑
-
-    // // 查找特定时间段内回报率（ROI）排序前 n 的交易者
-    // @Query("SELECT t FROM Trader t WHERE t.date >= :startDate AND t.date <= :endDate ORDER BY t.roi DESC")
-    // List<Trader> findTopByOrderByROIDesc(
-    //         @Param("startDate") LocalDate startDate,
-    //         @Param("endDate") LocalDate endDate,
-    //         Pageable pageable);
+    // 查找特定时间段内回报率（ROI）排序前 n 的交易者
+    @Query("SELECT t FROM Trader t WHERE t.lastUpdatedDate BETWEEN :startDate AND :endDate ORDER BY t.ROI DESC")
+    List<Trader> findTopByROIDescWithinDateRange(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
 
     // 查找在特定日期范围内活跃的交易者
     @Query("SELECT t FROM Trader t WHERE t.lastUpdatedDate BETWEEN :startDate AND :endDate")

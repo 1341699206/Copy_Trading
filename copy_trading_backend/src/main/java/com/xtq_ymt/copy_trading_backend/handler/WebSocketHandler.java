@@ -1,5 +1,6 @@
 package com.xtq_ymt.copy_trading_backend.handler;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -8,6 +9,7 @@ import com.xtq_ymt.copy_trading_backend.service.WebSocketManager;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 public class WebSocketHandler extends TextWebSocketHandler {
 
     @SuppressWarnings("null")

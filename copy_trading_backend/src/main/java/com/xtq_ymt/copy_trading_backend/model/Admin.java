@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,10 +42,12 @@ public class Admin {
 
     @Column(name = "last_login")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastLogin; // 上次登录时间
 
     @Column(name = "created_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt; // 创建时间
 
     @PrePersist

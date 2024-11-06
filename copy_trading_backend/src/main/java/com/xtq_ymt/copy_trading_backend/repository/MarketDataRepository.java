@@ -57,7 +57,7 @@ public interface MarketDataRepository extends JpaRepository<MarketData, String> 
 
     // 查找特定金融工具的最新 MarketData
     @Query("SELECT m FROM MarketData m WHERE m.instrument = :instrument ORDER BY m.timestamp DESC")
-    List<MarketData> findLatestByInstrument(@Param("instrument") String instrument, Pageable pageable);
+    MarketData findLatestByInstrument(@Param("instrument") String instrument);
 
     // 批量删除在指定时间范围内的 MarketData
     @Modifying
