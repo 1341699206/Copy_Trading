@@ -150,7 +150,7 @@ public class FollowerServiceImpl implements FollowerService {
         traderDTO.setMaxOpenTrades(trader.getMaxOpenTrades());
         traderDTO.setAvgProfit(avgProfit);
         traderDTO.setWinTrades(winTrades);
-        traderDTO.setRecommendedMinInvestment(calculateRecommendedInvestment(trader));
+        traderDTO.setRecommendedMinInvestment(BigDecimal.valueOf(0));
         traderDTO.setMaxDrawDown(trader.getMaximumDrawdown());
         traderDTO.setAvgTradeTime(avgTradeTime);
         traderDTO.setAvgPips(avgPips);
@@ -159,7 +159,4 @@ public class FollowerServiceImpl implements FollowerService {
         return Result.success("Trader detailed info retrieved successfully.", traderDTO);
     }
 
-    private BigDecimal calculateRecommendedInvestment(Trader trader) {
-        return trader.getAmountFollowing().divide(BigDecimal.valueOf(trader.getFollowers()), RoundingMode.HALF_UP);
-    }
 }

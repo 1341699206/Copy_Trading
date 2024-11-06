@@ -28,23 +28,23 @@ public class TraderDashboardUpdateScheduler {
     @Autowired
     private MarketDataRepository marketDataRepository;
 
-    @Scheduled(fixedRate = 10000) // 每10秒执行一次
+    @Scheduled(fixedRate = 10000) // Executes every 10 seconds
     public void updateAccountMetrics() {
-        log.info("开始更新交易账户指标...");
+        log.info("Starting to update trading account metrics...");
 
         List<TradingAccount> accounts = tradingAccountRepository.findAll();
         for (TradingAccount account : accounts) {
             try {
                 updateAccountMetrics(account);
 
-                // 保存更新后的账户信息
+                // Save the updated account information
                 tradingAccountRepository.save(account);
             } catch (Exception e) {
-                log.error("更新账户 ID: " + account.getAccountId() + " 时发生错误", e);
+                log.error("Error occurred while updating account ID: " + account.getAccountId(), e);
             }
         }
 
-        log.info("交易账户指标更新完成。");
+        log.info("Trading account metrics update completed.");
     }
 
     private void updateAccountMetrics(TradingAccount account) {
@@ -53,7 +53,7 @@ public class TraderDashboardUpdateScheduler {
         BigDecimal newMargin = calculateMargin(account);
         BigDecimal newFreeMargin = calculateFreeMargin(newEquity, newMargin);
 
-        // 更新账户的各项指标
+        // Update account metrics
         account.setEquity(newEquity);
         account.setRealisedPNL(newRealisedPNL);
         account.setMargin(newMargin);
