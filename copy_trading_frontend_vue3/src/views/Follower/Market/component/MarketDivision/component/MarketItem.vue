@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, inject } from "vue";
+import { defineProps, inject,computed } from "vue";
 
 // 定义组件的 props，接收父组件传递的 `item` 数据
 const props = defineProps({
@@ -27,6 +27,12 @@ const selectItem = inject("selectItem");
 const handleClick = () => {
   selectItem(props.item); // 传递选中的数据项
 };
+
+// 计算百分比格式的 ROI
+const change = computed(() => {
+  const c = (props.item.currentPrice - props.item.openPrice)/props.item.openPrice
+  return `${(c * 100).toFixed(2)}%`; // 转换为百分比并保留两位小数
+});
 </script>
 
 <template>
@@ -46,10 +52,10 @@ const handleClick = () => {
       <ul>
         <!-- 当前值 -->
         <li class="curValue">
-          <strong>Current Value:</strong> {{ item.currentPrice }}
+          <strong>Current:</strong> {{ item.currentPrice.toFixed(3) }}
         </li>
         <!-- 变化百分比 -->
-        <li class="change"><strong>Change:</strong> {{ 0.33 }}%</li>
+        <li class="change"><strong>Change:</strong> {{ change }}</li>
       </ul>
     </div>
 

@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps,computed } from "vue";
+import { useRouter } from "vue-router";
 
 // 定义组件的 props，接收父组件传递的 `item` 数据
 const props =defineProps({
@@ -9,6 +10,13 @@ const props =defineProps({
   },
 });
 
+// 导向动态的trader界面
+const router = useRouter();
+const goToTraderPage = () => {
+  router.push({ path: `/trader/${props.item.traderId}` });
+};
+
+// 收藏逻辑
 const collect=()=>{
 
 }

@@ -4,9 +4,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 import FollowerPage from '@/views/Follower/Follower_Page.vue';  // 导入主页
 import FollowerDashboard from '@/views/Follower/FollowerDashboard/FollowerDashboard.vue'
 import Home from '@/views/Follower/Home/HomePage.vue';  // 导入主页的HOME
-import Trader from '@/views/Follower/Traders/TradersPage.vue';  // 导入主页的Trader
+import Trader from '@/views/Follower/Traders/TradersPage.vue';  // 导入主页的Traders
 import Market from '@/views/Follower/Market/MarketPage.vue';  // 导入主页的Market
 import Community from '@/views/Follower/Community/CommunityPage.vue';  // 导入主页的Community
+import TraderHomePage from '@/views/Follower/TraderHomePage/TraderHomePage.vue'; //导入主页的TraderHomePage
 
 import LoginsPage from '@/views/Logins/LoginsPage.vue' //导入登录页面
 import Login from '@/views/Logins/Login/LoginPage.vue' //导入登录页面的login
@@ -59,6 +60,10 @@ const router = createRouter({
         {
           path:'community',
           component: Community
+        },
+        {
+          path:'trader/:id',
+          component: TraderHomePage,
         }
       ]
     },

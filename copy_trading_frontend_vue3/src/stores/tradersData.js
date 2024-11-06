@@ -9,7 +9,7 @@ export const useTradersDataStore = defineStore('traderData', () => {
     const tradersData = ref({});
 
     // 定义获取接口数据的 action 函数
-    //获取top traderss
+    //获取top traders
     const getTopTradersData = async ( quantity ) => {
         const res = await getTopTraders({ quantity:quantity })
         tradersData.value = res.data;
