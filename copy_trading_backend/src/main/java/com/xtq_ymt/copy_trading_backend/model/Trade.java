@@ -93,6 +93,14 @@ public class Trade {
     @Column(name = "Profit_USD", precision = 10, scale = 2)
     private BigDecimal profitUsd; // 利润（美元）
 
+    // 新增的状态字段：是否开仓
+    @Column(name = "Is_Open", nullable = false)
+    private Boolean isOpen = true; // 默认为 true，表示开仓状态
+
+    // 新增的杠杆字段
+    @Column(name = "Leverage", columnDefinition = "DECIMAL(5,2)", nullable = false)
+    private BigDecimal leverage; // 杠杆倍数
+
     @PrePersist
     protected void onCreate() {
         if (dateOpen == null) {
@@ -105,6 +113,22 @@ public class Trade {
         if (dateClose == null && priceOpen != null && priceClose != null && standardLots != null) {
             // 计算利润/损失
             profitPips = priceClose.subtract(priceOpen).multiply(standardLots);
+        }
+
+        // 自动检测是否已开仓
+        if (priceClose != null) {
+            isOpen = false; // 如果平仓价格不为空，表示已平仓
+        } else {
+            isOpen = true; // 否则为开仓状态
+        }
+
+        // 自动检测并填充 leverage 字段
+        if (leverage == null) {
+            if (traderAccount != null && traderAccount.getLeverage() != null) {
+                leverage = traderAccount.getLeverage(); // 使用交易者账户的杠杆
+            } else if (followerAccount != null && followerAccount.getLeverage() != null) {
+                leverage = followerAccount.getLeverage(); // 使用跟随者账户的杠杆
+            }
         }
     }
 

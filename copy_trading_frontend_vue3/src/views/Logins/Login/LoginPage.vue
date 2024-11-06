@@ -3,19 +3,18 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
-import {useUserStore} from '@/stores/user'
-import { connectWebSocket } from '@/service/websocket'; // 引入 WebSocket 模块 登录时连接WebSocket
+import { useUserStore } from '@/stores/user'
+import { connectWebSocket } from '@/service/websocket'
 
-const userStore =useUserStore()
-
-// 表单对象
+const userStore = useUserStore()
 const userInfo = ref({
   email: '',
   password: '',
   role: 'Follower',
 })
+const formRef = ref(null)
+const router = useRouter()
 
-// 规则数据对象
 const rules = {
   email: [
     { required: true, message: 'Email cannot be empty' }
@@ -29,37 +28,28 @@ const rules = {
   ],
 }
 
-const formRef = ref(null)
-const router = useRouter()
-
-// 登录函数
 const doLogin = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        // 将 role 转换为大写字母，以匹配后端要求
         userInfo.value.role = userInfo.value.role.toUpperCase()
-
-        // 调用 loginAPI，并确保传递的是 userInfo.value
-        await userStore.getUserInfo(userInfo.value)
+        await userStore.getUserInfo(userInfo.value) // 登录并存储用户信息
         ElMessage({ type: 'success', message: 'Login successful!' })
 
-        // 根据角色跳转页面 并连接Websocket
+        // 根据角色跳转页面 并连接 WebSocket
         if (userInfo.value.role === 'TRADER') {
           router.replace('/trader_page')
-          //连接Websocket
-          connectWebSocket(userInfo.value.role+':'+userStore.userInfo.user.traderId)
+          connectWebSocket(userInfo.value.role + ':' + userStore.userInfo.user.traderId)
         } else if (userInfo.value.role === 'FOLLOWER') {
           router.replace('/followerDashboard')
-          //连接Websocket
-          connectWebSocket(userInfo.value.role+':'+userStore.userInfo.user.followerId)
+          connectWebSocket(userInfo.value.role + ':' + userStore.userInfo.user.followerId)
         } else if (userInfo.value.role === 'ADMIN') {
           router.replace('/admin')
-          //连接Websocket
-          connectWebSocket(userInfo.value.role+':'+userStore.userInfo.user.adminId)
+          connectWebSocket(userInfo.value.role + ':' + userStore.userInfo.user.adminId)
         }
       } catch (error) {
-        // 处理登录失败的情况
+        ElMessage({ type: 'error', message: 'Login failed. Please check your credentials.' })
+        console.error("Login error:", error)
       }
     } else {
       ElMessage({ type: 'error', message: 'Please fill out the form correctly!' })
@@ -77,17 +67,12 @@ const doLogin = () => {
       <div class="account-box">
         <div class="form">
           <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="right" label-width="60px" status-icon>
-            <!-- 输入邮箱 -->
             <el-form-item prop="email" label="email">
               <el-input v-model="userInfo.email" />
             </el-form-item>
-
-            <!-- 输入密码 -->
             <el-form-item prop="password" label="password">
               <el-input type="password" v-model="userInfo.password" />
             </el-form-item>
-
-            <!-- 选择角色 -->
             <el-form-item prop="role" label="role">
               <el-select v-model="userInfo.role" placeholder="role">
                 <el-option value="Trader">Trader</el-option>
@@ -95,10 +80,7 @@ const doLogin = () => {
                 <el-option value="Admin">Admin</el-option>
               </el-select>
             </el-form-item>
-
-            <!-- 登录按钮 -->
             <el-button class="loginB" @click="doLogin">login</el-button>
-            <!-- 注册按钮 -->
             <el-button class="registerB" @click="$router.push('/register')">register</el-button>
           </el-form>
         </div>

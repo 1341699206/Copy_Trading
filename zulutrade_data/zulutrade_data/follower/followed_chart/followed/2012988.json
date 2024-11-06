@@ -1,0 +1,91 @@
+{
+    "content": [
+        {
+            "zuluAccountId": 2101548,
+            "name": "ForexNinjaTM",
+            "leverage": 100.0,
+            "baseCurrencyName": "EUR",
+            "id": 394800,
+            "public": true
+        },
+        {
+            "zuluAccountId": 2081786,
+            "name": "4HAM System",
+            "leverage": 500.0,
+            "baseCurrencyName": "GBP",
+            "id": 391925,
+            "public": true
+        },
+        {
+            "zuluAccountId": 2073475,
+            "name": "Splendid FX",
+            "leverage": 100.0,
+            "baseCurrencyName": "EUR",
+            "id": 390948,
+            "public": true
+        },
+        {
+            "zuluAccountId": 1883754,
+            "name": "chunyffs333",
+            "leverage": 100.0,
+            "baseCurrencyName": "USD",
+            "id": 373866,
+            "public": true
+        },
+        {
+            "zuluAccountId": 1811340,
+            "name": "EvgenDoga",
+            "leverage": 500.0,
+            "baseCurrencyName": "USD",
+            "id": 368599,
+            "public": true
+        },
+        {
+            "zuluAccountId": 1742008,
+            "name": "PANTOKRATOR",
+            "leverage": 200.0,
+            "baseCurrencyName": "USD",
+            "id": 361378,
+            "public": true
+        },
+        {
+            "zuluAccountId": 1610385,
+            "name": "YunoriYK",
+            "leverage": 100.0,
+            "baseCurrencyName": "USD",
+            "id": 338728,
+            "public": true
+        },
+        {
+            "zuluAccountId": 1462870,
+            "name": "Signal Guide",
+            "leverage": 100.0,
+            "baseCurrencyName": "USD",
+            "id": 304366,
+            "public": true
+        },
+        {
+            "zuluAccountId": 1458320,
+            "name": "FrigoRifer",
+            "leverage": 100.0,
+            "baseCurrencyName": "EUR",
+            "id": 302915,
+            "public": true
+        },
+        {
+            "zuluAccountId": 708903,
+            "name": "Calipsofx",
+            "leverage": 200.0,
+            "baseCurrencyName": "USD",
+            "id": 104770,
+            "public": true
+        }
+    ],
+    "last": true,
+    "totalElements": 10,
+    "totalPages": 1,
+    "size": 1500,
+    "number": 0,
+    "first": true,
+    "numberOfElements": 10
+}
