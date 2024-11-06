@@ -1,0 +1,77 @@
+{
+    "colors": [
+        "#FF7200"
+    ],
+    "mainTitle": "",
+    "xAxisTitle": "Date",
+    "yAxisTitle": "pips",
+    "xAxisType": "datetime",
+    "xAxisReversed": false,
+    "yAxisReversed": false,
+    "xMinValue": 0,
+    "yMinValue": 0,
+    "xAxisValueType": 0,
+    "yAxisValueType": 0,
+    "yAxisDecimalPoints": 2,
+    "yAxisLabelsEnabled": true,
+    "hideXAxisLabels": false,
+    "hideYAxisLabels": false,
+    "series": [
+        {
+            "name": "Trader",
+            "color": "#FF7200",
+            "type": "spline",
+            "lineWidth": 6,
+            "nameKey": "provider",
+            "id": "dataseries",
+            "className": "glossy",
+            "data": [
+                {
+                    "x": 1516665600000.0,
+                    "y": 115.8
+                },
+                {
+                    "x": 1516752000000.0,
+                    "y": 278.8
+                },
+                {
+                    "x": 1516838400000.0,
+                    "y": 521.5
+                }
+            ]
+        },
+        {
+            "name": "Investor",
+            "color": "#4572A7",
+            "type": "spline",
+            "lineWidth": 6,
+            "nameKey": "follower",
+            "id": "dataseries",
+            "className": "glossy",
+            "data": [
+                {
+                    "x": 1516665600000.0,
+                    "y": 5.0
+                },
+                {
+                    "x": 1516752000000.0,
+                    "y": -961.4
+                },
+                {
+                    "x": 1516838400000.0,
+                    "y": -1083.3
+                }
+            ]
+        }
+    ],
+    "markerPoints": [],
+    "type": "spline",
+    "spacingTop": 0,
+    "spacingRight": 0,
+    "spacingBottom": 0,
+    "spacingLeft": 0,
+    "stacking": false,
+    "hideSeries": false,
+    "hideLegend": false,
+    "hideExporting": false
+}

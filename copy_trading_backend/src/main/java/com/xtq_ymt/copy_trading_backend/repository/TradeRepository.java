@@ -130,5 +130,8 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
 
     // 查找特定交易账户中已平仓的交易（分页）
     Page<Trade> findByTraderAccount_AccountIdAndIsOpenFalse(Long accountId, Pageable pageable);
+
     List<Trade> findByTraderAccount_AccountIdAndIsOpenFalse(Long accountId);
+    
+    
 }

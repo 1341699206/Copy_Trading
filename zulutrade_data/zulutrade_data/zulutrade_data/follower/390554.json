@@ -1,0 +1,41 @@
+{
+    "content": [
+        {
+            "zuluAccountId": 2194973,
+            "brokerAccountId": 2062373,
+            "name": "AAAI2062373F",
+            "publicAccount": true,
+            "publicPage": "follower/2062373",
+            "brokerId": 197,
+            "brokerName": "AAAFX Intl",
+            "countryCode": "NL",
+            "countryNameResourceId": "netherlands",
+            "profitPips": 125.4,
+            "profitUsd": -6.0,
+            "profitSharing": false,
+            "profileName": "AAAI2062373F"
+        },
+        {
+            "zuluAccountId": 1000436,
+            "brokerAccountId": 1028172,
+            "name": "AAA1028172F",
+            "publicAccount": false,
+            "publicPage": "follower/1028172",
+            "brokerId": 41,
+            "brokerName": "AAAFX",
+            "countryCode": "CH",
+            "countryNameResourceId": "switzerland",
+            "profitPips": -69.9,
+            "profitUsd": -9.0,
+            "profitSharing": false,
+            "profileName": "AAA1028172F"
+        }
+    ],
+    "last": true,
+    "totalElements": 2,
+    "totalPages": 1,
+    "size": 1800,
+    "number": 0,
+    "first": true,
+    "numberOfElements": 2
+}
