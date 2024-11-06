@@ -79,6 +79,7 @@ const fetchUserInfo = async () => {
 
 // 打开创建账户对话框
 const openDialog = () => {
+  console.log("Opening dialog...");
   showDialog.value = true;
 };
 
@@ -127,6 +128,7 @@ onMounted(() => {
   fetchUserInfo(); // 页面加载时获取用户信息并检查是否需要显示创建账户弹窗
 });
 </script>
+
 
 <style scoped>
 /* 样式保持不变 */

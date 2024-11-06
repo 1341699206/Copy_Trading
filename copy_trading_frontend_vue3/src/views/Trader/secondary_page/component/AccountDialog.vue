@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
-import { getCurrencyAPI, createTraderAccountAPI } from "@/apis/follower";
+import { getCurrencyAPI, createTradingAccount } from "@/apis/follower";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 
@@ -35,16 +35,13 @@ const closeDialog = () => {
 
 // 账户信息
 const accountInfo = reactive({
-  traderId: userStore.userInfo.user?.traderId || null,
+  id: userStore.userInfo.user?.traderId || null,
+  role: "TRADER",
   accountNumber: "",
   accountType: "",
   currency: "",
   balance: 0,
-  equity: 0,
-  realisedPNL: 0,
-  margin: 0,
-  freeMargin: 0,
-  status: "Active",
+  leverage: 1,
 });
 
 // 限制规则
@@ -63,13 +60,24 @@ const rules = {
       message: "The simulation amount needs to be between 200 and 10000.",
     },
   ],
+  leverage: [
+    { required: true, message: "Leverage cannot be empty." },
+    {
+      type: "number",
+      min: 1,
+      max: 100,
+      message: "Leverage must be between 1 and 100.",
+    },
+  ],
 };
 
 // 从后端获取币种
 const currencies = ref([]);
 const getCurrency = async () => {
   try {
+    console.log("Fetching currencies...");
     const res = await getCurrencyAPI();
+    console.log("Currencies received:", res);
     currencies.value = res.data || [];
   } catch (error) {
     console.error("Failed to fetch currencies:", error);
@@ -88,11 +96,20 @@ const doCreateAccount = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        const response = await createTraderAccountAPI(accountInfo);
-        if (response.status === 200) {
+        // 打印当前要发送的账户信息
+        console.log("Account Info before sending:", JSON.stringify(accountInfo));
+        const response = await createTradingAccount(accountInfo);
+        console.log("Response received:", response); // 新增日志
+
+        if (response.code === 1) {
           ElMessage({ type: "success", message: "Create successful!" });
           closeDialog();
           formRef.value?.resetFields();
+
+          // 重新获取用户信息以刷新账户列表
+          console.log("Refreshing user info...");
+          await userStore.getUserInfo();
+          console.log("User info refreshed:", userStore.userInfo);
         } else {
           throw new Error("Failed to create account");
         }
@@ -133,7 +150,7 @@ const doCreateAccount = () => {
       <!-- 模拟账户时可以选择余额 -->
       <template v-if="accountInfo.accountType === 'Simulated Account'">
         <el-form-item label="Balance" prop="balance">
-          <el-input-number v-model="accountInfo.balance" :step="100" />
+          <el-input-number v-model="accountInfo.balance" :step="100" :min="200" :max="10000" />
         </el-form-item>
       </template>
 
@@ -144,6 +161,11 @@ const doCreateAccount = () => {
             {{ currency }}
           </el-option>
         </el-select>
+      </el-form-item>
+
+      <!-- 杠杆 -->
+      <el-form-item label="Leverage" prop="leverage">
+        <el-input-number v-model="accountInfo.leverage" :min="1" :max="100" />
       </el-form-item>
     </el-form>
     <template #footer>

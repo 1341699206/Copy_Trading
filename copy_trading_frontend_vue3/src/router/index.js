@@ -1,7 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from "@/stores/user"
 
-
-import FollowerPage from '@/views/Follower/Follower_Page.vue';  // 导入主页
+// 导入页面组件
+import FollowerPage from '@/views/Follower/Follower_Page.vue'
 import FollowerDashboard from '@/views/Follower/FollowerDashboard/FollowerDashboard.vue'
 import Home from '@/views/Follower/Home/HomePage.vue';  // 导入主页的HOME
 import Trader from '@/views/Follower/Traders/TradersPage.vue';  // 导入主页的Traders
@@ -68,67 +69,32 @@ const router = createRouter({
       ]
     },
     {
-      path:'/login',
+      path: '/login',
       component: LoginsPage,
-      children:[
-        {
-          path:'',
-          component: Login
-        },
-        {
-          path:'/register',
-          component: Register
-        }
-      ]
+      children: [
+        { path: '', component: Login },
+        { path: '/register', component: Register },
+      ],
     },
     {
       path: '/trader_page',
       component: TraderDashboard,
+      meta: { requiresAuth: true, role: 'TRADER' },
       children: [
         {
-          path: '',  // Trader的基本信息页面作为二级路由
+          path: '',
           component: TraderBasicInfo,
           children: [
-            {
-              path: 'positions',  // 三级路由 - Positions 页面
-              component: Positions,
-            },
-            {
-              path: '',  // 三级路由 - Account 页面
-              component: Account,
-            },
-            {
-              path: 'widgets',  // 三级路由 - Widgets 页面
-              component: Widgets,
-            },
-            {
-              path: 'history',  // 三级路由 - History 页面
-              component: History,
-            },
-            {
-              path: 'invite',  // 三级路由 - Invite 页面
-              component: Invite,
-            },
-            {
-              path: 'revenue',  // 三级路由 - Revenue 页面
-              component: Revenue,
-            },
-            {
-              path: 'settings',  // 三级路由 - Setting 页面
-              component: Settings,
-            },
-            {
-              path: 'social-feed',  // 三级路由 - SocialFeed 页面
-              component: SocialFeed,
-            },
-            {
-              path: 'trade',  // 三级路由 - Trade 页面
-              component: Trade,
-            },
-            {
-              path: 'ztp',  // 三级路由 - Ztp 页面
-              component: Ztp,
-            },
+            { path: 'positions', component: Positions },
+            { path: '', component: Account },
+            { path: 'widgets', component: Widgets },
+            { path: 'history', component: History },
+            { path: 'invite', component: Invite },
+            { path: 'revenue', component: Revenue },
+            { path: 'settings', component: Settings },
+            { path: 'social-feed', component: SocialFeed },
+            { path: 'trade', component: Trade },
+            { path: 'ztp', component: Ztp },
           ],
         },
       ],
@@ -136,8 +102,32 @@ const router = createRouter({
     {
       path: '/admin',
       component: AdminDashboard,
+      meta: { requiresAuth: true, role: 'ADMIN' },
     },
   ],
-});
+})
 
-export default router;
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const isLoggedIn = !!userStore.userInfo.token
+  const userRole = userStore.userInfo.role
+
+  console.log("Route Guard - User Role:", userRole)
+  console.log("Route Guard - Target Role:", to.meta.role)
+
+  // 检查是否需要身份验证
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    return next('/login')
+  }
+
+  // 检查角色是否匹配
+  if (to.meta.role && to.meta.role !== userRole) {
+    console.warn("无权访问该页面，请检查您的权限。")
+    return next('/login')
+  }
+
+  next()
+})
+
+export default router

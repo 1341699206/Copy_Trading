@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -125,10 +125,6 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     // 查找在特定杠杆范围内的所有交易（分页）
     Page<Trade> findByLeverageBetween(BigDecimal minLeverage, BigDecimal maxLeverage, Pageable pageable);
     List<Trade> findByLeverageBetween(BigDecimal minLeverage, BigDecimal maxLeverage);
-
-    // 查找使用特定保证金的交易（分页）
-    Page<Trade> findByMarginUsedGreaterThan(BigDecimal minMargin, Pageable pageable);
-    List<Trade> findByMarginUsedGreaterThan(BigDecimal minMargin);
 
     // 查找特定交易账户中已平仓的交易（分页）
     Page<Trade> findByTraderAccount_AccountIdAndIsOpenFalse(Long accountId, Pageable pageable);
