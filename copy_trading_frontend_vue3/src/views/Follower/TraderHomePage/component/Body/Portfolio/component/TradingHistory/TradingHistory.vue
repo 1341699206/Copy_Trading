@@ -1,4 +1,4 @@
-<script setup> 
+<script setup>
 import { getTraderTradesHistory } from "@/apis/follower";
 import TradeHistoryItem from "./TradeHistoryItem.vue";
 import { onMounted, ref, watch } from "vue";
@@ -23,11 +23,12 @@ const fetchTraderTradesHistory = async () => {
       currentPage: currentPage.value,
     });
 
-    traderTradesHistory.value = response.data.tradeHistory;
-    totalPages.value = response.data.totalPages;
-    totalItems.value = response.data.totalElements;
-    hasPrevPage.value = response.data.isPrePage;
-    hasNextPage.value = response.data.isNextPage;
+    // 确保数据为数组的类型
+    traderTradesHistory.value = Array.isArray(response.data.tradeHistory) ? response.data.tradeHistory : [];
+    totalPages.value = response.data.totalPages || 0;
+    totalItems.value = response.data.totalElements || 0;
+    hasPrevPage.value = response.data.isPrePage || currentPage.value > 1;
+    hasNextPage.value = response.data.isNextPage || currentPage.value < totalPages.value;
   } catch (error) {
     // 处理错误
     console.error("Failed to fetch trade history:", error);
@@ -56,7 +57,7 @@ onMounted(fetchTraderTradesHistory);
     </div>
 
     <!-- 数据条目列表 -->
-    <div v-if="traderTradesHistory.length > 0">
+    <div v-if="traderTradesHistory && traderTradesHistory.length > 0">
       <trade-history-item
         v-for="item in traderTradesHistory"
         :key="item.tradeId"

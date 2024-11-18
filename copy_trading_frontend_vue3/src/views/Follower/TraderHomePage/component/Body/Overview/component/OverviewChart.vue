@@ -36,7 +36,7 @@ const fetchTraderData = async () => {
   });
   traderDetailInfo.value = res.data;
   traderHistoryInfo.value = traderDetailInfo.value.traderHistoryData;
-
+  console.log(traderHistoryInfo.value)
   const options = {
     xAxis: {
       type: "category",

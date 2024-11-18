@@ -1,1 +1,0 @@
-CREATE DATABASE copy_trading;  -- 此为创建数据的sql代码

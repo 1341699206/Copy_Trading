@@ -27,10 +27,9 @@ export const useMarketDataStore = defineStore('marketData', () => {
     if (intervalId.value) {
       stopAutoUpdate();
     }
-    fetchAvailableMarketData();
-    // intervalId.value = setInterval(() => {
-    //   fetchAvailableMarketData();
-    // }, 1000);
+   intervalId.value = setInterval(() => {
+     fetchAvailableMarketData();
+   }, 1000);
   };
 
   // 停止定时任务
