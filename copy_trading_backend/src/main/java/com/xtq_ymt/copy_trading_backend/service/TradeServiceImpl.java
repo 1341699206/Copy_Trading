@@ -1,6 +1,10 @@
 package com.xtq_ymt.copy_trading_backend.service;
 
+import com.xtq_ymt.copy_trading_backend.model.Account;
+import com.xtq_ymt.copy_trading_backend.model.Strategy;
 import com.xtq_ymt.copy_trading_backend.model.Trade;
+import com.xtq_ymt.copy_trading_backend.repository.AccountRepository;
+import com.xtq_ymt.copy_trading_backend.repository.StrategyRepository;
 import com.xtq_ymt.copy_trading_backend.repository.TradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,17 +16,30 @@ import java.util.List;
 public class TradeServiceImpl implements TradeService {
 
     private final TradeRepository tradeRepository;
+    private final AccountRepository accountRepository;
+    private final StrategyRepository strategyRepository;
 
     @Autowired
-    public TradeServiceImpl(TradeRepository tradeRepository) {
+    public TradeServiceImpl(TradeRepository tradeRepository, AccountRepository accountRepository, StrategyRepository strategyRepository) {
         this.tradeRepository = tradeRepository;
+        this.accountRepository = accountRepository;
+        this.strategyRepository = strategyRepository;
     }
 
     @Override
     public Trade openTrade(Long accountId, Long strategyId, String symbol, String type, double lotSize, double priceOpen) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Account not found with ID: " + accountId));
+        
+        Strategy strategy = null;
+        if (strategyId != null) {
+            strategy = strategyRepository.findById(strategyId)
+                    .orElseThrow(() -> new IllegalArgumentException("Strategy not found with ID: " + strategyId));
+        }
+
         Trade trade = new Trade();
-        trade.setAccountId(accountId);
-        trade.setStrategyId(strategyId);
+        trade.setAccount(account);
+        trade.setStrategy(strategy);
         trade.setSymbol(symbol);
         trade.setType(type);
         trade.setLotSize(lotSize);

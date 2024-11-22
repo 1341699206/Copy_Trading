@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "strategies")
@@ -18,8 +19,12 @@ public class Strategy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long traderId; // 交易员 ID，关联 User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trader_id", nullable = false)
+    private User trader; // 关联交易员对象
+
+    @OneToMany(mappedBy = "strategy", cascade = CascadeType.ALL)
+    private List<Trade> trades; // 与 Trade 的双向关联
 
     @Column(nullable = false)
     private String name; // 策略名称

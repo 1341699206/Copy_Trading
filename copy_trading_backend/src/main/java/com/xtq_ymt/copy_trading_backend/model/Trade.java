@@ -18,11 +18,13 @@ public class Trade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long accountId; // 关联的账户 ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account; // 关联账户对象
 
-    @Column(nullable = false)
-    private Long strategyId; // 关联的策略 ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "strategy_id", nullable = true)
+    private Strategy strategy; // 关联策略对象
 
     @Column(nullable = false)
     private String symbol; // 交易品种，例如 "EUR/USD"

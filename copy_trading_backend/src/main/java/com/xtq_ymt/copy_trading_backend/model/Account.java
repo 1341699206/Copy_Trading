@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -18,8 +19,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Long userId; // 关联用户
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // 关联用户对象
 
     @Column(nullable = false)
     private double balance; // 账户余额
@@ -35,6 +37,9 @@ public class Account {
 
     @Column(nullable = false)
     private double winRate; // 胜率
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<Trade> trades; // 与 Trade 的双向关联
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

@@ -1,7 +1,9 @@
 package com.xtq_ymt.copy_trading_backend.service;
 
 import com.xtq_ymt.copy_trading_backend.model.Account;
+import com.xtq_ymt.copy_trading_backend.model.User;
 import com.xtq_ymt.copy_trading_backend.repository.AccountRepository;
+import com.xtq_ymt.copy_trading_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,16 +11,21 @@ import org.springframework.stereotype.Service;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, UserRepository userRepository) {
         this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Account createAccount(Long userId, double initialBalance) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        
         Account account = new Account();
-        account.setUserId(userId);
+        account.setUser(user);
         account.setBalance(initialBalance);
         account.setEquity(initialBalance);
         account.setMargin(0.0);
