@@ -1,6 +1,6 @@
 <script setup>
 import CopierItem from "./CopierItem";
-import { getTraderCopiers } from "@/apis/follower"; // 确保使用正确的导入方式
+import { getTraderCopiers } from "@/apis/followerManagement"; // 确保使用正确的导入方式
 import { onMounted, ref, watch } from "vue";
 import { defineEmits } from "vue";
 import { useRoute } from "vue-router";

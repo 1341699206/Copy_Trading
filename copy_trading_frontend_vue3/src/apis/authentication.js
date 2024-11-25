@@ -1,24 +1,19 @@
 import request from "@/utils/http";
 
-export const renovateAPI=() =>{
+//a
+export const login=({email,password}) =>{
     return request({
-        url:'/api/renovate'
-    })
-}
-
-export const loginAPI=({email,password,role}) =>{
-    return request({
-        url:'/api/login',
+        url:'/auth/login',
         method:'POST',
         data:{
             email,
-            password,
-            role
+            password
         }
     })
 }
 
-export const registerAPI=({name,email,password,role,country})=>{
+//a
+export const register=({username,email,password,role,createdAt,updatedAt})=>{
     return request({
         url: '/api/register',
         method: 'POST',
@@ -26,11 +21,12 @@ export const registerAPI=({name,email,password,role,country})=>{
             'Content-Type': 'application/json',
         },
         data: {
-            name,
+            username,
             email,
             password,
             role,
-            country
+            createdAt,
+            updatedAt,
         }
     });
 

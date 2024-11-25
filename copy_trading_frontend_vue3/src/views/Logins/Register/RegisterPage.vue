@@ -1,18 +1,19 @@
+//a
 <script setup>
-import { onMounted, ref } from 'vue';
-import { registerAPI } from '@/apis/user';
+import { ref } from 'vue';
+import { register } from '@/apis/authentication';
 import { ElMessage } from 'element-plus';
 import 'element-plus/theme-chalk/el-message.css';
-import { useRouter } from 'vue-router';
-import { getCountriesAPI } from '@/apis/layout'; 
+import { useRouter } from 'vue-router'; 
 
 // 用户注册信息
 const userInfo = ref({
-  name: '',
+  username: '',
   email: '',
   password: '',
   role: 'Follower',
-  country: ''
+  createdAt:'',
+  updatedAt:''
 });
 
 // 规则数据对象
@@ -30,23 +31,8 @@ const rules = {
   ],
   role: [
     { required: true }
-  ],
-  country: [
-    { required: true }
   ]
 };
-
-// 从后端获取国家
-const countries = ref([]);
-const getCountries = async () => {
-  const res = await getCountriesAPI();
-  countries.value = res.data;
-};
-
-// 启动函数
-onMounted(() => {
-  getCountries();
-});
 
 const formRef = ref(null);
 const router = useRouter();
@@ -56,8 +42,12 @@ const doRegister = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       try {
+        //获取时间
+        const now=(new Date()).toISOString();
+        userInfo.value.createdAt=now;
+        userInfo.value.updatedAt=now;
         // 调用注册 API 并传递 userInfo 的值
-        await registerAPI(userInfo.value);
+        await register(userInfo.value);
         ElMessage({ type: 'success', message: 'Register successful!' });
         // 成功后跳转到登录页面
         router.push('/login');
@@ -77,8 +67,8 @@ const doRegister = () => {
 
     <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="top" label-width="60px" status-icon>
       <!-- 输入 Name -->
-      <el-form-item label="name" prop="name"> 
-        <el-input v-model="userInfo.name" id="name" />
+      <el-form-item label="username" prop="username"> 
+        <el-input v-model="userInfo.username" id="username" />
       </el-form-item>
 
       <!-- 输入 Email -->
@@ -97,15 +87,6 @@ const doRegister = () => {
           <el-option value="Trader">Trader</el-option>
           <el-option value="Follower">Follower</el-option>
           <el-option value="Admin">Admin</el-option>
-        </el-select>
-      </el-form-item>
-
-      <!-- 选择国家，存储国家 ISO 代码 -->
-      <el-form-item prop="country" label="country">
-        <el-select v-model="userInfo.country" placeholder="country">
-          <el-option v-for="country in countries" :key="country.code" :value="country.code">
-            {{ country.name }}
-          </el-option>
         </el-select>
       </el-form-item>
 

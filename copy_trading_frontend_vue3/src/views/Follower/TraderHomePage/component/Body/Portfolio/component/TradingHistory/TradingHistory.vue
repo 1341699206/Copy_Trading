@@ -1,5 +1,5 @@
 <script setup>
-import { getTraderTradesHistory } from "@/apis/follower";
+import { getTraderTradesHistory } from "@/apis/followerManagement";
 import TradeHistoryItem from "./TradeHistoryItem.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";

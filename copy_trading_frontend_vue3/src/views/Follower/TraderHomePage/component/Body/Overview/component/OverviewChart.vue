@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { getTraderDetailInf } from "@/apis/follower";
+import { getTraderDetailInf } from "@/apis/followerManagement";
 import timeSelector from "@/views/Follower/TraderHomePage/component/Body/component/timeSelector.vue";
 import * as echarts from "echarts";
 

@@ -1,7 +1,7 @@
 // userStore.js
 import { defineStore } from "pinia";
 import { ref } from 'vue';
-import { loginAPI } from '@/apis/user';
+import { login } from '@/apis/authentication';
 import { on } from '@/utils/eventBus';
 
 export const useUserStore = defineStore('user', () => {
@@ -13,7 +13,7 @@ export const useUserStore = defineStore('user', () => {
 
     const getUserInfo = async ({ email, password, role }) => {
         try {
-            const res = await loginAPI({ email, password, role });
+            const res = await login({ email, password, role });
             console.log("API response for getUserInfo:", res.data);
 
             // 手动设置 role，并将其他返回的数据存储到 userInfo 中

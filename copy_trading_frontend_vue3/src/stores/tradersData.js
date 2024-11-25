@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { getTopTraders } from "@/apis/follower";
+import { getTopTraders } from "@/apis/followerManagement";
 
 
 export const useTradersDataStore = defineStore('traderData', () => {

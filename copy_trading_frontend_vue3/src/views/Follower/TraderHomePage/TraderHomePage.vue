@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import TraderColumn from "./component/TraderColumn";
 import TraderHomeBody from "./component/Body/TraderHomeBody";
-import { getTraderBasicInf } from "@/apis/follower";
+import { getTraderBasicInf } from "@/apis/followerManagement";
 
 const route = useRoute();
 const traderId = route.params.id; // 获取路由中的 id 参数

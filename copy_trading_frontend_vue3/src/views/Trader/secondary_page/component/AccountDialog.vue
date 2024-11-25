@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue";
-import { getCurrencyAPI, createTradingAccount } from "@/apis/follower";
+import { getCurrencyAPI, createTradingAccount } from "@/apis/followerManagement";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 

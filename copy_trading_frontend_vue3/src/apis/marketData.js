@@ -1,10 +1,19 @@
-import axios from 'axios';
 import request from "@/utils/http";
 
-// 获取所有可用市场数据
-export const fetchMarketDataAPI = () => {
-  return axios.get('/api/market-data/available');
+//a 获取所有可用市场数据
+export const getAllMarketData = () => {
+  return request({
+    url: '/market-data'
+  })
 };
+
+//a 获取指定一项市场数据的更新
+export const getMarketDataBySymbol=(symbol)=>{
+  const url=`/market-data/${symbol}`
+  return request({
+    url:url
+  })
+}
 
 // 其他与市场数据相关的 API 调用可以放在这里
 // export const anotherMarketDataAPI = () => { ... };

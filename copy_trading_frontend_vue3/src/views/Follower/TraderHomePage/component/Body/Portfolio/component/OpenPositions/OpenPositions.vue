@@ -1,5 +1,5 @@
 <script setup>
-import { getTraderOpenPosition } from "@/apis/follower";
+import { getTraderOpenPosition } from "@/apis/followerManagement";
 import OpenPositionItem from "./OpenPositionItem.vue";
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";

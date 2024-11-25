@@ -1,5 +1,5 @@
 <script setup>
-import getFollowerCopy from "@/apis/follower";
+import getFollowerCopy from "@/apis/followerManagement";
 import * as echarts from "echarts";
 import { defineProps, ref, watch, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
