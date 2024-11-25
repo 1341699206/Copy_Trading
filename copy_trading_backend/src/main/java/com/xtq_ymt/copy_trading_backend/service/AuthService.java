@@ -13,16 +13,16 @@ public interface AuthService {
      * 用户注册逻辑。
      *
      * @param userRegisterDTO 包含注册信息的数据传输对象
-     * @return 包含用户基本信息的响应数据传输对象
+     * @throws IllegalArgumentException 如果用户名或邮箱已存在
      */
-    UserResponseDTO register(UserRegisterDTO userRegisterDTO);
+    void register(UserRegisterDTO userRegisterDTO);
 
     /**
      * 用户登录逻辑。
      *
      * @param username 用户名
      * @param password 用户密码
-     * @return JWT 令牌
+     * @return 包含用户基本信息的响应数据传输对象
      */
-    String login(String username, String password);
+    UserResponseDTO login(String username, String password);
 }

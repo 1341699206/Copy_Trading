@@ -29,20 +29,20 @@ public class AuthController {
      * 用户注册接口。
      *
      * @param userRegisterDTO 包含用户注册信息的 DTO
-     * @return 包含用户基本信息的响应 DTO 和 HTTP 状态码
+     * @return HTTP 状态码和消息
      */
     @PostMapping("/register")
     @Operation(summary = "Register a new user", description = "This API registers a new user in the system.")
     public ResponseEntity<?> register(@RequestBody UserRegisterDTO userRegisterDTO) {
         try {
-            // 调用服务层的注册方法，返回用户响应 DTO
-            UserResponseDTO responseDTO = authService.register(userRegisterDTO);
-            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+            // 调用服务层的注册方法
+            authService.register(userRegisterDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully.");
         } catch (IllegalArgumentException e) {
             // 捕获异常并返回错误信息
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body("Error: " + e.getMessage()); // 返回详细的错误信息
+                    .body("Error: " + e.getMessage());
         }
     }
 
@@ -51,15 +51,15 @@ public class AuthController {
      *
      * @param username 用户名
      * @param password 密码
-     * @return 包含 JWT 令牌或错误信息和 HTTP 状态码
+     * @return 包含用户信息和 JWT 令牌的响应 DTO 或错误信息
      */
     @PostMapping("/login")
-    @Operation(summary = "User login", description = "This API authenticates a user and returns a JWT token.")
+    @Operation(summary = "User login", description = "This API authenticates a user and returns user details along with a JWT token.")
     public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
         try {
-            // 调用服务层的登录方法获取 JWT 令牌
-            String token = authService.login(username, password);
-            return ResponseEntity.ok(token);
+            // 调用服务层的登录方法获取用户信息和 JWT 令牌
+            UserResponseDTO responseDTO = authService.login(username, password);
+            return ResponseEntity.ok(responseDTO);
         } catch (IllegalArgumentException e) {
             // 捕获异常并返回错误信息
             return ResponseEntity

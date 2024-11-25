@@ -29,43 +29,66 @@ public class AuthServiceImpl implements AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    /**
+     * 用户注册逻辑。
+     * 验证用户名和邮箱的唯一性，编码用户密码，并将用户信息保存到数据库中。
+     *
+     * @param userRegisterDTO 包含注册信息的数据传输对象
+     * @throws IllegalArgumentException 如果用户名或邮箱已存在
+     */
     @Override
-    public UserResponseDTO register(UserRegisterDTO userRegisterDTO) {
+    public void register(UserRegisterDTO userRegisterDTO) {
+        // 检查用户名是否已存在
         if (userRepository.existsByUsername(userRegisterDTO.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
+        // 检查邮箱是否已存在
         if (userRepository.existsByEmail(userRegisterDTO.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
 
+        // 创建用户并保存到数据库
         User user = new User();
         user.setUsername(userRegisterDTO.getUsername());
         user.setEmail(userRegisterDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
-        user.setRole(User.Role.valueOf(userRegisterDTO.getRole())); // 转换为枚举类型
+        user.setRole(User.Role.valueOf(userRegisterDTO.getRole()));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-
-        User savedUser = userRepository.save(user);
-
-        return new UserResponseDTO(
-                savedUser.getId(),
-                savedUser.getUsername(),
-                savedUser.getEmail(),
-                savedUser.getRole(),
-                savedUser.getCreatedAt()
-        );
+        userRepository.save(user);
     }
 
+    /**
+     * 用户登录逻辑。
+     * 验证用户名和密码是否匹配，并生成 JWT 令牌和返回用户信息。
+     *
+     * @param username 用户名
+     * @param password 用户密码
+     * @return 包含 JWT 令牌和用户基本信息的响应数据传输对象
+     * @throws IllegalArgumentException 如果用户名或密码无效
+     */
     @Override
-    public String login(String username, String password) {
+    public UserResponseDTO login(String username, String password) {
+        // 根据用户名查找用户
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
+        // 验证密码是否匹配
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        return jwtTokenProvider.generateToken(user);
+        // 生成 JWT 令牌
+        String token = jwtTokenProvider.generateToken(user);
+
+        // 返回包含用户信息和 JWT 令牌的响应
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt(),
+                token // 将生成的 JWT 令牌添加到返回信息中
+        );
     }
 }
