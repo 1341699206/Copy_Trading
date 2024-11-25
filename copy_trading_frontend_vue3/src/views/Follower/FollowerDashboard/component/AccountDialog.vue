@@ -65,7 +65,6 @@ const doCreateAccount = () => {
 };
 </script>
 
-
 <template>
   <el-dialog :model-value="show" title="New Account" width="500">
     <el-form ref="formRef" :model="accountInfo" :rules="rules">
@@ -76,7 +75,7 @@ const doCreateAccount = () => {
           <el-input-number v-model="accountInfo.balance" :step="100" />
         </el-form-item>
       </template>
-
+    </el-form>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="emit('close')">Cancel</el-button>

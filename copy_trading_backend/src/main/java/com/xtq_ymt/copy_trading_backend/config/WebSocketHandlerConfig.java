@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.config;
 
 import com.xtq_ymt.copy_trading_backend.handler.TradeSyncHandler;
+import com.xtq_ymt.copy_trading_backend.handler.MarketDataHandler;
 import com.xtq_ymt.copy_trading_backend.handler.NotificationHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -25,15 +26,19 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
     // NotificationHandler 用于处理通知的 WebSocket 请求
     private final NotificationHandler notificationHandler;
 
+    // MarketDataHandler 用于更新市场数据的 WebSocket 请求
+    private final MarketDataHandler marketDataHandler;
+
     /**
      * 构造函数，用于注入所需的 WebSocket Handler。
      *
-     * @param tradeSyncHandler     交易同步处理器
-     * @param notificationHandler  通知处理器
+     * @param tradeSyncHandler    交易同步处理器
+     * @param notificationHandler 通知处理器
      */
-    public WebSocketHandlerConfig(TradeSyncHandler tradeSyncHandler, NotificationHandler notificationHandler) {
+    public WebSocketHandlerConfig(TradeSyncHandler tradeSyncHandler, NotificationHandler notificationHandler, MarketDataHandler marketDataHandler) {
         this.tradeSyncHandler = tradeSyncHandler;
         this.notificationHandler = notificationHandler;
+        this.marketDataHandler = marketDataHandler;
     }
 
     /**
@@ -50,5 +55,9 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
         // 注册用于处理通知的 WebSocket Handler，路径为 "/ws/notification"
         registry.addHandler(notificationHandler, "/ws/notification")
                 .setAllowedOrigins("*"); // 允许所有来源的跨域请求（生产环境建议指定具体域名）
+
+        // 新增市场数据的 WebSocket 路径
+        registry.addHandler(marketDataHandler, "/ws/market-data")
+                .setAllowedOrigins("*");
     }
 }

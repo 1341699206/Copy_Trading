@@ -2,40 +2,36 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
 import { login } from '@/apis/authentication';
-import { on } from '@/utils/eventBus';
+import { on } from '@/utils/webSocketManager';
 
 export const useUserStore = defineStore('user', () => {
     const userInfo = ref({
-        user: { name: null, email: null, followerId: null, tradingAccounts: [] },
-        token: null,
-        role: null, // 新增 role 字段用于存储前端选择的角色
+        id: 0,
+        username: null,
+        email: null,
+        role: null,
+        createdAt: null,
+        token: null
     });
 
-    const getUserInfo = async ({ email, password, role }) => {
+    const getUserInfo = async ({ username, password }) => {
         try {
-            const res = await login({ email, password, role });
-            console.log("API response for getUserInfo:", res.data);
-
-            // 手动设置 role，并将其他返回的数据存储到 userInfo 中
-            userInfo.value = {
-                ...res.data,
-                role: role.toUpperCase() // 保存用户选择的角色，并转成大写
-            };
+            const res = await login({ username, password, });
+            // 将其他返回的数据存储到 userInfo 中
+            userInfo.value = res.data;
         } catch (error) {
             console.error("Failed to fetch user info:", error);
-            userInfo.value = { 
-                user: { name: null, email: null, followerId: null, tradingAccounts: [] }, 
-                token: null,
-                role: null
-            };
         }
     };
 
     const clearUserInfo = () => {
-        userInfo.value = { 
-            user: { name: null, email: null, followerId: null, tradingAccounts: [] }, 
-            token: null,
-            role: null
+        userInfo.value = {
+            id: 0,
+            username: null,
+            email: null,
+            role: null,
+            createdAt: null,
+            token: null
         };
         console.log("User info cleared.");
     };
@@ -54,4 +50,10 @@ export const useUserStore = defineStore('user', () => {
     };
 }, {
     persist: true, // 开启数据持久化
+    strategies: [
+        {
+            key: 'user', // 自定义存储的键名
+            storage: sessionStorage // 指定存储方式为 sessionStorage
+        }
+    ]
 });

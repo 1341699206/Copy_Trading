@@ -1,61 +1,56 @@
+//a 
 <script setup>
-import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
-import 'element-plus/theme-chalk/el-message.css'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { connectWebSocket } from '@/service/websocket'
+import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import 'element-plus/theme-chalk/el-message.css';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 const userInfo = ref({
-  email: '',
+  username: '',
   password: '',
-  role: 'Follower',
-})
-const formRef = ref(null)
-const router = useRouter()
+});
+const formRef = ref(null);
+const router = useRouter();
 
 const rules = {
-  email: [
-    { required: true, message: 'Email cannot be empty' }
-  ],
+  username: [{ required: true, message: 'Username cannot be empty' }],
   password: [
     { required: true, message: 'Password cannot be empty.' },
-    { min: 6, max: 14, message: 'Password length requires 6-14 characters' }
+    { min: 6, max: 14, message: 'Password length requires 6-14 characters' },
   ],
-  role: [
-    { required: true }
-  ],
-}
+};
 
-const doLogin = () => {
+const doLogin = async () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        userInfo.value.role = userInfo.value.role.toUpperCase()
-        await userStore.getUserInfo(userInfo.value) // 登录并存储用户信息
-        ElMessage({ type: 'success', message: 'Login successful!' })
+        // 调用 userStore 的登录方法
+        await userStore.getUserInfo({ 
+          username: userInfo.value.username, 
+          password: userInfo.value.password 
+        });
+        ElMessage({ type: 'success', message: 'Login successful!' });
 
-        // 根据角色跳转页面 并连接 WebSocket
-        if (userInfo.value.role === 'TRADER') {
-          router.replace('/trader_page')
-          connectWebSocket(userInfo.value.role + ':' + userStore.userInfo.user.traderId)
-        } else if (userInfo.value.role === 'FOLLOWER') {
-          router.replace('/followerDashboard')
-          connectWebSocket(userInfo.value.role + ':' + userStore.userInfo.user.followerId)
-        } else if (userInfo.value.role === 'ADMIN') {
-          router.replace('/admin')
-          connectWebSocket(userInfo.value.role + ':' + userStore.userInfo.user.adminId)
+        // 根据角色跳转页面并连接 WebSocket
+        const { role } = userStore.userInfo;
+        if (role === 'TRADER') {
+          router.replace('/trader_page');
+        } else if (role === 'FOLLOWER') {
+          router.replace('/followerDashboard');
+        } else if (role === 'ADMIN') {
+          router.replace('/admin');
         }
       } catch (error) {
-        ElMessage({ type: 'error', message: 'Login failed. Please check your credentials.' })
-        console.error("Login error:", error)
+        ElMessage({ type: 'error', message: 'Login failed. Please check your credentials.' });
+        console.error('Login error:', error);
       }
     } else {
-      ElMessage({ type: 'error', message: 'Please fill out the form correctly!' })
+      ElMessage({ type: 'error', message: 'Please fill out the form correctly!' });
     }
-  })
-}
+  });
+};
 </script>
 
 <template>
@@ -66,19 +61,19 @@ const doLogin = () => {
       </nav>
       <div class="account-box">
         <div class="form">
-          <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="right" label-width="60px" status-icon>
-            <el-form-item prop="email" label="email">
-              <el-input v-model="userInfo.email" />
+          <el-form
+            ref="formRef"
+            :model="userInfo"
+            :rules="rules"
+            label-position="right"
+            label-width="60px"
+            status-icon
+          >
+            <el-form-item prop="username" label="username">
+              <el-input v-model="userInfo.username" />
             </el-form-item>
             <el-form-item prop="password" label="password">
               <el-input type="password" v-model="userInfo.password" />
-            </el-form-item>
-            <el-form-item prop="role" label="role">
-              <el-select v-model="userInfo.role" placeholder="role">
-                <el-option value="Trader">Trader</el-option>
-                <el-option value="Follower">Follower</el-option>
-                <el-option value="Admin">Admin</el-option>
-              </el-select>
             </el-form-item>
             <el-button class="loginB" @click="doLogin">login</el-button>
             <el-button class="registerB" @click="$router.push('/register')">register</el-button>
