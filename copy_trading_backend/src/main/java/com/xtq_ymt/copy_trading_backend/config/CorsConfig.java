@@ -12,14 +12,22 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("*"); // 允许所有来源请求
-        config.addAllowedMethod("*"); // 允许所有HTTP方法
-        config.addAllowedHeader("*"); // 允许所有请求头
-        config.setAllowCredentials(true); // 允许携带Cookie等凭证
+        
+        // 允许所有来源
+        config.addAllowedOriginPattern("*");
 
-        // 配置路径
+        // 允许所有 HTTP 方法
+        config.addAllowedMethod("*");
+
+        // 允许所有请求头
+        config.addAllowedHeader("*");
+
+        // 允许携带 Cookie 和其他凭证
+        config.setAllowCredentials(true);
+
+        // 配置所有路径生效
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // 对所有路径生效
+        source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);
     }
