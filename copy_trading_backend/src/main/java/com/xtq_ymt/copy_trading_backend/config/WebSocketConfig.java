@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // 设置客户端连接的 WebSocket 端点为 "/ws"
-                .setAllowedOrigins("*") // 允许来自任何源的跨域请求（生产环境建议指定具体域名）
+                .setAllowedOrigins("http://localhost:8081") // 允许来自任何源的跨域请求（生产环境建议指定具体域名）
                 .withSockJS(); // 启用 SockJS 支持，提供对不支持 WebSocket 的浏览器的兼容性
     }
 
@@ -58,9 +58,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         });
     });
     */
-    
-
-    
-
     
 }

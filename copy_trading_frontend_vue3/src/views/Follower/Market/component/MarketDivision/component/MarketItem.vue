@@ -44,7 +44,7 @@ const change = computed(() => {
 
     <!-- 名称部分 -->
     <div class="name">
-      {{ props.item.instrument }}
+      {{ props.item.symbol }}
     </div>
 
     <!-- 数据展示部分 -->

@@ -1,43 +1,45 @@
 <script setup>
 import { useMarketDataStore } from "@/stores/marketDataStore";
-import { ref,onMounted, onBeforeUnmount, computed } from "vue"; // 引入生命周期钩子和 computed
+import { onMounted, onBeforeUnmount, computed } from "vue"; // 引入生命周期钩子和 computed
 import MarketItem from "../component/MarketItem.vue";
 
 const marketDataStore = useMarketDataStore();
 
-// 每个组件独立维护自己的 selectedAssets
-const selectedAssets = ref([]);
+const marketData=computed(()=>marketDataStore.marketData);
 
-// 使用 computed 获取 availableAssets
-const marketData = computed(() => marketDataStore.availableAssets);
+// // 每个组件独立维护自己的 selectedAssets
+// const selectedAssets = ref([]);
 
-// 添加一个函数，用于选定多个 symbols
-const selectAssets = (symbols) => {
-  selectedAssets.value = marketData.value.filter(item =>
-    symbols.includes(item.symbol)
-  );
-};
+// // 使用 computed 获取 availableAssets
+// const marketData = computed(() => marketDataStore.availableAssets);
+
+// // 添加一个函数，用于选定多个细分市场
+// const selectAssets = (symbols) => {
+//   selectedAssets.value = marketData.value.filter(item =>
+//     symbols.includes(item.symbol)
+//   );
+// };
 
 // 在组件挂载时启动定时任务
 onMounted(() => {
   console.log("Component mounted, starting auto update");
-  marketDataStore.startAutoUpdate(); // 开启定时任务
-  selectAssets(['CyptoCFD']);
+  marketDataStore.startListening(); // 开启Websocket监听
+  //selectAssets(['']);
 });
 
 // 在组件卸载时停止定时任务
 onBeforeUnmount(() => {
   console.log("Component before unmount, stopping auto update");
-  marketDataStore.stopAutoUpdate(); // 停止定时任务，防止内存泄漏
+  marketDataStore.stopListening(); // 关闭Websocket监听
 });
 </script>
 
 
 <template>
   <el-scrollbar>
-    <div v-if="selectedAssets.length > 0">
+    <div v-if="marketData.length > 0">
       <market-item
-        v-for="item in selectedAssets"
+        v-for="item in marketData"
         :key="item.instrument"
         :item="item"
       ></market-item>

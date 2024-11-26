@@ -7,16 +7,8 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
-import { useTokenRefresh } from '@/utils/tokenRefresh';
 export default {
   name: "App",
-  setup() {
-    const { refreshToken } = useTokenRefresh();
-    onMounted(() => {
-      refreshToken();
-    });
-  },
 };
 </script>
 

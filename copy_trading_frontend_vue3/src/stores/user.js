@@ -2,7 +2,6 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
 import { login } from '@/apis/authentication';
-import { on } from '@/utils/webSocketManager';
 
 export const useUserStore = defineStore('user', () => {
     const userInfo = ref({
@@ -35,13 +34,6 @@ export const useUserStore = defineStore('user', () => {
         };
         console.log("User info cleared.");
     };
-
-    on('userInfoUpdate', (data) => {
-        if (data) {
-            Object.assign(userInfo.value.user, data);
-            console.log('User info updated via WebSocket:', data);
-        }
-    });
 
     return {
         userInfo,
