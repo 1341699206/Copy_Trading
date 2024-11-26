@@ -1,10 +1,9 @@
 package com.xtq_ymt.copy_trading_backend.handler;
 
 import org.springframework.lang.NonNull;
-import org.springframework.web.socket.CloseStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.xtq_ymt.copy_trading_backend.model.MarketData;
-import com.xtq_ymt.copy_trading_backend.service.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -16,70 +15,48 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * WebSocket处理器，用于向连接的客户端广播市场数据。
- * 该类管理WebSocket会话，并向所有连接的客户端发送实时市场数据更新。
+ * WebSocket处理器，用于广播市场数据。
  */
 @Component
 public class MarketDataHandler extends TextWebSocketHandler {
 
-    // 线程安全的列表，用于存储活动的WebSocket会话
     private final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-    
-    // 用于获取市场数据的服务
-    private final MarketDataService marketDataService;
-    
-    // 用于将对象序列化为JSON的工具
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    /**
-     * MarketDataHandler的构造函数。
-     *
-     * @param marketDataService 市场数据服务，用于提供市场数据。
-     */
     @Autowired
-    public MarketDataHandler(MarketDataService marketDataService) {
-        this.marketDataService = marketDataService;
+    public MarketDataHandler() {
+        // 初始化 ObjectMapper，并注册 JavaTimeModule 以支持 LocalDateTime
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
 
-    /**
-     * 当新建WebSocket连接时调用。
-     * 将新的会话添加到活动会话列表中。
-     *
-     * @param session 新建立的WebSocket会话。
-     */
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
         sessions.add(session);
     }
 
-    /**
-     * 当WebSocket连接关闭时调用。
-     * 将关闭的会话从活动会话列表中移除。
-     *
-     * @param session 已关闭的WebSocket会话。
-     * @param status  关闭状态。
-     */
     @Override
-    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull org.springframework.web.socket.CloseStatus status) {
         sessions.remove(session);
     }
 
     /**
-     * 广播最新的市场数据给所有连接的WebSocket客户端。
-     * 从MarketDataService中获取市场数据，并将其作为JSON消息发送给所有活动会话。
+     * 广播最新市场数据给所有连接的客户端。
      *
-     * @throws IOException 如果发送消息时发生错误。
+     * @param latestMarketDataList 最新的市场数据列表
+     * @throws IOException 如果发送数据失败
      */
-    public void broadcastMarketData() throws IOException {
-        // 从服务中获取所有市场数据
-        List<MarketData> marketDataList = marketDataService.getAllMarketData();
-        
-        // 将市场数据列表转换为JSON字符串
-        String payload = objectMapper.writeValueAsString(marketDataList);
-        
-        // 向所有连接的WebSocket客户端发送JSON消息
+    public void broadcastLatestMarketData(List<MarketData> latestMarketDataList) throws IOException {
+        // 序列化市场数据为 JSON
+        String payload = objectMapper.writeValueAsString(latestMarketDataList);
+
+        // 逐一发送给所有会话
         for (WebSocketSession session : sessions) {
-            session.sendMessage(new TextMessage(payload));
+            try {
+                session.sendMessage(new TextMessage(payload));
+            } catch (IOException e) {
+                System.err.println("Failed to send message to session: " + e.getMessage());
+            }
         }
     }
 }

@@ -54,4 +54,26 @@ public class MarketDataController {
         // 将返回的结果封装为 ResponseEntity 对象，返回 HTTP 200 和数据。
         return ResponseEntity.ok(marketDataService.getLatestMarketData(symbol));
     }
+
+    /**
+     * 获取指定 symbol 的历史市场数据（支持分页）
+     *
+     * @param symbol 交易品种符号（例如 "EUR/USD"）
+     * @param page 页码，从 0 开始
+     * @param size 每页的记录数
+     * @return 指定 symbol 的历史 MarketData 列表
+     */
+    @GetMapping("/history/{symbol}") // 定义一个 GET 请求，路径为 "/market-data/history/{symbol}"。
+    @Operation(summary = "Get historical market data for a symbol", 
+               description = "Retrieve historical market data for a specific symbol with pagination") 
+    // Swagger 注解：为该方法生成 API 文档，指定方法摘要和详细描述。
+    public ResponseEntity<List<MarketData>> getHistoricalMarketData(
+            @PathVariable String symbol,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        // 调用 MarketDataService 的 getHistoricalMarketData 方法，获取分页的历史市场数据。
+        List<MarketData> historicalData = marketDataService.getHistoricalMarketData(symbol, page, size);
+        // 将返回的结果封装为 ResponseEntity 对象，返回 HTTP 200 和数据。
+        return ResponseEntity.ok(historicalData);
+    }
 }
