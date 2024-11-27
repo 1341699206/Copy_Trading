@@ -1,27 +1,33 @@
 package com.xtq_ymt.copy_trading_backend.service;
 
 import com.xtq_ymt.copy_trading_backend.dto.NotificationRequest;
+import com.xtq_ymt.copy_trading_backend.handler.TradeSyncHandler;
 import com.xtq_ymt.copy_trading_backend.model.Trade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 public class SyncServiceImpl implements SyncService {
 
-    private final SimpMessagingTemplate messagingTemplate;
+    private final TradeSyncHandler tradeSyncHandler; // 使用自定义的 WebSocket Handler 替代 SimpMessagingTemplate
     private final NotificationService notificationService;
 
     @Autowired
-    public SyncServiceImpl(SimpMessagingTemplate messagingTemplate, NotificationService notificationService) {
-        this.messagingTemplate = messagingTemplate;
+    public SyncServiceImpl(TradeSyncHandler tradeSyncHandler, NotificationService notificationService) {
+        this.tradeSyncHandler = tradeSyncHandler;
         this.notificationService = notificationService;
     }
 
     @Override
     public void notifyTrade(Trade trade) {
-        // WebSocket 广播交易事件
-        messagingTemplate.convertAndSend("/topic/trades", trade);
+        // 使用自定义 WebSocket Handler 发送交易事件
+        try {
+            tradeSyncHandler.broadcastMessage(trade); // 调用 TradeSyncHandler 中的广播方法
+        } catch (IOException e) {
+            System.err.println("Error broadcasting trade update: " + e.getMessage());
+        }
 
         // 发送通知给交易员
         NotificationRequest traderNotification = new NotificationRequest(

@@ -120,6 +120,23 @@
         </dependency>
 
 
+        <!-- Mockito 核心依赖 -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.14.2</version> <!-- 最新版本，发布于2024年10月15日 -->
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito JUnit 5 支持 -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.14.2</version>
+            <scope>test</scope>
+        </dependency>
+
+
 
     </dependencies>
 
