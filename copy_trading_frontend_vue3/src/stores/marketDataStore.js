@@ -3,8 +3,8 @@ import { ref } from 'vue';                 // 从 Vue 导入 ref，用于响应�
 import webSocketManager from '@/utils/webSocketManager';  // 导入自定义的 WebSocket 管理器
 
 // 定义 WebSocket 的基础 URL 和处理器路径
-const wsUrl = 'http://localhost:9099/ws';  // 基础 WebSocket 地址
-const handler = '/topic/market-data';       // WebSocket 的处理器路径（具体业务）
+const wsUrl = 'ws://localhost:9099/ws';  // 基础 WebSocket 地址
+const handler = '/market-data';       // WebSocket 的处理器路径（具体业务）
 
 // 使用 Pinia 定义一个名为 marketData 的 store
 export const useMarketDataStore = defineStore('marketData', () => {
