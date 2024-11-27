@@ -1,7 +1,7 @@
 <script setup>
 import { inject, watch, ref, onMounted } from "vue";
 import * as echarts from "echarts";
-import { getMarketDataAPI } from "@/apis/marketData";
+import { getMarketDataHistory } from "@/apis/marketData";
 
 const selectedItem = inject("selectedItem");
 const item = ref(selectedItem.value); // 当前展示的项
@@ -11,10 +11,10 @@ let chart;
 
 // 获取市场数据并更新图表
 const fetchMarketData = async () => {
-  if (item.value && item.value.instrument) {
+  if (item.value && item.value.symbol) {
     // 检查 item 是否存在
-    const res = await getMarketDataAPI({ instrument: item.value.instrument });
-    marketInfo.value = res.data;
+    const res = await getMarketDataHistory({ symbol:item.value.symbol,page:0,size:5 });
+    marketInfo.value = res;
 
     const options = {
       xAxis: {
@@ -26,7 +26,7 @@ const fetchMarketData = async () => {
       },
       series: [
         {
-          data: marketInfo.value.map((data) => data.price),
+          data: marketInfo.value.map((data) => data.currentPrice),
           type: "line",
           smooth: true,
         },
@@ -58,7 +58,7 @@ onMounted(async () => {
   <div class="container">
     <div class="header">
       <div class="avatar"></div>
-      <div class="title">{{ item.instrument }}</div>
+      <div class="title">{{ item.symbol }}</div>
     </div>
     <div class="information">
       <ul>

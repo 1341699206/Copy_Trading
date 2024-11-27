@@ -15,6 +15,19 @@ export const getMarketDataBySymbol=(symbol)=>{
   })
 }
 
+//a 获取指定一项市场数据的历史数据
+export const getMarketDataHistory=({symbol,page,size})=>{
+  const url=`/market-data/history/${symbol}`
+  return request({
+    url:url,
+    data:{
+      symbol,
+      page,
+      size
+    }
+  })
+}
+
 // 其他与市场数据相关的 API 调用可以放在这里
 // export const anotherMarketDataAPI = () => { ... };
 
