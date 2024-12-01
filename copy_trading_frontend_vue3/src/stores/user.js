@@ -41,11 +41,8 @@ export const useUserStore = defineStore('user', () => {
         clearUserInfo
     };
 }, {
-    persist: true, // 开启数据持久化
-    strategies: [
-        {
-            key: 'user', // 自定义存储的键名
-            storage: sessionStorage // 指定存储方式为 sessionStorage
-        }
-    ]
+    persist: {
+        key: 'user', // 自定义存储的键名
+        storage: sessionStorage // 指定存储方式为 sessionStorage
+    }
 });

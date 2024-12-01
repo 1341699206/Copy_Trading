@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 交易卡片展示 -->
+    <!-- 市场数据展示 -->
     <div class="trade-card-grid">
       <TradeCard
         v-for="asset in availableAssets"
@@ -11,46 +11,32 @@
   </div>
 </template>
 
-<script>
-import { useMarketDataStore } from '@/stores/marketDataStore';
-import TradeCard from './component/TradeCard.vue';
-import { onMounted, onBeforeUnmount, computed } from 'vue'; // 引入生命周期钩子和 computed
+<script setup>
+import { useMarketDataStore } from '@/stores/marketDataStore'; // 引入新的 marketDataStore
+import TradeCard from './component/TradeCard.vue'; // 引入 TradeCard 组件
+import { computed, onMounted, onBeforeUnmount } from 'vue'; // Vue 钩子和计算属性
 
-export default {
-  name: 'TRADE',
-  components: {
-    TradeCard
-  },
-  setup() {
-    const marketDataStore = useMarketDataStore();
-    
-    // 使用 computed 确保 availableAssets 的响应性
-    const availableAssets = computed(() => marketDataStore.availableAssets);
+// 使用 store 获取市场数据
+const marketDataStore = useMarketDataStore();
+const availableAssets = computed(() => marketDataStore.marketData); // 响应式的市场数据
 
-    // 在组件挂载时启动定时任务
-    onMounted(() => {
-      console.log('Component mounted, starting auto update');
-      marketDataStore.startAutoUpdate(); // 开启定时任务
-    });
+// 组件挂载时启动监听，卸载时停止监听
+onMounted(() => {
+  console.log('Component mounted, starting WebSocket connection');
+  marketDataStore.startListening();
+});
 
-    // 在组件卸载时停止定时任务
-    onBeforeUnmount(() => {
-      console.log('Component before unmount, stopping auto update');
-      marketDataStore.stopAutoUpdate(); // 停止定时任务，防止内存泄漏
-    });
-
-    return {
-      availableAssets
-    };
-  }
-};
+onBeforeUnmount(() => {
+  console.log('Component before unmount, stopping WebSocket connection');
+  marketDataStore.stopListening();
+});
 </script>
 
 <style scoped>
 .trade-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 网格布局，自动填充 */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 响应式网格布局 */
   gap: 1rem; /* 卡片之间的间距 */
-  padding: 1rem; /* 内边距 */
+  padding: 1rem; /* 容器内边距 */
 }
 </style>

@@ -18,7 +18,7 @@ const emit = defineEmits(["close"]);
 
 //账户信息
 const accountInfo = reactive({
-  id: userStore.userInfo.userId,
+  id: userStore.userInfo.id,
   balance: 0,
 });
 
@@ -42,7 +42,7 @@ const doCreateAccount = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        // 调用 createTradingAccount
+        // 调用 createAccount
         await createAccount(accountInfo);
         //创建成功提示
         ElMessage({ type: "success", message: "Create successful!" });

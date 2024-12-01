@@ -39,8 +39,7 @@ const doLogin = async () => {
           username: userInfo.value.username, 
           password: userInfo.value.password 
         });
-        ElMessage({ type: 'success', message: 'Login successful!' });
-
+        
         // 根据角色跳转页面并连接 WebSocket
         const { role } = userStore.userInfo;
         if (role === 'TRADER') {
