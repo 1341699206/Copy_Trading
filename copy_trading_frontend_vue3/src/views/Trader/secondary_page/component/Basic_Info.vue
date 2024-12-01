@@ -3,13 +3,7 @@
     <!-- Trader头像和账户信息 -->
     <div class="trader-info">
       <img v-if="userLoggedIn" :src="userAvatar" alt="Trader Avatar" class="avatar" />
-      <h2 v-if="userLoggedIn">{{ name }}</h2>
-      <select v-if="userLoggedIn" class="trader-type" @change="handleAccountChange">
-        <option v-for="account in traderAccounts" :key="account.id" :value="account.id">{{ account.name }}</option>
-      </select>
-
-      <!-- 如果用户未登录，显示登录按钮 -->
-      <button v-if="!userLoggedIn" class="login-button" @click="redirectToLogin">Login</button>
+      <h2 v-if="userLoggedIn">{{ username }}</h2>
     </div>
 
     <!-- Trader的资金和状态信息，仅在登录状态下显示 -->
@@ -21,8 +15,6 @@
       </div>
       <button class="funds-button">Funds</button>
 
-      <!-- 新增的“创建交易账户”按钮 -->
-      <button class="create-account-button" @click="openDialog">创建交易账户</button>
     </div>
 
     <!-- 账户创建对话框 -->
@@ -32,16 +24,15 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
 import { useUserStore } from '@/stores/user';
+import { generateAvatar } from '@/utils/avatar'
 
 const userStore = useUserStore();
-const router = useRouter();
 
-const userLoggedIn = computed(() => !!userStore.userInfo.user);
-const userAvatar = computed(() => generateAvatar(userStore.userInfo.user?.name || 'User'));
-const name = computed(() => userStore.userInfo.user?.name || 'N/A');
+const userLoggedIn = computed(() => !!userStore.userInfo);
+const userAvatar = computed(() => generateAvatar(userStore.userInfo.username || 'User'));
+const username = computed(() => userStore.userInfo.username || 'N/A');
 const traderAccounts = computed(() => userStore.userInfo.user?.tradingAccounts || []);
 const showDialog = ref(false); // 控制弹窗显示
 
@@ -77,28 +68,9 @@ const fetchUserInfo = async () => {
   }
 };
 
-// 打开创建账户对话框
-const openDialog = () => {
-  console.log("Opening dialog...");
-  showDialog.value = true;
-};
-
 // 关闭对话框
 const closeDialog = () => {
   showDialog.value = false;
-};
-
-// 头像生成逻辑
-const generateAvatar = (userName) => {
-  const firstChar = userName.charAt(0).toUpperCase();
-  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="white"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="36" fill="black">${firstChar}</text></svg>`;
-};
-
-// 账户选择变化处理
-const handleAccountChange = (event) => {
-  const accountId = event.target.value;
-  const account = traderAccounts.value.find(acc => acc.id === accountId);
-  if (account) updateStats(account);
 };
 
 // 更新统计数据
@@ -116,11 +88,6 @@ const updateStats = (account) => {
     { label: 'Margin', value: `${account.marginPercent?.toFixed(2) || '0.00'}% (${account.margin?.toFixed(2) || '0'})` },
     { label: 'Free Margin', value: `$${account.freeMargin?.toFixed(2) || '0.00'}` },
   ];
-};
-
-// 重定向到登录页面
-const redirectToLogin = () => {
-  router.push('/login');
 };
 
 // 生命周期钩子

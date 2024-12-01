@@ -78,7 +78,7 @@ const doRegister = () => {
       <!-- 选择注册角色：Trader 或 Follower -->
       <el-form-item prop="role" label="role">
         <el-select v-model="userInfo.role" placeholder="role">
-          <el-option value="TREADER">TRADER</el-option>
+          <el-option value="TRADER">TRADER</el-option>
           <el-option value="FOLLOWER">FOLLOWER</el-option>
           <el-option value="ADMIN">ADMIN</el-option>
         </el-select>

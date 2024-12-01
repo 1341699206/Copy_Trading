@@ -3,7 +3,7 @@
     <div class="container">
       <!-- Logo部分 -->
       <div class="logo">
-        <router-link to="/">ZuluTrade</router-link>
+        <router-link to="/">Co-trade</router-link>
       </div>
 
       <!-- 中间的导航部分 -->

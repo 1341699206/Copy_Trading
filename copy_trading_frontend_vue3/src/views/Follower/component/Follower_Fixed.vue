@@ -43,7 +43,7 @@
         </div>
         <div class="right">
           <ul>
-            <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.user.name}}</a></li>
+            <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.username}}</a></li>
             <li>
               <el-popconfirm @confirm="confirm" title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
                 <template #reference>

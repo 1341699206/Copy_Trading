@@ -3,7 +3,7 @@
     <!-- 顶部资产信息 -->
     <div class="trade-card-header">
       <div class="asset-info">
-        {{ formattedInstrument }}
+        {{ formattedSymbol }}
         <span class="icon">~</span>
       </div>
       <div class="header-icons">
@@ -22,7 +22,6 @@
           <span class="price-big">{{ sellPriceMain }}</span>
           <span class="price-small">{{ sellPriceEnd }}</span>
         </div>
-        <!-- 动态显示箭头 -->
         <span class="price-arrow" v-if="sellPriceDirection !== 0">
           <i :class="sellPriceArrowClass"></i>
         </span>
@@ -36,14 +35,13 @@
           <span class="price-big">{{ buyPriceMain }}</span>
           <span class="price-small">{{ buyPriceEnd }}</span>
         </div>
-        <!-- 动态显示箭头 -->
         <span class="price-arrow" v-if="buyPriceDirection !== 0">
           <i :class="buyPriceArrowClass"></i>
         </span>
       </div>
     </div>
 
-    <!-- 中间的点差显示，放在 SELL 和 BUY 之间 -->
+    <!-- 中间的点差显示 -->
     <div class="spread-between">
       <span>{{ spread.toFixed(1) }}</span>
     </div>
@@ -56,133 +54,96 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { computed, ref, watch } from 'vue';
 
-export default {
-  name: 'TradeCard',
-  props: {
-    asset: Object
-  },
-  setup(props) {
-    const spread = 0.1; // 固定点差
-    const sellPrice = ref(props.asset.currentPrice - spread); // 卖出价格
-    const buyPrice = ref(props.asset.currentPrice); // 买入价格
+const props = defineProps({
+  asset: Object
+});
 
-    // 定义前一个价格，用于比较判断价格是上涨还是下跌
-    const prevSellPrice = ref(sellPrice.value);
-    const prevBuyPrice = ref(buyPrice.value);
+const spread = 0.1; // 固定点差
 
-    // 格式化价格函数
-    const formatPrice = (price) => {
-      const [wholePart, decimalPart] = price.toFixed(5).split('.'); // 分成整数部分和小数部分
-      return {
-        wholePart,
-        main: decimalPart.slice(0, 2), // 突出显示的小数部分
-        end: decimalPart.slice(2) // 剩余小数部分
-      };
-    };
+// 响应式价格变量
+const sellPrice = ref(props.asset.currentPrice - spread);
+const buyPrice = ref(props.asset.currentPrice);
 
-    // 响应式存储价格变化后的显示内容
-    const sellPriceWholePart = ref('');
-    const sellPriceMain = ref('');
-    const sellPriceEnd = ref('');
-    const buyPriceWholePart = ref('');
-    const buyPriceMain = ref('');
-    const buyPriceEnd = ref('');
+// 存储前一个价格用于变化判断
+const prevSellPrice = ref(sellPrice.value);
+const prevBuyPrice = ref(buyPrice.value);
 
-    // 价格变化方向：1 表示上涨，-1 表示下跌，0 表示未变化
-    const sellPriceDirection = ref(0);
-    const buyPriceDirection = ref(0);
-
-    // 监控卖出价格变化
-    watch(
-      () => props.asset.currentPrice,
-      (newPrice) => {
-        prevSellPrice.value = sellPrice.value;
-        sellPrice.value = newPrice - spread;
-
-        if (sellPrice.value > prevSellPrice.value) {
-          sellPriceDirection.value = 1; // 上涨
-        } else if (sellPrice.value < prevSellPrice.value) {
-          sellPriceDirection.value = -1; // 下跌
-        } else {
-          sellPriceDirection.value = 0; // 未变化
-        }
-
-        // 更新卖出价格格式化内容
-        const { wholePart, main, end } = formatPrice(sellPrice.value);
-        sellPriceWholePart.value = wholePart;
-        sellPriceMain.value = main;
-        sellPriceEnd.value = end;
-      },
-      { immediate: true }
-    );
-
-    // 监控买入价格变化
-    watch(
-      () => props.asset.currentPrice,
-      (newPrice) => {
-        prevBuyPrice.value = buyPrice.value;
-        buyPrice.value = newPrice;
-
-        if (buyPrice.value > prevBuyPrice.value) {
-          buyPriceDirection.value = 1; // 上涨
-        } else if (buyPrice.value < prevBuyPrice.value) {
-          buyPriceDirection.value = -1; // 下跌
-        } else {
-          buyPriceDirection.value = 0; // 未变化
-        }
-
-        // 更新买入价格格式化内容
-        const { wholePart, main, end } = formatPrice(buyPrice.value);
-        buyPriceWholePart.value = wholePart;
-        buyPriceMain.value = main;
-        buyPriceEnd.value = end;
-      },
-      { immediate: true }
-    );
-
-    // 定义根据价格变化返回的 class
-    const sellPriceClass = computed(() => {
-      return sellPriceDirection.value === 1 ? 'up' : sellPriceDirection.value === -1 ? 'down' : '';
-    });
-
-    const buyPriceClass = computed(() => {
-      return buyPriceDirection.value === 1 ? 'up' : buyPriceDirection.value === -1 ? 'down' : '';
-    });
-
-    // 箭头方向 class
-    const sellPriceArrowClass = computed(() => {
-      return sellPriceDirection.value === 1 ? 'arrow-up' : 'arrow-down';
-    });
-
-    const buyPriceArrowClass = computed(() => {
-      return buyPriceDirection.value === 1 ? 'arrow-up' : 'arrow-down';
-    });
-
-    return {
-      spread,
-      formattedInstrument: computed(() => {
-        const instrument = props.asset.instrument || '';
-        const parts = instrument.split('');
-        return parts.length === 6 ? `${parts.slice(0, 3).join('')}/${parts.slice(3).join('')}` : instrument;
-      }),
-      sellPriceWholePart,
-      sellPriceMain,
-      sellPriceEnd,
-      buyPriceWholePart,
-      buyPriceMain,
-      buyPriceEnd,
-      sellPriceClass,
-      buyPriceClass,
-      sellPriceArrowClass,
-      buyPriceArrowClass,
-      sellPriceDirection,
-      buyPriceDirection
-    };
-  }
+// 格式化价格为整数和小数部分
+const formatPrice = (price) => {
+  const [wholePart, decimalPart] = price.toFixed(5).split('.');
+  return {
+    wholePart,
+    main: decimalPart.slice(0, 2),
+    end: decimalPart.slice(2)
+  };
 };
+
+// 响应式存储价格变化的显示内容
+const sellPriceWholePart = ref('');
+const sellPriceMain = ref('');
+const sellPriceEnd = ref('');
+const buyPriceWholePart = ref('');
+const buyPriceMain = ref('');
+const buyPriceEnd = ref('');
+
+// 价格变化方向：1-上涨，-1-下跌，0-未变化
+const sellPriceDirection = ref(0);
+const buyPriceDirection = ref(0);
+
+// 监控资产价格变化
+watch(
+  () => props.asset.currentPrice,
+  (newPrice) => {
+    // 更新卖出价格
+    prevSellPrice.value = sellPrice.value;
+    sellPrice.value = newPrice - spread;
+
+    sellPriceDirection.value = sellPrice.value > prevSellPrice.value
+      ? 1
+      : sellPrice.value < prevSellPrice.value
+      ? -1
+      : 0;
+
+    const { wholePart, main, end } = formatPrice(sellPrice.value);
+    sellPriceWholePart.value = wholePart;
+    sellPriceMain.value = main;
+    sellPriceEnd.value = end;
+
+    // 更新买入价格
+    prevBuyPrice.value = buyPrice.value;
+    buyPrice.value = newPrice;
+
+    buyPriceDirection.value = buyPrice.value > prevBuyPrice.value
+      ? 1
+      : buyPrice.value < prevBuyPrice.value
+      ? -1
+      : 0;
+
+    const { wholePart: buyWhole, main: buyMain, end: buyEnd } = formatPrice(buyPrice.value);
+    buyPriceWholePart.value = buyWhole;
+    buyPriceMain.value = buyMain;
+    buyPriceEnd.value = buyEnd;
+  },
+  { immediate: true }
+);
+
+// 根据价格变化返回的 class
+const sellPriceClass = computed(() => (sellPriceDirection.value === 1 ? 'up' : sellPriceDirection.value === -1 ? 'down' : ''));
+const buyPriceClass = computed(() => (buyPriceDirection.value === 1 ? 'up' : buyPriceDirection.value === -1 ? 'down' : ''));
+
+// 箭头方向 class
+const sellPriceArrowClass = computed(() => (sellPriceDirection.value === 1 ? 'arrow-up' : 'arrow-down'));
+const buyPriceArrowClass = computed(() => (buyPriceDirection.value === 1 ? 'arrow-up' : 'arrow-down'));
+
+// 格式化资产符号，例如 "EURUSD" 转为 "EUR/USD"
+const formattedSymbol = computed(() => {
+  const symbol = props.asset.symbol || '';
+  const parts = symbol.split('');
+  return parts.length === 6 ? `${parts.slice(0, 3).join('')}/${parts.slice(3).join('')}` : symbol;
+});
 </script>
 
 <style scoped>
