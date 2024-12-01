@@ -52,4 +52,11 @@ public class User {
         TRADER,
         FOLLOWER
     }
+
+    public User(Long id, String username, Role role) {
+    this.id = id;
+    this.username = username;
+    this.role = role;
+    }
+
 }

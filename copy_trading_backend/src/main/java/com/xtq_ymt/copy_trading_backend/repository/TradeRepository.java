@@ -16,6 +16,10 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     @Query("SELECT t FROM Trade t WHERE t.account.id = :accountId AND t.isClosed = false")
     List<Trade> findByAccountIdAndIsClosedFalse(@Param("accountId") Long accountId);
 
+    // 新增方法：获取账户的已平仓交易
+    @Query("SELECT t FROM Trade t WHERE t.account.id = :accountId AND t.isClosed = true")
+    List<Trade> findByAccountIdAndIsClosedTrue(@Param("accountId") Long accountId); // 新增的方法
+
     // 已有方法：获取与策略相关的所有交易
     @Query("SELECT t FROM Trade t WHERE t.strategy.id = :strategyId")
     List<Trade> findByStrategyId(@Param("strategyId") Long strategyId);

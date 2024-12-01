@@ -14,12 +14,16 @@ import java.util.List;
 public class StatsServiceImpl implements StatsService {
 
     private final TradeRepository tradeRepository;
+    private final TradeService tradeService;  // 声明 tradeService 字段
 
-    // 构造器注入TradeRepository，主要用于访问交易数据
     @Autowired
-    public StatsServiceImpl(TradeRepository tradeRepository) {
+    public StatsServiceImpl(TradeRepository tradeRepository, TradeService tradeService) {
         this.tradeRepository = tradeRepository;
+        this.tradeService = tradeService;
     }
+
+
+    
 
     /**
      * 计算交易者的统计数据
@@ -109,10 +113,18 @@ public class StatsServiceImpl implements StatsService {
                 .stream()
                 .map(result -> {
                     FollowerStats stats = new FollowerStats();
-                    stats.setFollowerId((Long) result[0]);  // 设置跟随者ID
-                    stats.setTotalProfit((Double) result[1]);  // 设置总利润
-                    return stats;  // 返回转换后的FollowerStats对象
+                    stats.setFollowerId((Long) result[0]); // 设置跟随者ID
+                    stats.setTotalProfit((Double) result[1]); // 设置总利润
+                    return stats; // 返回转换后的FollowerStats对象
                 })
-                .toList();  // 返回结果列表
+                .toList(); // 返回结果列表
     }
+    
+
+    @Override
+    public void updateTraderAndFollowerStats(Long tradeId) {
+        // 调用 TradeService 中的方法
+        tradeService.updateTraderAndFollowerStats(tradeId);
+    }
+
 }
