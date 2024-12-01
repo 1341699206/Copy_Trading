@@ -1,21 +1,21 @@
 import request from "@/utils/http";
 
 //a
-export const login=({email,password}) =>{
+export const login=({username,password}) =>{
     return request({
-        url:'/auth/login',
+        url:`/auth/login?username=${username}&password=${password}`,
         method:'POST',
         data:{
-            email,
-            password
+            username,
+            password,
         }
     })
 }
 
 //a
-export const register=({username,email,password,role,createdAt,updatedAt})=>{
+export const register=({username,email,password,role})=>{
     return request({
-        url: '/api/register',
+        url: '/auth/register',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,8 +25,6 @@ export const register=({username,email,password,role,createdAt,updatedAt})=>{
             email,
             password,
             role,
-            createdAt,
-            updatedAt,
         }
     });
 

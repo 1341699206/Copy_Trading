@@ -1,27 +1,35 @@
-//a 
+//a
 <script setup>
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useUserStore } from '@/stores/user'
 import 'element-plus/theme-chalk/el-message.css';
-import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router'; 
 
 const userStore = useUserStore();
+
+// 用户注册信息
 const userInfo = ref({
   username: '',
   password: '',
 });
+
+// 规则数据对象
+const rules = {
+  username: [
+    { required: true, message: 'Name cannot be empty' },
+    { min: 4, max: 16, message: 'Name length required 4-16 characters' }
+  ],
+  password: [
+    { required: true, message: 'Password cannot be empty.' },
+    { min: 6, max: 14, message: 'Password length requires 6-14 characters' }
+  ]
+};
+
 const formRef = ref(null);
 const router = useRouter();
 
-const rules = {
-  username: [{ required: true, message: 'Username cannot be empty' }],
-  password: [
-    { required: true, message: 'Password cannot be empty.' },
-    { min: 6, max: 14, message: 'Password length requires 6-14 characters' },
-  ],
-};
-
+//登录函数
 const doLogin = async () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
@@ -54,82 +62,32 @@ const doLogin = async () => {
 </script>
 
 <template>
-  <section class="login-section">
-    <div class="wrapper">
-      <nav>
-        <h1>Log in</h1>
-      </nav>
-      <div class="account-box">
-        <div class="form">
-          <el-form
-            ref="formRef"
-            :model="userInfo"
-            :rules="rules"
-            label-position="right"
-            label-width="60px"
-            status-icon
-          >
-            <el-form-item prop="username" label="username">
-              <el-input v-model="userInfo.username" />
-            </el-form-item>
-            <el-form-item prop="password" label="password">
-              <el-input type="password" v-model="userInfo.password" />
-            </el-form-item>
-            <el-button class="loginB" @click="doLogin">login</el-button>
-            <el-button class="registerB" @click="$router.push('/register')">register</el-button>
-          </el-form>
-        </div>
-      </div>
-    </div>
-  </section>
+  <div class="register">
+    <h1>Log in</h1>
+
+    <el-form ref="formRef" :model="userInfo" :rules="rules" label-position="top" label-width="60px" status-icon>
+      <!-- 输入 Name -->
+      <el-form-item label="username" prop="username"> 
+        <el-input v-model="userInfo.username" id="username" />
+      </el-form-item>
+
+      <!-- 输入密码 -->
+      <el-form-item label="password" prop="password"> 
+        <el-input type="password" v-model="userInfo.password" id="password" />
+      </el-form-item>
+
+      <!-- 登录按钮 -->
+      <el-button @click="doLogin">login</el-button>
+      <el-button @click="$router.push('/register')">register</el-button>
+
+    </el-form>
+
+  </div>
 </template>
 
 <style scoped lang="scss">
-.login-section {
-  height: 488px;
-  position: relative;
-  .wrapper {
-    width: 380px;
-    background: #fff;
-    position: absolute;
-    left: 50%;
-    top: 24%;
-    transform: translate3d(100px, 0, 0);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    nav {
-      font-size: 14px;
-      height: 55px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #f5f5f5;
-      display: flex;
-      padding: 0 40px;
-      text-align: right;
-      align-items: center;
-      h1 {
-        flex: 1;
-        line-height: 1;
-        display: inline-block;
-        font-size: 18px;
-        position: relative;
-        text-align: center;
-      }
-    }
-  }
-}
-.account-box {
-  .form {
-    padding: 0 20px 20px 20px;
-    &-item {
-      margin-bottom: 28px;
-    }
-  }
-}
-.loginB {
-  background: #409eff;
-  width: 40%;
-  color: #fff;
-}
-.registerB {
-  width: 40%;
+.el-form {
+  max-width: 400px;
+  margin: 0 auto;
 }
 </style>

@@ -15,9 +15,9 @@ export const useUserStore = defineStore('user', () => {
 
     const getUserInfo = async ({ username, password }) => {
         try {
-            const res = await login({ username, password, });
+            const res = await login({ username, password });
             // 将其他返回的数据存储到 userInfo 中
-            userInfo.value = res.data;
+            userInfo.value = res;
         } catch (error) {
             console.error("Failed to fetch user info:", error);
         }

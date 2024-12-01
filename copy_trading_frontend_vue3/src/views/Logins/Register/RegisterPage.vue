@@ -11,14 +11,12 @@ const userInfo = ref({
   username: '',
   email: '',
   password: '',
-  role: 'Follower',
-  createdAt:'',
-  updatedAt:''
+  role: 'FOLLOWER'
 });
 
 // 规则数据对象
 const rules = {
-  name: [
+  username: [
     { required: true, message: 'Name cannot be empty' },
     { min: 4, max: 16, message: 'Name length required 4-16 characters' }
   ],
@@ -42,10 +40,6 @@ const doRegister = () => {
   formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        //获取时间
-        const now=(new Date()).toISOString();
-        userInfo.value.createdAt=now;
-        userInfo.value.updatedAt=now;
         // 调用注册 API 并传递 userInfo 的值
         await register(userInfo.value);
         ElMessage({ type: 'success', message: 'Register successful!' });
@@ -84,9 +78,9 @@ const doRegister = () => {
       <!-- 选择注册角色：Trader 或 Follower -->
       <el-form-item prop="role" label="role">
         <el-select v-model="userInfo.role" placeholder="role">
-          <el-option value="Trader">Trader</el-option>
-          <el-option value="Follower">Follower</el-option>
-          <el-option value="Admin">Admin</el-option>
+          <el-option value="TREADER">TRADER</el-option>
+          <el-option value="FOLLOWER">FOLLOWER</el-option>
+          <el-option value="ADMIN">ADMIN</el-option>
         </el-select>
       </el-form-item>
 
