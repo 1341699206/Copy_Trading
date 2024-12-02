@@ -14,4 +14,6 @@ public interface StatsService {
     List<TraderStats> getTopTradersByProfit(int limit);
 
     List<FollowerStats> getTopFollowersByProfit(int limit);
+
+    void updateTraderAndFollowerStats(Long tradeId);
 }

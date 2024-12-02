@@ -1,7 +1,9 @@
 package com.xtq_ymt.copy_trading_backend.service;
 
 import com.xtq_ymt.copy_trading_backend.model.FollowerTrader;
+import com.xtq_ymt.copy_trading_backend.model.TraderStats;
 import com.xtq_ymt.copy_trading_backend.repository.FollowerTraderRepository;
+import com.xtq_ymt.copy_trading_backend.repository.TraderStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +13,14 @@ import java.util.List;
 public class FollowerServiceImpl implements FollowerService {
 
     private final FollowerTraderRepository followerTraderRepository;
+    private final TraderStatsRepository traderStatsRepository;  // 注入 TraderStatsRepository 用于更新交易员的跟随者数量
 
-    // 构造器注入FollowerTraderRepository，用于与数据库交互
+    // 构造器注入FollowerTraderRepository和TraderStatsRepository
     @Autowired
-    public FollowerServiceImpl(FollowerTraderRepository followerTraderRepository) {
+    public FollowerServiceImpl(FollowerTraderRepository followerTraderRepository,
+                               TraderStatsRepository traderStatsRepository) {
         this.followerTraderRepository = followerTraderRepository;
+        this.traderStatsRepository = traderStatsRepository;
     }
 
     /**
@@ -36,7 +41,12 @@ public class FollowerServiceImpl implements FollowerService {
         followerTrader.setFollowerAccountId(followerAccountId);  // 设置跟随者账户ID
         followerTrader.setTraderAccountId(traderAccountId);  // 设置交易者账户ID
         // 保存并返回新创建的FollowerTrader记录
-        return followerTraderRepository.save(followerTrader);
+        followerTraderRepository.save(followerTrader);
+
+        // 更新交易员的总跟随者数
+        updateTotalFollowers(traderAccountId, 1);
+
+        return followerTrader;
     }
 
     /**
@@ -53,6 +63,9 @@ public class FollowerServiceImpl implements FollowerService {
                 .filter(record -> record.getTraderAccountId().equals(traderAccountId))  // 过滤出匹配的交易者账户ID
                 .findFirst()  // 找到第一个匹配的记录
                 .ifPresent(followerTraderRepository::delete);  // 如果存在，则删除该记录
+
+        // 更新交易员的总跟随者数
+        updateTotalFollowers(traderAccountId, -1);
     }
 
     /**
@@ -64,5 +77,30 @@ public class FollowerServiceImpl implements FollowerService {
     public List<FollowerTrader> getFollowedTraders(Long followerAccountId) {
         // 查询该跟随者所关注的所有交易者
         return followerTraderRepository.findByFollowerAccountId(followerAccountId);
+    }
+
+    /**
+     * 更新交易员的跟随者数量
+     * @param traderAccountId 交易员账户ID
+     * @param delta 跟随者变化量（+1表示新增一个跟随者，-1表示取消一个跟随者）
+     */
+    private void updateTotalFollowers(Long traderAccountId, int delta) {
+        // 获取交易员的统计数据
+        TraderStats stats = traderStatsRepository.findByTraderId(traderAccountId);
+        if (stats == null) {
+            // 如果没有找到交易员统计数据，则创建一个新的
+            stats = new TraderStats();
+            stats.setTraderId(traderAccountId);
+            stats.setTotalProfit(0);
+            stats.setWinRate(0);
+            stats.setMaxDrawdown(0);
+            stats.setTotalTrades(0);
+            stats.setWinningTrades(0);
+            stats.setTotalFollowers(0);  // 默认跟随者数量为0
+        }
+
+        // 更新跟随者数量
+        stats.updateTotalFollowers(delta);
+        traderStatsRepository.save(stats);  // 保存更新后的统计数据
     }
 }

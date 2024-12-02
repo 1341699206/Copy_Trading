@@ -13,4 +13,7 @@ public interface TradeService {
     List<Trade> getOpenTradesByAccountId(Long accountId);
 
     List<Trade> getTradesByStrategyId(Long strategyId);
+
+    // 新增的方法：更新交易员和跟随者的统计数据
+    void updateTraderAndFollowerStats(Long tradeId);
 }
