@@ -4,8 +4,11 @@ import PersonalColumn from "./component/PersonalColumn.vue";
 import DashboardBody from "./component/Body/DashboardBody.vue"
 import AccountDialog from "./component/AccountDialog.vue";
 
+import { useAccountStore } from "@/stores/account";
 import { useUserStore } from "@/stores/user";
-const userStore = useUserStore();
+
+const accountStore=useAccountStore();
+const userStore=useUserStore();
 
 const showDialog = ref(false);
 const closeDialog=()=>{
@@ -13,10 +16,13 @@ const closeDialog=()=>{
 }
 
 //强制创建第一个账户
-const createFirstAccount = () => {
+const createFirstAccount = async() => {
   //检测当前登录是否有账户
-  if (userStore.userInfo.user.tradingAccounts.length === 0) {
-    showDialog.value = true;
+  try{
+    await accountStore.getAccountInfo(userStore.userInfo.id);
+  }catch(error){
+    console.log("正确捕获错误");
+    showDialog.value=true;
   }
 };
 // 启动函数

@@ -1,17 +1,26 @@
 <script setup>
 import { reactive, watch } from "vue";
 import { useUserStore } from "@/stores/user";
+import { useRoleStore } from "@/stores/roleBasicData";
+import { useAccountStore } from "@/stores/account";
 
-const userStore = useUserStore();
+const userStore=useUserStore();
+const user = userStore.userInfo;
+
+const roleStore = useRoleStore();
+const role=roleStore.roleInfo;
+
+const accountStore=useAccountStore();
+const account =accountStore.accountInfo;
 
 // 定义 followerInfo，同时监听 userInfo 的变化
 const followerInfo = reactive({
-  id: userStore.id || null,
-  username: userStore.username || "N/A",
-  value:  0,
-  profitLoss:  0,
-  copying: 0,
-  following:  0,
+  id: user.id || null,
+  username: user.username || "N/A",
+  value:  account.balance || 0,
+  profitLoss:  role.totalProfit || 0,
+  copying: role.totalTrades || 0,
+  following:  role.totalFollowedTraders || 0,
 });
 
 // 如果 userInfo 发生变化，动态更新 followerInfo 的值
