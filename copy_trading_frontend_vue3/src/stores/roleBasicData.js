@@ -1,17 +1,17 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
-import { getRoleBasicInfo } from '';
+import { getUserStatistics } from '@/apis/statisticsManagement';
 
 export const useRoleStore = defineStore('role', () => {
     const roleInfo = ref({})
 
-    const getRoleInfo = async (id) => {
+    const getRoleInfo = async ({role,id}) => {
         try {
-            const res = await getRoleBasicInfo(id);
-            // 将其他返回的数据存储到 userInfo 中
+            const res = await getUserStatistics({role,id});
+            // 将其他返回的数据存储到 roleInfo 中
             roleInfo.value = res;
         } catch (error) {
-            console.error("Failed to fetch user info:", error);
+            console.error("Failed to fetch role info:", error);
         }
     }
 
