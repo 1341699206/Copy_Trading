@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-    Optional<Account> findByUserId(Long userId);
+    // 根据用户ID查找账户
+    Optional<Account> findByUser_Id(Long userId);
 }

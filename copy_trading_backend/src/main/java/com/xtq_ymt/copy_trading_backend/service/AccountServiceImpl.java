@@ -51,7 +51,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getAccountByUserId(Long userId) {
         // 根据用户ID查找账户，如果未找到则抛出异常
-        return accountRepository.findByUserId(userId)
+        return accountRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new IllegalArgumentException("未找到ID为 " + userId + " 的账户"));
     }
 
