@@ -1,8 +1,9 @@
 <script setup>
-import { reactive } from "vue";
+import { reactive,computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useRoleStore } from "@/stores/roleBasicData";
 import { useAccountStore } from "@/stores/account";
+import { generateAvatar } from "@/utils/avatar"
 
 const userStore=useUserStore();
 const user = userStore.userInfo;
@@ -22,26 +23,14 @@ const followerInfo = reactive({
   copying: role.totalTrades || 0,
   following:  role.totalFollowedTraders || 0,
 });
-
-// // 如果 userInfo 发生变化，动态更新 followerInfo 的值
-// watch(
-//   () => userStore.userInfo,
-//   (newUserInfo) => {
-//     followerInfo.id = newUserInfo.id || null;
-//     followerInfo.username = newUserInfo.username || "N/A";
-//     followerInfo.value = 0;
-//     followerInfo.profitLoss = 0;
-//     followerInfo.following =  0;
-//   },
-//   { immediate: true }
-// );
+const userAvatar = computed(() => generateAvatar(followerInfo.username));
 </script>
 
 <template>
   <div class="container">
     <div class="left-section">
       <div class="user_information">
-        <div class="avatar"></div>
+        <img class="avatar" :src="userAvatar" alt="avatar" />
         <div class="name">{{ followerInfo.username }}</div>
       </div>
       <div class="trade_information">

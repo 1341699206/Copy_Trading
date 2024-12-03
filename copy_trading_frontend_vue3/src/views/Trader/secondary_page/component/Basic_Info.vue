@@ -26,7 +26,7 @@
 import { ref, onMounted, computed } from 'vue';
 import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
 import { useUserStore } from '@/stores/user';
-import { generateAvatar } from '@/utils/avatar'
+import { generateAvatar } from '@/utils/avatar';
 
 const userStore = useUserStore();
 
