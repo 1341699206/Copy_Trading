@@ -21,7 +21,6 @@ const createFirstAccount = async() => {
   try{
     await accountStore.getAccountInfo(userStore.userInfo.id);
   }catch(error){
-    console.log("正确捕获错误");
     showDialog.value=true;
   }
 };

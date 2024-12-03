@@ -3,7 +3,7 @@ import request from "@/utils/http";
 //a 更新账户信息
 export const updateAccount=(account)=>{
     return request({
-        url:'/account/update',
+        url:'/accounts/update',
         method:'PUT',
         data:account
     })
@@ -12,7 +12,7 @@ export const updateAccount=(account)=>{
 //a 创建新账户
 export const createAccount=({userId,initialBalance})=>{
     return request({
-        url:'/account/create',
+        url:`/accounts/create?userId=${userId}&initialBalance=${initialBalance}`,
         method:'POST',
         data:{
             userId,
@@ -23,7 +23,7 @@ export const createAccount=({userId,initialBalance})=>{
 
 //a 获取账户信息
 export const getAccountDetails=(userId)=>{
-    const url=`/account/${userId}`
+    const url=`/accounts/${userId}`
     return request({
         url:url,
     })

@@ -8,6 +8,8 @@ export const useAccountStore =defineStore('account',()=>{
     const getAccountInfo =async (id)=>{
         try {
             const res = await getAccountDetails(id);
+            console.log("创建的数据")
+            console.log(res)
             if(!res) throw new Error("Account need to be created!")
             // 将其他返回的数据存储到 accountInfo 中
             accountInfo.value = res;

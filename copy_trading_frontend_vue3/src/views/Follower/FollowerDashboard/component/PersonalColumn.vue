@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { reactive } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useRoleStore } from "@/stores/roleBasicData";
 import { useAccountStore } from "@/stores/account";
@@ -23,18 +23,18 @@ const followerInfo = reactive({
   following:  role.totalFollowedTraders || 0,
 });
 
-// 如果 userInfo 发生变化，动态更新 followerInfo 的值
-watch(
-  () => userStore.userInfo,
-  (newUserInfo) => {
-    followerInfo.id = newUserInfo.id || null;
-    followerInfo.username = newUserInfo.username || "N/A";
-    followerInfo.value = 0;
-    followerInfo.profitLoss = 0;
-    followerInfo.following =  0;
-  },
-  { immediate: true }
-);
+// // 如果 userInfo 发生变化，动态更新 followerInfo 的值
+// watch(
+//   () => userStore.userInfo,
+//   (newUserInfo) => {
+//     followerInfo.id = newUserInfo.id || null;
+//     followerInfo.username = newUserInfo.username || "N/A";
+//     followerInfo.value = 0;
+//     followerInfo.profitLoss = 0;
+//     followerInfo.following =  0;
+//   },
+//   { immediate: true }
+// );
 </script>
 
 <template>
