@@ -1,5 +1,6 @@
 package com.xtq_ymt.copy_trading_backend.config;
 
+import com.xtq_ymt.copy_trading_backend.handler.AccountWebSocketHandler;
 import com.xtq_ymt.copy_trading_backend.handler.TradeSyncHandler;
 import com.xtq_ymt.copy_trading_backend.handler.MarketDataHandler;
 import com.xtq_ymt.copy_trading_backend.handler.NotificationHandler;
@@ -19,6 +20,7 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
     private final TradeSyncHandler tradeSyncHandler;
     private final NotificationHandler notificationHandler;
     private final MarketDataHandler marketDataHandler;
+    private final AccountWebSocketHandler accountWebSocketHandler; // 新增的 WebSocket 处理器
 
     /**
      * 构造函数，用于注入所需的 WebSocket Handler。
@@ -26,11 +28,16 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
      * @param tradeSyncHandler    交易同步处理器
      * @param notificationHandler 通知处理器
      * @param marketDataHandler   市场数据处理器
+     * @param accountWebSocketHandler 账户信息 WebSocket 处理器
      */
-    public WebSocketHandlerConfig(TradeSyncHandler tradeSyncHandler, NotificationHandler notificationHandler, MarketDataHandler marketDataHandler) {
+    public WebSocketHandlerConfig(TradeSyncHandler tradeSyncHandler, 
+                                  NotificationHandler notificationHandler, 
+                                  MarketDataHandler marketDataHandler,
+                                  AccountWebSocketHandler accountWebSocketHandler) {
         this.tradeSyncHandler = tradeSyncHandler;
         this.notificationHandler = notificationHandler;
         this.marketDataHandler = marketDataHandler;
+        this.accountWebSocketHandler = accountWebSocketHandler; // 初始化新的处理器
     }
 
     /**
@@ -49,5 +56,9 @@ public class WebSocketHandlerConfig implements WebSocketConfigurer {
         // 注册市场数据 WebSocket 处理器，路径为 "/ws/market-data"
         registry.addHandler(marketDataHandler, "/ws/market-data")
                 .setAllowedOrigins("*");
+
+        // 注册账户信息 WebSocket 处理器，路径为 "/ws/account"
+        registry.addHandler(accountWebSocketHandler, "/ws/account")
+                .setAllowedOrigins("*"); // 允许所有来源跨域请求
     }
 }
