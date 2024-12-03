@@ -11,7 +11,7 @@ export const getTraderStatistics=(traderId)=>{
 //a 获取top的交易员
 export const getTopTraders=(limit)=>{
     return request({
-        url:'/stats/top-traders',
+        url:`/stats/top-traders?limit=${limit}`,
         data:{
             limit
         }

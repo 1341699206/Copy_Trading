@@ -22,9 +22,9 @@ const collect=()=>{
 }
 
 // 计算百分比格式的 ROI
-const formattedROI = computed(() => {
-  const roi = props.item.ROI ?? 0;
-  return `${(roi * 100).toFixed(2)}%`; // 转换为百分比并保留两位小数
+const formattedWinRate = computed(() => {
+  const winRate = props.item.winRate ?? 0;
+  return `${(winRate * 100).toFixed(2)}%`; // 转换为百分比并保留两位小数
 });
 </script>
 
@@ -35,10 +35,11 @@ const formattedROI = computed(() => {
       <div class="name">{{ item.name }}</div>
       <el-icon class="collection" @click.stop="collect"><Star /></el-icon>
       <div class="information">
-        <div class="copiers">copiers: {{ item.followersWhoFollowed ?? 0 }}</div>
-        <div class="followers">followers: {{ item.followersWhoFavorited ?? 0 }}</div>
+        <div class="copiers">copiers: {{ item.totalFollowers ?? 0 }}</div>
+        <div class="followers">winingTrades: {{ item.winingTrades ?? 0 }}</div>
       </div>
-      <div class="ROI">ROI: {{ formattedROI }}</div>
+      <div class="ROI">winRate: {{ formattedWinRate }}</div>
+      <div class="ROI">Profit: {{ item.totalProfit }}</div>
       <div class="RIOHistory"></div>
     </div>
   </div>
