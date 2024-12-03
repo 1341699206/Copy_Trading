@@ -7,9 +7,6 @@ import "element-plus/theme-chalk/el-message.css";
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 
-import { useAccountStore } from "@/stores/account";
-const accountStore = useAccountStore();
-
 defineProps({
   show: {
     type: Boolean,
@@ -66,8 +63,6 @@ const doCreateAccount = () => {
     }
   });
 
-  //创建完毕后，获取并存储账户信息
-  accountStore.getAccountInfo(accountInfo.id);
 };
 </script>
 
