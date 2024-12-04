@@ -36,7 +36,7 @@ const formattedWinRate = computed(() => {
   <div @click="goToTraderPage" class="clickable-card">
     <div class="container">
       <img class="avatar" :src="userAvatar" alt="avatar"/>
-      <div class="name">{{ item.username }}</div>
+      <div class="name">{{ item.user.username }}</div>
       <el-icon class="collection" @click.stop="collect"><Star /></el-icon>
       <div class="information">
         <div class="copiers">copiers: {{ item.totalFollowers ?? 0 }}</div>
