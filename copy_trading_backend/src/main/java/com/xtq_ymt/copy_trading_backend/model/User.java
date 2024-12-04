@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -54,9 +55,21 @@ public class User {
     }
 
     public User(Long id, String username, Role role) {
-    this.id = id;
-    this.username = username;
-    this.role = role;
+        this.id = id;
+        this.username = username;
+        this.role = role;
     }
+        
+    @Builder
+    public User(Long id, String username, String email, String password, Role role) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.createdAt = LocalDateTime.now(); // Ensure createdAt and updatedAt are initialized
+        this.updatedAt = LocalDateTime.now();
+    }
+
 
 }

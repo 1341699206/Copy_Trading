@@ -6,8 +6,10 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * TraderStats 模型：用于保存每个交易员的统计信息
+ * TraderStats 实体：用于保存每个交易员的统计信息
  */
 @Entity
 @Table(name = "trader_stats")
@@ -20,8 +22,16 @@ public class TraderStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, insertable = false, updatable = false)
     private Long traderId; // 交易员的用户ID
+
+    /**
+     * 建立与 User 实体的一对一关系
+     */
+    @OneToOne
+    @JoinColumn(name = "traderId", referencedColumnName = "id")
+    @JsonIgnore // 避免序列化导致的问题
+    private User user; // 关联的 User 实体
 
     @Column(nullable = false)
     private double totalProfit; // 总收益，所有已关闭的交易的收益总和
@@ -46,7 +56,6 @@ public class TraderStats {
      * 计算最大回撤的逻辑可以在实际交易计算过程中更新
      */
     public void updateMaxDrawdown(double profit) {
-        // 如果当前利润更低，则更新最大回撤
         if (profit < this.maxDrawdown) {
             this.maxDrawdown = profit;
         }

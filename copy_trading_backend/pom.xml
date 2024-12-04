@@ -34,12 +34,12 @@
         </dependency>
 
         <!-- MySQL Connector -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.32</version> <!-- 推荐使用的最新版本 -->
-            <scope>runtime</scope>
-        </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.32</version> <!-- 推荐使用的最新版本 -->
+                <scope>runtime</scope>
+            </dependency>
 
         <!-- Spring Boot Configuration Processor -->
         <dependency>
@@ -135,7 +135,7 @@
             <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
-
+    
 
 
     </dependencies>

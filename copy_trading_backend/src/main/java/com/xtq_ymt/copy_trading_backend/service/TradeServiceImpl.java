@@ -74,7 +74,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public Trade closeTrade(Long tradeId, double priceClose) {
         Trade trade = tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found with ID: " + tradeId));
         if (trade.isClosed()) {
             throw new IllegalStateException("Trade is already closed");
         }
@@ -109,7 +109,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     public void updateTraderAndFollowerStats(Long tradeId) {
         Trade trade = tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found with ID: " + tradeId));
 
         // 更新交易员统计数据
         updateTraderStats(trade.getAccount().getUser().getId(), trade);
@@ -126,11 +126,15 @@ public class TradeServiceImpl implements TradeService {
         if (stats == null) {
             stats = new TraderStats();
             stats.setTraderId(traderId);
-            stats.setTotalProfit(0);
-            stats.setWinRate(0);
-            stats.setMaxDrawdown(0);
+            // 设置关联的 User 实体
+            User user = trade.getAccount().getUser();
+            stats.setUser(user);
+            stats.setTotalProfit(0.0);
+            stats.setWinRate(0.0);
+            stats.setMaxDrawdown(0.0);
             stats.setTotalTrades(0);
             stats.setWinningTrades(0);
+            stats.setTotalFollowers(0); // 初始化为0，因为 User 类中没有 followerCount 字段
         }
 
         stats.setTotalProfit(stats.getTotalProfit() + trade.getProfit());
@@ -140,7 +144,8 @@ public class TradeServiceImpl implements TradeService {
         }
 
         // 更新胜率
-        stats.setWinRate((double) stats.getWinningTrades() / stats.getTotalTrades() * 100);
+        stats.setWinRate(stats.getTotalTrades() > 0 ? 
+            ((double) stats.getWinningTrades() / stats.getTotalTrades()) * 100 : 0.0);
 
         // 最大回撤的更新
         if (trade.getProfit() < stats.getMaxDrawdown()) {
@@ -156,9 +161,12 @@ public class TradeServiceImpl implements TradeService {
         if (stats == null) {
             stats = new FollowerStats();
             stats.setFollowerId(followerId);
-            stats.setTotalProfit(0);
-            stats.setMaxDrawdown(0);
-            stats.setTotalFollowedTraders(0);
+            // 设置关联的 User 实体
+            User user = trade.getAccount().getUser();
+            stats.setUser(user);
+            stats.setTotalProfit(0.0);
+            stats.setMaxDrawdown(0.0);
+            stats.setTotalFollowedTraders(0); // 初始化为0
             stats.setTotalTrades(0);
         }
 

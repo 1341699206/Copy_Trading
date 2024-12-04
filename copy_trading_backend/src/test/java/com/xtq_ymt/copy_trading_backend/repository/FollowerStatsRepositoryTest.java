@@ -1,6 +1,7 @@
 package com.xtq_ymt.copy_trading_backend.repository;
 
 import com.xtq_ymt.copy_trading_backend.model.FollowerStats;
+import com.xtq_ymt.copy_trading_backend.model.User; // 导入 User 实体类
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,24 +15,42 @@ import static org.junit.jupiter.api.Assertions.*;
  * 使用 Spring Boot 集成测试框架，并通过 @Transactional 注解确保测试后数据回滚。
  */
 @SpringBootTest  // 启动 Spring Boot 应用上下文，进行集成测试
+@Transactional  // 在整个测试类中启用事务，测试结束后自动回滚数据
 public class FollowerStatsRepositoryTest {
 
     // 自动注入 FollowerStatsRepository 实例，供测试使用
     @Autowired
     private FollowerStatsRepository followerStatsRepository;
 
+    // 自动注入 UserRepository 实例，供测试使用
+    @Autowired
+    private UserRepository userRepository;
+
+    // 保存的跟随者用户
+    private User follower;
+
     /**
      * 在每个测试方法执行之前都会调用这个方法来准备测试数据。
-     * 这里我们创建一个 FollowerStats 对象并将其保存到数据库中。
-     * 使用 @BeforeEach 确保每个测试方法执行之前都进行数据准备。
+     * 这里我们创建一个 Follower 用户和一个 FollowerStats 对象并将它们保存到数据库中。
      */
     @BeforeEach
     public void setUp() {
-        // 创建一个 FollowerStats 对象，模拟一个跟随者的统计数据
+        // 清空 FollowerStats 表，确保测试数据的独立性
+        followerStatsRepository.deleteAll();
+
+        // 创建并保存一个 User 对象，模拟一个跟随者用户
+        User user = new User();
+        user.setUsername("followerUser");
+        user.setEmail("followerUser@example.com"); // 设置 email 字段
+        user.setPassword("password123"); // 根据实际 User 类字段设置
+        user.setRole(User.Role.FOLLOWER); // 正确的设置方法，使用枚举类型
+        follower = userRepository.save(user); // 保存 User 对象到数据库，并赋值回 follower 变量
+
+        // 创建一个 FollowerStats 对象，关联到刚刚保存的 Follower User
         FollowerStats stats = new FollowerStats();
-        stats.setFollowerId(1L);  // 设置跟随者 ID 为 1
+        stats.setFollowerId(follower.getId());  // 设置跟随者 ID 为保存后的 User ID
         stats.setTotalProfit(500);  // 设置总利润为 500
-        stats.setMaxDrawdown(-50);  // 设置最大回撤为 -50
+        stats.setMaxDrawdown(-50.0);  // 设置最大回撤为 -50
         stats.setTotalFollowedTraders(3);  // 设置跟随的交易员数量为 3
         stats.setTotalTrades(10);  // 设置总交易数量为 10
 
@@ -44,16 +63,21 @@ public class FollowerStatsRepositoryTest {
      * 这个测试方法会验证根据给定的 followerId 查找到的 FollowerStats 是否为非空，并且 followerId 是否正确。
      */
     @Test
-    @Transactional  // 每次测试会启动一个事务，执行完后会回滚，保证测试数据不污染数据库
     public void testFindByFollowerId() {
-        // 通过 followerId 查找跟随者统计数据
-        FollowerStats stats = followerStatsRepository.findByFollowerId(1L);
+        // 通过 followerId 查找 FollowerStats
+        FollowerStats stats = followerStatsRepository.findByFollowerId(follower.getId());
 
         // 验证查找到的 FollowerStats 对象不为 null
         assertNotNull(stats, "Follower stats should not be null");
 
-        // 验证查找到的 FollowerStats 对象的 followerId 是否为 1
-        assertEquals(1L, stats.getFollowerId(), "Follower ID should be 1");
+        // 验证查找到的 FollowerStats 对象的 followerId 是否与保存的 followerId 一致
+        assertEquals(follower.getId(), stats.getFollowerId(), "Follower ID should match the saved follower's ID");
+
+        // 其他断言（根据需要）
+        assertEquals(500.0, stats.getTotalProfit(), "Total profit should be 500");
+        assertEquals(-50.0, stats.getMaxDrawdown(), "Max drawdown should be -50.0");
+        assertEquals(3, stats.getTotalFollowedTraders(), "Total followed traders should be 3");
+        assertEquals(10, stats.getTotalTrades(), "Total trades should be 10");
     }
 
     /**
@@ -61,13 +85,20 @@ public class FollowerStatsRepositoryTest {
      * 这个测试方法会验证是否能够成功保存一个新的 FollowerStats 对象，并检查返回的对象是否正确。
      */
     @Test
-    @Transactional  // 每次测试会启动一个事务，执行完后会回滚，保证测试数据不污染数据库
     public void testSaveFollowerStats() {
-        // 创建一个新的 FollowerStats 对象，设置其属性
+        // 创建并保存一个新的 User 对象，模拟另一个跟随者用户
+        User newFollower = new User();
+        newFollower.setUsername("newFollowerUser");
+        newFollower.setEmail("newFollowerUser@example.com"); // 设置 email 字段
+        newFollower.setPassword("password456"); // 根据实际 User 类字段设置
+        newFollower.setRole(User.Role.FOLLOWER); // 正确的设置方法，使用枚举类型
+        newFollower = userRepository.save(newFollower); // 保存 User 对象到数据库，并赋值回 newFollower 变量
+
+        // 创建一个新的 FollowerStats 对象，关联到刚刚保存的 newFollower User
         FollowerStats stats = new FollowerStats();
-        stats.setFollowerId(3L);  // 设置跟随者 ID 为 3
-        stats.setTotalProfit(200);  // 设置总利润为 200
-        stats.setMaxDrawdown(-50);  // 设置最大回撤为 -50
+        stats.setFollowerId(newFollower.getId());  // 设置跟随者 ID 为保存后的 newFollower User ID
+        stats.setTotalProfit(200.0);  // 设置总利润为 200
+        stats.setMaxDrawdown(-50.0);  // 设置最大回撤为 -50
         stats.setTotalFollowedTraders(5);  // 设置跟随的交易员数量为 5
         stats.setTotalTrades(20);  // 设置总交易数量为 20
 
@@ -77,7 +108,13 @@ public class FollowerStatsRepositoryTest {
         // 验证保存后的 FollowerStats 对象不为 null
         assertNotNull(savedStats, "Saved stats should not be null");
 
-        // 验证保存后的 FollowerStats 对象的 followerId 是否为 3
-        assertEquals(3L, savedStats.getFollowerId(), "Follower ID should be 3");
+        // 验证保存后的 FollowerStats 对象的 followerId 是否为 newFollower.getId()
+        assertEquals(newFollower.getId(), savedStats.getFollowerId(), "Follower ID should match the new follower's ID");
+
+        // 其他断言（根据需要）
+        assertEquals(200.0, savedStats.getTotalProfit(), "Total profit should be 200");
+        assertEquals(-50.0, savedStats.getMaxDrawdown(), "Max drawdown should be -50.0");
+        assertEquals(5, savedStats.getTotalFollowedTraders(), "Total followed traders should be 5");
+        assertEquals(20, savedStats.getTotalTrades(), "Total trades should be 20");
     }
 }
