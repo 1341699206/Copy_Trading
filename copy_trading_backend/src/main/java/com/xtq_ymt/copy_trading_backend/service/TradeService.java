@@ -5,15 +5,9 @@ import com.xtq_ymt.copy_trading_backend.model.Trade;
 import java.util.List;
 
 public interface TradeService {
-
-    Trade openTrade(Long accountId, Long strategyId, String symbol, String type, double lotSize, double priceOpen);
-
-    Trade closeTrade(Long tradeId, double priceClose);
-
+    Trade openTrade(Long accountId, Long strategyId, String symbol, String type, double lotSize);
+    Trade closeTrade(Long tradeId);
     List<Trade> getOpenTradesByAccountId(Long accountId);
-
     List<Trade> getTradesByStrategyId(Long strategyId);
-
-    // 新增的方法：更新交易员和跟随者的统计数据
     void updateTraderAndFollowerStats(Long tradeId);
 }
