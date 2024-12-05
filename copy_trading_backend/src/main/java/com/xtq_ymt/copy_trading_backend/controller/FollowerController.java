@@ -92,7 +92,7 @@ public class FollowerController {
      * @param followerAccountId 追随者的账户 ID
      * @param traderAccountId   交易员的账户 ID
      */
-    @GetMapping("/")
+    @GetMapping("/check")
     // 使用 Swagger 注解描述该操作的摘要和详细信息
     @Operation(summary = "Check relationship", description = "Check relationship between follower and trader.")
     public ResponseEntity<Boolean> CheckBooleanFollowerBoolean(Long followerAccountId, Long traderAccountId) {
