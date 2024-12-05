@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service  // 标记该类为Spring的Service层，业务逻辑的实现类
+@Service // 标记该类为Spring的Service层，业务逻辑的实现类
 public class FollowerServiceImpl implements FollowerService {
 
     private final FollowerTraderRepository followerTraderRepository;
-    private final TraderStatsRepository traderStatsRepository;  // 注入 TraderStatsRepository 用于更新交易员的跟随者数量
+    private final TraderStatsRepository traderStatsRepository; // 注入 TraderStatsRepository 用于更新交易员的跟随者数量
 
     // 构造器注入FollowerTraderRepository和TraderStatsRepository
     @Autowired
     public FollowerServiceImpl(FollowerTraderRepository followerTraderRepository,
-                               TraderStatsRepository traderStatsRepository) {
+            TraderStatsRepository traderStatsRepository) {
         this.followerTraderRepository = followerTraderRepository;
         this.traderStatsRepository = traderStatsRepository;
     }
@@ -34,12 +34,12 @@ public class FollowerServiceImpl implements FollowerService {
     public FollowerTrader followTrader(Long followerAccountId, Long traderAccountId) {
         // 判断当前跟随者是否已经关注了该交易者
         if (followerTraderRepository.existsByFollowerAccountIdAndTraderAccountId(followerAccountId, traderAccountId)) {
-            throw new IllegalArgumentException("Already following this trader.");  // 如果已经关注，抛出异常
+            throw new IllegalArgumentException("Already following this trader."); // 如果已经关注，抛出异常
         }
         // 创建一个新的FollowerTrader对象，表示一个关注记录
         FollowerTrader followerTrader = new FollowerTrader();
-        followerTrader.setFollowerAccountId(followerAccountId);  // 设置跟随者账户ID
-        followerTrader.setTraderAccountId(traderAccountId);  // 设置交易者账户ID
+        followerTrader.setFollowerAccountId(followerAccountId); // 设置跟随者账户ID
+        followerTrader.setTraderAccountId(traderAccountId); // 设置交易者账户ID
         // 保存并返回新创建的FollowerTrader记录
         followerTraderRepository.save(followerTrader);
 
@@ -60,9 +60,9 @@ public class FollowerServiceImpl implements FollowerService {
         List<FollowerTrader> records = followerTraderRepository.findByFollowerAccountId(followerAccountId);
         // 使用Stream API遍历所有关注记录，找到对应交易者的记录
         records.stream()
-                .filter(record -> record.getTraderAccountId().equals(traderAccountId))  // 过滤出匹配的交易者账户ID
-                .findFirst()  // 找到第一个匹配的记录
-                .ifPresent(followerTraderRepository::delete);  // 如果存在，则删除该记录
+                .filter(record -> record.getTraderAccountId().equals(traderAccountId)) // 过滤出匹配的交易者账户ID
+                .findFirst() // 找到第一个匹配的记录
+                .ifPresent(followerTraderRepository::delete); // 如果存在，则删除该记录
 
         // 更新交易员的总跟随者数
         updateTotalFollowers(traderAccountId, -1);
@@ -96,11 +96,27 @@ public class FollowerServiceImpl implements FollowerService {
             stats.setMaxDrawdown(0);
             stats.setTotalTrades(0);
             stats.setWinningTrades(0);
-            stats.setTotalFollowers(0);  // 默认跟随者数量为0
+            stats.setTotalFollowers(0); // 默认跟随者数量为0
         }
 
         // 更新跟随者数量
         stats.updateTotalFollowers(delta);
-        traderStatsRepository.save(stats);  // 保存更新后的统计数据
+        traderStatsRepository.save(stats); // 保存更新后的统计数据
     }
+
+    /**
+     * 检查某个关注者账户是否已关注特定交易者账户。
+     *
+     * @param followerAccountId 关注者的账户ID
+     * @param traderAccountId   交易者的账户ID
+     * @return 如果关注者已关注交易者，返回 true；否则，返回 false
+     */
+    public Boolean exBooleanFollowerBoolean(Long followerAccountId, Long traderAccountId) {
+        
+        // 调用 FollowerTraderRepository 接口的方法，检查是否存在特定的跟随关系
+        // existsByFollowerAccountIdAndTraderAccountId 方法根据关注者账户ID和交易者账户ID
+        // 查询数据库，判断是否存在对应的记录
+        return followerTraderRepository.existsByFollowerAccountIdAndTraderAccountId(followerAccountId, traderAccountId);
+    }
+
 }
