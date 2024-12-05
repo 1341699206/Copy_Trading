@@ -95,7 +95,7 @@ public class FollowerController {
     @GetMapping("/check")
     // 使用 Swagger 注解描述该操作的摘要和详细信息
     @Operation(summary = "Check relationship", description = "Check relationship between follower and trader.")
-    public ResponseEntity<Boolean> CheckBooleanFollowerBoolean(Long followerAccountId, Long traderAccountId) {
+    public ResponseEntity<Boolean> CheckBooleanFollowerBoolean(@PathVariable Long followerAccountId, @PathVariable Long traderAccountId) {
         Boolean relationshipExists = followerService.exBooleanFollowerBoolean(followerAccountId, traderAccountId);
         return new ResponseEntity<>(relationshipExists, HttpStatus.OK);
     }
