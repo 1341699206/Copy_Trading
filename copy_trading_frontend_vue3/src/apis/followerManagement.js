@@ -32,6 +32,18 @@ export const unfollow=({followerAccountId,traderAccountId})=>{
     })
 }
 
+// a 检测是否follow关系
+export const checkIsFollow=({followerAccountId,traderAccountId})=>{
+    const url=`/followers/check/${followerAccountId}/${traderAccountId}`
+    return request({
+        url:url,
+        data:{
+            followerAccountId,
+            traderAccountId,
+        }
+    })
+}
+
 // 获取 ROI 前 top.N 的交易者
 export const getTopTraders = ({
     quantity,

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, defineProps, ref, onMounted } from "vue";
 import { generateAvatar } from "@/utils/avatar";
-import { follow, unfollow } from "@/apis/followerManagement";
+import { follow, unfollow,checkIsFollow } from "@/apis/followerManagement";
 import { getAccountDetails } from "@/apis/accountManagement";
 import { useAccountStore } from "@/stores/account";
 
@@ -26,9 +26,10 @@ const traderAccountId = computed(() => {
 const isFollow = ref(false);
 const showDialog = ref(false); // 控制对话框的显示状态
 
-onMounted(() => {
-  // 模拟根据 traderId 检查是否已经 follow
-  isFollow.value = true; // 根据实际逻辑更新
+onMounted(async () => {
+  if(await checkIsFollow(followerAccountId.value,traderAccountId.value)){
+    isFollow.value = true; // 根据实际逻辑更新
+  }
 });
 
 const doFollow = async () => {

@@ -2,7 +2,12 @@
   <div class="basic-info-container">
     <!-- Trader头像和账户信息 -->
     <div class="trader-info">
-      <img v-if="userLoggedIn" :src="userAvatar" alt="Trader Avatar" class="avatar" />
+      <img
+        v-if="userLoggedIn"
+        :src="userAvatar"
+        alt="Trader Avatar"
+        class="avatar"
+      />
       <h2 v-if="userLoggedIn">{{ username }}</h2>
     </div>
 
@@ -14,7 +19,6 @@
         <h3>{{ stat.value }}</h3>
       </div>
       <button class="funds-button">Funds</button>
-
     </div>
 
     <!-- 账户创建对话框 -->
@@ -23,48 +27,42 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from "vue";
 import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
-import { useUserStore } from '@/stores/user';
-import { generateAvatar } from '@/utils/avatar';
+import { useUserStore } from "@/stores/user";
+import { useAccountStore } from "@/stores/account";
+import { generateAvatar } from "@/utils/avatar";
 
 const userStore = useUserStore();
 
+const accountStore = useAccountStore();
+const accountInfo=accountStore.accountInfo;
+
 const userLoggedIn = computed(() => !!userStore.userInfo);
-const userAvatar = computed(() => generateAvatar(userStore.userInfo.username || 'User'));
-const username = computed(() => userStore.userInfo.username || 'N/A');
-const traderAccounts = computed(() => userStore.userInfo.user?.tradingAccounts || []);
+const userAvatar = computed(() =>
+  generateAvatar(userStore.userInfo.username || "User")
+);
+const username = computed(() => userStore.userInfo.username || "N/A");
+
 const showDialog = ref(false); // 控制弹窗显示
 
 const stats = ref([
-  { label: 'Amount Following', value: '-' },
-  { label: 'Investors', value: '0' },
-  { label: 'Rank (All)', value: '-' },
-  { label: 'Rank (Europe)', value: '-' },
-  { label: 'Rank (USA)', value: '-' },
-  { label: 'Rank (Japan)', value: '-' },
-  { label: 'Equity', value: '$0.00' },
-  { label: 'Balance', value: '$0.00' },
-  { label: 'Realized PNL', value: '$0.00' },
-  { label: 'Margin', value: '0.00% (0%)' },
-  { label: 'Free Margin', value: '$0.00' },
+  { label: "Amount Following", value: 0 },
+  { label: "Followers", value: 0 },
+  { label: "Equity", value: accountInfo.equity || 0 },
+  { label: "Balance", value: accountInfo.balance || 0 },
+  { label: "Realized PNL", value: accountInfo.winRate || 0 },
+  { label: "Margin", value: accountInfo.margin || 0 },
+  { label: "Free Margin", value: accountInfo.freeMargin || 0 },
 ]);
 
 // 获取用户基础信息并检查账户
-const fetchUserInfo = async () => {
+const createFirstAccount = async () => {
+  //检测当前登录是否有账户
   try {
-    await userStore.getUserInfo(); // 从userStore获取用户信息
-    console.log("Fetched user info:", userStore.userInfo);
-
-    // 检查是否需要弹出账户创建弹窗
-    if (traderAccounts.value.length === 0) {
-      showDialog.value = true; // 显示弹窗
-    } else {
-      // 如果有账户，更新第一个账户的信息
-      updateStats(traderAccounts.value[0]);
-    }
+    await accountStore.getAccountInfo(userStore.userInfo.id);
   } catch (error) {
-    console.error("Failed to fetch user info:", error);
+    showDialog.value = true;
   }
 };
 
@@ -73,26 +71,9 @@ const closeDialog = () => {
   showDialog.value = false;
 };
 
-// 更新统计数据
-const updateStats = (account) => {
-  stats.value = [
-    { label: 'Amount Following', value: account.amountFollowing || '-' },
-    { label: 'Investors', value: account.investors || '0' },
-    { label: 'Rank (All)', value: account.rankAll || '-' },
-    { label: 'Rank (Europe)', value: account.rankEurope || '-' },
-    { label: 'Rank (USA)', value: account.rankUSA || '-' },
-    { label: 'Rank (Japan)', value: account.rankJapan || '-' },
-    { label: 'Equity', value: `$${account.equity?.toFixed(2) || '0.00'}` },
-    { label: 'Balance', value: `$${account.balance?.toFixed(2) || '0.00'}` },
-    { label: 'Realized PNL', value: `$${account.realizedPNL?.toFixed(2) || '0.00'}` },
-    { label: 'Margin', value: `${account.marginPercent?.toFixed(2) || '0.00'}% (${account.margin?.toFixed(2) || '0'})` },
-    { label: 'Free Margin', value: `$${account.freeMargin?.toFixed(2) || '0.00'}` },
-  ];
-};
-
 // 生命周期钩子
 onMounted(() => {
-  fetchUserInfo(); // 页面加载时获取用户信息并检查是否需要显示创建账户弹窗
+  createFirstAccount(); // 页面加载时获取用户信息并检查是否需要显示创建账户弹窗
 });
 </script>
 
