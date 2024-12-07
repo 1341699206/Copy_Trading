@@ -30,9 +30,6 @@ import Trade from '@/views/Trader/secondary_page/Three_level_page/Trade/TRADE.vu
 import Ztp from '@/views/Trader/secondary_page/Three_level_page/Ztp/ZTP.vue';
 
 import AdminDashboard from '@/views/Admin/AdminDashboard.vue';  // 导入Admin的Dashboard页面
-// import { pa } from 'element-plus/es/locale';
-
-
 
 
 const router = createRouter({

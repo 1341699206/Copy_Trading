@@ -1,51 +1,73 @@
 <script setup>
-  import {useScroll} from '@vueuse/core'
-  const { y } = useScroll(window)
-  
-  import {useUserStore} from '@/stores/user'
-  const userStore=useUserStore()
+import { computed } from 'vue';
 
-  import {useRouter} from 'vue-router'
-  const router =useRouter()
+import { useScroll } from "@vueuse/core";
+const { y } = useScroll(window);
 
-  //回调函数，完成退出登录操作
-  const confirm =()=>{
-    //清除用户信息
-    userStore.clearUserInfo()
-    //跳转回到登录页
-    router.push('/login')
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
+
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+//回调函数，完成退出登录操作
+const confirm = () => {
+  //清除用户信息
+  userStore.clearUserInfo();
+  //跳转回到登录页
+  router.push("/login");
+};
+
+// 动态计算 Dashboard 路径
+const dashboardPath = computed(() => {
+  if (userStore.userInfo.role === "FOLLOWER") {
+    return "/followerDashboard";
+  } else if (userStore.userInfo.role === "TRADER") {
+    return "/trader_page";
+  } else {
+    return "/"; // 默认路径
   }
-
+});
 </script>
 
 <template>
-  <div class="app-header-sticky" :class="{show: y > 78 }">
+  <div class="app-header-sticky" :class="{ show: y > 78 }">
     <div class="container">
       <template v-if="userStore.userInfo.token">
         <div class="left">
           <ul>
             <li class="logo">
-                <router-link to="/">Co-trade</router-link>
+              <router-link to="/">Co-trade</router-link>
             </li>
             <li class="home">
-                <router-link to="/followerDashboard">Dashboard</router-link>
+              <router-link :to="dashboardPath">Dashboard</router-link>
             </li>
             <li>
-                <router-link to="/traders">Traders</router-link>
+              <router-link to="/traders">Traders</router-link>
             </li>
             <li>
-                <router-link to="/market">Market</router-link>
+              <router-link to="/market">Market</router-link>
             </li>
             <li>
-                <router-link to="/community">Community</router-link>
+              <router-link to="/community">Community</router-link>
             </li>
           </ul>
         </div>
         <div class="right">
           <ul>
-            <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.username}}</a></li>
             <li>
-              <el-popconfirm @confirm="confirm" title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
+              <a href="javascript:;"
+                ><i class="iconfont icon-user"></i
+                >{{ userStore.userInfo.username }}</a
+              >
+            </li>
+            <li>
+              <el-popconfirm
+                @confirm="confirm"
+                title="Sure you want to quit?"
+                confirm-button-text="sure"
+                cancel-button-text="cancel"
+              >
                 <template #reference>
                   <a href="javascript:;">log out</a>
                 </template>
@@ -56,28 +78,36 @@
       </template>
       <template v-else>
         <div class="left">
-        <ul class="app-header-nav">
-          <li class="logo">
+          <ul class="app-header-nav">
+            <li class="logo">
               <router-link to="/">Co-trade</router-link>
-          </li>
-          <li class="home">
+            </li>
+            <li class="home">
               <router-link to="/">Home</router-link>
-          </li>
-          <li>
+            </li>
+            <li>
               <router-link to="/traders">Traders</router-link>
-          </li>
-          <li>
+            </li>
+            <li>
               <router-link to="/market">Market</router-link>
-          </li>
-          <li>
+            </li>
+            <li>
               <router-link to="/community">Community</router-link>
-          </li>
-        </ul>
+            </li>
+          </ul>
         </div>
         <div class="right">
           <ul>
-            <li><a @click="$router.push('/login')"><i class="iconFont icon-login"></i>login</a></li>
-            <li><a @click="$router.push('/register')"><i class="iconFont icon-register"></i>register</a></li>
+            <li>
+              <a @click="$router.push('/login')"
+                ><i class="iconFont icon-login"></i>login</a
+              >
+            </li>
+            <li>
+              <a @click="$router.push('/register')"
+                ><i class="iconFont icon-register"></i>register</a
+              >
+            </li>
           </ul>
         </div>
       </template>
@@ -108,7 +138,6 @@
     opacity: 1;
   }
 
-
   .container {
     display: flex;
     justify-content: space-between; /* 左右两侧对齐 */
@@ -119,7 +148,7 @@
   .left {
     ul {
       display: flex; /* 横排显示 */
-      align-items: center; 
+      align-items: center;
       margin-left: 20px; /*使所有左侧标签向右侧移动。*/
       padding: 0; /* 去掉内边距 */
       list-style: none; /* 去掉点 */
@@ -127,7 +156,7 @@
       li {
         margin-right: 80px; /* 间距 */
         padding: 20px 0; /* 上下距离统一 */
-        
+
         .logo {
           font-size: 24px; /* Logo字体大小 */
           font-weight: bold; /* 加粗 */

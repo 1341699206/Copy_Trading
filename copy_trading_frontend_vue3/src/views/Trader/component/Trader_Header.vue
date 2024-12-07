@@ -14,33 +14,47 @@
           <li><router-link to="/markets">Markets</router-link></li>
           <li><router-link to="/learn">Learn</router-link></li>
           <li><router-link to="/about">About</router-link></li>
-          <li><router-link to="/social-feed">Social Feed <span class="new-label">New</span></router-link></li>
+          <li>
+            <router-link to="/social-feed"
+              >Social Feed <span class="new-label">New</span></router-link
+            >
+          </li>
         </ul>
       </nav>
 
-      <!-- 右边的账户部分 -->
-      <div class="account-section">
-        <div class="icon-container">
-          <!-- 图标和国家标志 -->
-          <i class="iconFont icon-phone"></i>
-          <i class="iconFont icon-calendar"></i>
-          <i class="iconFont icon-flag"></i>
-        </div>
-        <div class="user-account">
-          <span>My Account</span>
-          <span class="username">ethanrosekk</span>
-          <i class="iconFont icon-user"></i>
-        </div>
+      <!-- 退出登录的代码 -->
+      <div class="logOut">
+        <el-popconfirm
+          @confirm="confirm"
+          title="Sure you want to quit?"
+          confirm-button-text="sure"
+          cancel-button-text="cancel"
+        >
+          <template #reference>
+            <a href="javascript:;">log out</a>
+          </template>
+        </el-popconfirm>
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
-// 不涉及复杂逻辑，暂时不需要script部分
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
+
+import { useRouter } from "vue-router";
+const router = useRouter();
+//回调函数，完成退出登录操作
+const confirm = () => {
+  //清除用户信息
+  userStore.clearUserInfo();
+  //跳转回到登录页
+  router.push("/login");
+};
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* 整个Header的样式 */
 .app-header {
   display: flex;
@@ -131,5 +145,15 @@
 .icon-user {
   font-size: 18px;
   margin-left: 5px;
+}
+.logOut a{
+  text-decoration: none; /* 去掉下划线 */
+  font-size: 16px; /* 字体大小 */
+  color: black; /* 黑色文本 */
+  transition: color 0.3s; /* 添加过渡效果 */
+
+  &:hover {
+    color: $xtxColor; /* 悬停时改变颜色 */
+  }
 }
 </style>

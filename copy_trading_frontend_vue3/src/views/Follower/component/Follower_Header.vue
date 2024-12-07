@@ -1,17 +1,30 @@
 <script setup>
-  import {useUserStore} from '@/stores/user'
-  const userStore=useUserStore()
+import { computed } from "vue";
 
-  import {useRouter} from 'vue-router'
-  const router =useRouter()
+import { useUserStore } from "@/stores/user";
+const userStore = useUserStore();
 
-  //回调函数，完成退出登录操作
-  const confirm =()=>{
-    //清除用户信息
-    userStore.clearUserInfo()
-    //跳转回到登录页
-    router.push('/login')
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+//回调函数，完成退出登录操作
+const confirm = () => {
+  //清除用户信息
+  userStore.clearUserInfo();
+  //跳转回到登录页
+  router.push("/login");
+};
+
+// 动态计算 Dashboard 路径
+const dashboardPath = computed(() => {
+  if (userStore.userInfo.role === "FOLLOWER") {
+    return "/followerDashboard";
+  } else if (userStore.userInfo.role === "TRADER") {
+    return "/trader_page";
+  } else {
+    return "/"; // 默认路径
   }
+});
 </script>
 
 <template>
@@ -24,7 +37,7 @@
               <router-link to="/">Co-trade</router-link>
             </li>
             <li class="home">
-              <router-link to="/followerDashboard">Dashboard</router-link>
+              <router-link :to="dashboardPath">Dashboard</router-link>
             </li>
             <li>
               <router-link to="/traders">Traders</router-link>
@@ -40,10 +53,18 @@
         <div class="right">
           <ul>
             <li>
-              <a href="javascript:;"><i class="iconfont icon-user"></i>{{userStore.userInfo.username}}</a>
+              <a href="javascript:;"
+                ><i class="iconfont icon-user"></i
+                >{{ userStore.userInfo.username }}</a
+              >
             </li>
             <li>
-              <el-popconfirm @confirm="confirm" title="Sure you want to quit?" confirm-button-text="sure" cancel-button-text="cancel">
+              <el-popconfirm
+                @confirm="confirm"
+                title="Sure you want to quit?"
+                confirm-button-text="sure"
+                cancel-button-text="cancel"
+              >
                 <template #reference>
                   <a href="javascript:;">log out</a>
                 </template>
@@ -74,8 +95,16 @@
         </div>
         <div class="right">
           <ul>
-            <li><a @click="$router.push('/login')"><i class="iconFont icon-login"></i>login</a></li>
-            <li><a @click="$router.push('/register')"><i class="iconFont icon-register"></i>register</a></li>
+            <li>
+              <a @click="$router.push('/login')"
+                ><i class="iconFont icon-login"></i>login</a
+              >
+            </li>
+            <li>
+              <a @click="$router.push('/register')"
+                ><i class="iconFont icon-register"></i>register</a
+              >
+            </li>
           </ul>
         </div>
       </template>
@@ -104,7 +133,7 @@
 
       li {
         margin-right: 80px; /* 标签间距 */
-        
+
         a {
           text-decoration: none; /* 去掉下划线 */
           font-size: 18px; /* 增大字体 */
@@ -124,7 +153,7 @@
       display: flex; /* 横排显示 */
       list-style: none; /* 去掉点 */
       padding: 0; /* 去掉内边距 */
-      
+
       li {
         margin-left: 30px; /* 标签间距 */
 

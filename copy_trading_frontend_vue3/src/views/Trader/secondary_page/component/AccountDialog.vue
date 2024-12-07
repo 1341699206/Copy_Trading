@@ -27,12 +27,12 @@ const rules = {
   balance: [
     { required: true, message: "Simulation amount cannot be empty." },
     {
-      type: 'number',
+      type: "number",
       min: 200,
       max: 10000,
-      message: "The simulation amount needs to be between 200 and 10000."
+      message: "The simulation amount needs to be between 200 and 10000.",
     },
-  ]
+  ],
 };
 
 const formRef = ref(null);
@@ -43,7 +43,7 @@ const doCreateAccount = () => {
     if (valid) {
       try {
         // 调用 createAccount
-        await createAccount(accountInfo);
+        await createAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
         //创建成功提示
         ElMessage({ type: "success", message: "Create successful!" });
         //关闭弹窗
@@ -58,23 +58,21 @@ const doCreateAccount = () => {
       ElMessage({
         type: "error",
         message: "Please fill out the form correctly!",
-         trigger: 'blur'
+        trigger: "blur",
       });
     }
   });
+
 };
 </script>
 
 <template>
   <el-dialog :model-value="show" title="New Account" width="500">
     <el-form ref="formRef" :model="accountInfo" :rules="rules">
-
       <!-- 选择金额 -->
-      <template>
-        <el-form-item label="Balance" prop="balance">
-          <el-input-number v-model="accountInfo.balance" :step="100" />
-        </el-form-item>
-      </template>
+      <el-form-item label="Balance" prop="balance">
+        <el-input-number v-model="accountInfo.balance" :step="100" />
+      </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -84,4 +82,3 @@ const doCreateAccount = () => {
     </template>
   </el-dialog>
 </template>
-

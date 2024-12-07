@@ -1,9 +1,8 @@
+<script setup>
+  import strategyItem from './component/strategyItem.vue'
+</script>
+
 <template>
-  <div>ZTP</div>
+  <strategy-item></strategy-item>
 </template>
 
-<script>
-export default {
-  name: 'ZTP',
-};
-</script>
