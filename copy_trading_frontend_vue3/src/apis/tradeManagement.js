@@ -16,7 +16,7 @@ export const closeTrade=({tradeId,priceClose})=>{
 //a 开启一个新的交易
 export const openTrade=({accountId,strategyId,symbol,type,lotSize})=>{
     return request({
-        url:'/trades/open',
+        url:`/trades/open?accountId=${accountId}&strategyId=${strategyId}&symbol=${symbol}&type=${type}&lotSize=${lotSize}`,
         method:'POST',
         data:{
             accountId,
