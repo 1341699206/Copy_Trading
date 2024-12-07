@@ -9,11 +9,18 @@ export const getStrategyById=(id)=>{
 }
 
 //a 通过id更新交易策略
-export const updateStrategyById=(id)=>{
-    const url=`/strategies/${id}`;
+export const updateStrategyById=({id,name,description,scriptContent,isActive})=>{
+    const url=`/strategies/${id}?traderId=${id}&name=${name}&description=${description}&scriptContent=${scriptContent}&isActive=${isActive}`;
     return request({
         url:url,
-        method:'PUT'
+        method:'PUT',
+        data:{
+            id,
+            name,
+            description,
+            scriptContent,
+            isActive,
+        }
     })
 }
 
@@ -27,11 +34,17 @@ export const deleteStrategyById=(id)=>{
 }
 
 //a 通过id创建新的交易策略
-export const createStrategyById=()=>{
-    const url=`/strategies/create`;
+export const createStrategyById=({id,name,description,scriptContent})=>{
+    const url=`/strategies/create?traderId=${id}&name=${name}&description=${description}&scriptContent=${scriptContent}`;
     return request({
         url:url,
-        method:'POST'
+        method:'POST',
+        data:{
+            id,
+            name,
+            description,
+            scriptContent,
+        }
     })
 }
 

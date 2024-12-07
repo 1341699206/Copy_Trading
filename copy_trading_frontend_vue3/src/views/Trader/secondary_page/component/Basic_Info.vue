@@ -27,53 +27,66 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
 import { useUserStore } from "@/stores/user";
 import { useAccountStore } from "@/stores/account";
 import { generateAvatar } from "@/utils/avatar";
 
 const userStore = useUserStore();
-
 const accountStore = useAccountStore();
-const accountInfo=accountStore.accountInfo;
+const accountInfo = accountStore.accountInfo; // 引用 accountStore 的响应式数据
 
+// 计算属性
 const userLoggedIn = computed(() => !!userStore.userInfo);
 const userAvatar = computed(() =>
   generateAvatar(userStore.userInfo.username || "User")
 );
 const username = computed(() => userStore.userInfo.username || "N/A");
 
-const showDialog = ref(false); // 控制弹窗显示
+// 弹窗控制
+const showDialog = ref(false);
 
+// 定义 stats 数据，直接使用响应式对象
 const stats = ref([
   { label: "Amount Following", value: 0 },
   { label: "Followers", value: 0 },
-  { label: "Equity", value: accountInfo.equity || 0 },
-  { label: "Balance", value: accountInfo.balance || 0 },
-  { label: "Realized PNL", value: accountInfo.winRate || 0 },
-  { label: "Margin", value: accountInfo.margin || 0 },
-  { label: "Free Margin", value: accountInfo.freeMargin || 0 },
+  { label: "Equity", value: 0 },
+  { label: "Balance", value: 0 },
+  { label: "Realized PNL", value: 0 },
+  { label: "Margin", value: 0 },
+  { label: "Free Margin", value: 0 },
 ]);
 
-// 获取用户基础信息并检查账户
+// 创建账户或检测账户
 const createFirstAccount = async () => {
-  //检测当前登录是否有账户
   try {
-    await accountStore.getAccountInfo(userStore.userInfo.id);
+    await accountStore.getAccountInfo(userStore.userInfo.id); // 拉取账户信息
   } catch (error) {
-    showDialog.value = true;
+    showDialog.value = true; // 如果没有账户，显示弹窗
   }
 };
 
-// 关闭对话框
-const closeDialog = () => {
-  showDialog.value = false;
-};
+// 监听 accountInfo 的变化，同步更新 stats
+watch(
+  accountInfo,
+  (newAccountInfo) => {
+    stats.value = [
+      { label: "Amount Following", value: newAccountInfo.amountFollowing || 0 },
+      { label: "Followers", value: newAccountInfo.followers || 0 },
+      { label: "Equity", value: newAccountInfo.equity || 0 },
+      { label: "Balance", value: newAccountInfo.balance || 0 },
+      { label: "Realized PNL", value: newAccountInfo.winRate || 0 },
+      { label: "Margin", value: newAccountInfo.margin || 0 },
+      { label: "Free Margin", value: newAccountInfo.freeMargin || 0 },
+    ];
+  },
+  { immediate: true, deep: true } // 立即执行一次并深度监听
+);
 
 // 生命周期钩子
 onMounted(() => {
-  createFirstAccount(); // 页面加载时获取用户信息并检查是否需要显示创建账户弹窗
+  createFirstAccount(); // 页面加载时检查账户
 });
 </script>
 
