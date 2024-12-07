@@ -1,29 +1,19 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
-import {
-  getStrategyById,
-  updateStrategyById,
-  deleteStrategyById,
-  createStrategyById,
-} from "@/apis/strategyManagement";
+import { useStrategyStore } from "@/stores/strategy";
 
 const userStore = useUserStore();
+const strategyStore = useStrategyStore();
 
 // 策略信息
-const strategy = ref();
-
+const strategy = computed(() => strategyStore.strategyInfo);
 onMounted(async () => {
-  try {
-    const res = await getStrategyById(userStore.userInfo.id);
-    strategy.value = res;
-  } catch (error) {
-    //错误处理
-  }
+  await strategyStore.getStrategyInfo(strategyInfo.value.id);
 });
 
 const strategyInfo = ref({
-  id: userStore.userInfo.id,
+  id: strategy.value?.id || 0,
   name: strategy.value?.name || "",
   description: strategy.value?.description || "",
   scriptContent: strategy.value?.scriptContent || "",
@@ -44,36 +34,28 @@ const rules = {
 const formRef = ref(null);
 
 const doCreate = async () => {
-  try {
-    const { id, name, description, scriptContent } = strategyInfo.value;
-    await createStrategyById({ id, name, description, scriptContent });
-  } catch (error) {
-    console.error("Failed to create strategy:", error);
-  }
+  await strategyStore.createStrategy({
+    traderId: userStore.userInfo.id,
+    name: strategyInfo.value.name,
+    description: strategyInfo.value.description,
+    scriptContent: strategyInfo.value.scriptContent,
+  });
 };
 
 const doUpdate = async () => {
-  try {
-    await updateStrategyById(strategyInfo.value);
-  } catch (error) {
-    console.error("Failed to update strategy:", error);
-  }
+  await strategyStore.updateStrategy(strategyInfo.value);
 };
 
 const doDelete = async () => {
-  try {
-    await deleteStrategyById(strategyInfo.value.id);
-    // 清空数据
-    strategyInfo.value = {
-      id: userStore.userInfo.id,
-      name: "",
-      description: "",
-      scriptContent: "",
-      isActive: true,
-    };
-  } catch (error) {
-    console.error("Failed to delete strategy:", error);
-  }
+  await strategyStore.deleteStrategy(strategyInfo.value.id);
+  // 清空数据
+  strategyInfo.value = {
+    id: 0,
+    name: "",
+    description: "",
+    scriptContent: "",
+    isActive: true,
+  };
 };
 </script>
 

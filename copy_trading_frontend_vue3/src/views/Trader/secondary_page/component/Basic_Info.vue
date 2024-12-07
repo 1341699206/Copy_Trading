@@ -30,12 +30,17 @@
 import { ref, onMounted, computed, watch } from "vue";
 import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
 import { useUserStore } from "@/stores/user";
+import { useRoleStore } from "@/stores/roleBasicData";
 import { useAccountStore } from "@/stores/account";
 import { generateAvatar } from "@/utils/avatar";
 
 const userStore = useUserStore();
 const accountStore = useAccountStore();
 const accountInfo = accountStore.accountInfo; // 引用 accountStore 的响应式数据
+
+const roleStore =useRoleStore();
+roleStore.getRoleInfo({role:userStore.userInfo.role,id:userStore.userInfo.id});
+const roleInfo= roleStore.roleInfo;
 
 // 计算属性
 const userLoggedIn = computed(() => !!userStore.userInfo);
@@ -69,11 +74,11 @@ const createFirstAccount = async () => {
 
 // 监听 accountInfo 的变化，同步更新 stats
 watch(
-  accountInfo,
-  (newAccountInfo) => {
+  accountInfo,roleInfo,
+  (newAccountInfo,newRoleInfo) => {
     stats.value = [
       { label: "Amount Following", value: newAccountInfo.amountFollowing || 0 },
-      { label: "Followers", value: newAccountInfo.followers || 0 },
+      { label: "Followers", value: newRoleInfo.totalFollowers || 0 },
       { label: "Equity", value: newAccountInfo.equity || 0 },
       { label: "Balance", value: newAccountInfo.balance || 0 },
       { label: "Realized PNL", value: newAccountInfo.winRate || 0 },

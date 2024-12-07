@@ -9,7 +9,8 @@ const userStore=useUserStore();
 const user = userStore.userInfo;
 
 const roleStore = useRoleStore();
-const role=roleStore.roleInfo;
+roleStore.getRoleInfo({role:user.role,id:user.id});
+const role=computed(()=>roleStore.roleInfo);
 
 const accountStore=useAccountStore();
 const account =accountStore.accountInfo;
@@ -19,9 +20,9 @@ const followerInfo = reactive({
   id: user.id || null,
   username: user.username || "N/A",
   value:  account.balance || 0,
-  profitLoss:  role.totalProfit || 0,
-  copying: role.totalTrades || 0,
-  following:  role.totalFollowedTraders || 0,
+  profitLoss:  role.value.totalProfit || 0,
+  copying: role.value.totalTrades || 0,
+  following:  role.value.totalFollowedTraders || 0,
 });
 const userAvatar = computed(() => generateAvatar(followerInfo.username));
 </script>
