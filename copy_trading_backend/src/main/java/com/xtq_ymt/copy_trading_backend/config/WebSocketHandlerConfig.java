@@ -4,6 +4,7 @@ import com.xtq_ymt.copy_trading_backend.handler.AccountWebSocketHandler;
 import com.xtq_ymt.copy_trading_backend.handler.TradeSyncHandler;
 import com.xtq_ymt.copy_trading_backend.handler.MarketDataHandler;
 import com.xtq_ymt.copy_trading_backend.handler.NotificationHandler;
+import com.xtq_ymt.copy_trading_backend.handler.TradeWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -14,51 +15,48 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
  * 配置类，用于定义基于 WebSocket 的通信处理。
  */
 @Configuration
-@EnableWebSocket // 启用纯 WebSocket 功能
+@EnableWebSocket
 public class WebSocketHandlerConfig implements WebSocketConfigurer {
 
     private final TradeSyncHandler tradeSyncHandler;
     private final NotificationHandler notificationHandler;
     private final MarketDataHandler marketDataHandler;
-    private final AccountWebSocketHandler accountWebSocketHandler; // 新增的 WebSocket 处理器
+    private final AccountWebSocketHandler accountWebSocketHandler;
+    // 新增：交易数据 WebSocket 处理器
+    private final TradeWebSocketHandler tradeWebSocketHandler;
 
-    /**
-     * 构造函数，用于注入所需的 WebSocket Handler。
-     *
-     * @param tradeSyncHandler    交易同步处理器
-     * @param notificationHandler 通知处理器
-     * @param marketDataHandler   市场数据处理器
-     * @param accountWebSocketHandler 账户信息 WebSocket 处理器
-     */
     public WebSocketHandlerConfig(TradeSyncHandler tradeSyncHandler, 
                                   NotificationHandler notificationHandler, 
                                   MarketDataHandler marketDataHandler,
-                                  AccountWebSocketHandler accountWebSocketHandler) {
+                                  AccountWebSocketHandler accountWebSocketHandler,
+                                  TradeWebSocketHandler tradeWebSocketHandler) {  // 添加新的处理器
         this.tradeSyncHandler = tradeSyncHandler;
         this.notificationHandler = notificationHandler;
         this.marketDataHandler = marketDataHandler;
-        this.accountWebSocketHandler = accountWebSocketHandler; // 初始化新的处理器
+        this.accountWebSocketHandler = accountWebSocketHandler;
+        this.tradeWebSocketHandler = tradeWebSocketHandler;  // 初始化新的处理器
     }
 
-    /**
-     * 注册 WebSocket 处理器。
-     */
     @Override
     public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
-        // 注册交易同步 WebSocket 处理器，路径为 "/ws/trade-sync"
+        // 注册交易同步 WebSocket 处理器
         registry.addHandler(tradeSyncHandler, "/ws/trade-sync")
-                .setAllowedOrigins("*"); // 允许所有来源跨域请求
+                .setAllowedOrigins("*");
 
-        // 注册通知 WebSocket 处理器，路径为 "/ws/notification"
+        // 注册通知 WebSocket 处理器
         registry.addHandler(notificationHandler, "/ws/notification")
                 .setAllowedOrigins("*");
 
-        // 注册市场数据 WebSocket 处理器，路径为 "/ws/market-data"
+        // 注册市场数据 WebSocket 处理器
         registry.addHandler(marketDataHandler, "/ws/market-data")
                 .setAllowedOrigins("*");
 
-        // 注册账户信息 WebSocket 处理器，路径为 "/ws/account"
+        // 注册账户信息 WebSocket 处理器
         registry.addHandler(accountWebSocketHandler, "/ws/account")
-                .setAllowedOrigins("*"); // 允许所有来源跨域请求
+                .setAllowedOrigins("*");
+
+        // 新增：注册交易数据 WebSocket 处理器
+        registry.addHandler(tradeWebSocketHandler, "/ws/trades/{accountId}")
+                .setAllowedOrigins("*");
     }
 }
