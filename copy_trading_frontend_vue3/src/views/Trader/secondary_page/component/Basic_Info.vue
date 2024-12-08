@@ -29,18 +29,34 @@
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from "vue";
 import AccountDialog from "./AccountDialog.vue"; // 使用同级目录路径导入组件
+import { useTradeStore } from "@/stores/tradeData";
 import { useUserStore } from "@/stores/user";
 import { useRoleStore } from "@/stores/roleBasicData";
 import { useAccountStore } from "@/stores/account";
+import { useStrategyStore } from "@/stores/strategy";
 import { generateAvatar } from "@/utils/avatar";
 
 const userStore = useUserStore();
+
+//加载strategy
+const strategyStore = useStrategyStore();
+strategyStore.getStrategyByTrader(userStore.userInfo.id);
+
+//加载trade
+const tradeStore = useTradeStore();
+tradeStore.getTradesInfo(strategyStore.strategyInfo.id);
+
+//加载account
 const accountStore = useAccountStore();
 const accountInfo = accountStore.accountInfo; // 引用 accountStore 的响应式数据
 
-const roleStore =useRoleStore();
-roleStore.getRoleInfo({role:userStore.userInfo.role,id:userStore.userInfo.id});
-const roleInfo= roleStore.roleInfo;
+//加载roleStore
+const roleStore = useRoleStore();
+roleStore.getRoleInfo({
+  role: userStore.userInfo.role,
+  id: userStore.userInfo.id,
+});
+const roleInfo = roleStore.roleInfo;
 
 // 计算属性
 const userLoggedIn = computed(() => !!userStore.userInfo);
@@ -60,12 +76,12 @@ const closeDialog = () => {
 // 定义 stats 数据，直接使用响应式对象
 const stats = ref([
   { label: "Amount Following", value: accountInfo.amountFollowing || 0 },
-      { label: "Followers", value: roleInfo.totalFollowers || 0 },
-      { label: "Equity", value: accountInfo.equity || 0 },
-      { label: "Balance", value: accountInfo.balance || 0 },
-      { label: "Realized PNL", value: accountInfo.winRate || 0 },
-      { label: "Margin", value: accountInfo.margin || 0 },
-      { label: "Free Margin", value: accountInfo.freeMargin || 0 },
+  { label: "Followers", value: roleInfo.totalFollowers || 0 },
+  { label: "Equity", value: accountInfo.equity || 0 },
+  { label: "Balance", value: accountInfo.balance || 0 },
+  { label: "Realized PNL", value: accountInfo.winRate || 0 },
+  { label: "Margin", value: accountInfo.margin || 0 },
+  { label: "Free Margin", value: accountInfo.freeMargin || 0 },
 ]);
 
 // 创建账户或检测账户
@@ -83,9 +99,10 @@ onMounted(() => {
   createFirstAccount(); // 页面加载时检查账户
 });
 
-onUnmounted(()=>{
+onUnmounted(() => {
   accountStore.stopListening();
-})
+  tradeStore.stopListening(accountStore.accountInfo.id);
+});
 </script>
 
 

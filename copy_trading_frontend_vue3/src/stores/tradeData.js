@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
-import{ openTrade,closeTrade,getOpenTrades } from '@/apis/tradeManagement';
+import{ openTrade,closeTrade,getOpenTrades,getTradesByStrategy } from '@/apis/tradeManagement';
 import webSocketManager from '@/utils/webSocketManager';  // 导入自定义的 WebSocket 管理器
 
 // 定义 WebSocket 的基础 URL 和处理器路径
@@ -10,6 +10,16 @@ const handler = '/trades';       // WebSocket 的处理器路径（具体业务�
 export const useTradeStore = defineStore('trade', () => {
     const tradeInfo = ref({})
     const openedTradeInfo = ref({})
+
+    const getTradesInfo=async(strategyId)=>{
+        try {
+            const res = await getTradesByStrategy(strategyId);
+            // 将其他返回的数据存储到 tradeInfo 中
+            tradeInfo.value = res;
+        } catch (error) {
+            console.error("Failed to fetch trade info:", error);
+        }
+    }
 
     const getOpenedTradeInfo = async (accountId) => {
         try {
@@ -73,6 +83,7 @@ export const useTradeStore = defineStore('trade', () => {
     return{
         tradeInfo,
         openedTradeInfo,
+        getTradesInfo,
         getOpenedTradeInfo,
         startListening,
         stopListening,

@@ -1,191 +1,108 @@
-<template>
-  <div class="history-page">
-    <!-- Title -->
-    <h1>Trade History</h1>
-
-    <!-- Tabs for Different History Views -->
-    <div class="tabs">
-      <button 
-        v-for="(tab, index) in tabs" 
-        :key="index" 
-        :class="{ active: activeTab === tab }" 
-        @click="activeTab = tab">
-        {{ tab }}
-      </button>
-    </div>
-
-    <!-- Content Based on Active Tab -->
-    <div v-if="activeTab === 'Trade History Log'">
-      <!-- Trade History Log Content -->
-      <div class="filters">
-        <div class="filter-item">
-          <label for="from-date">From Date:</label>
-          <input type="date" id="from-date" v-model="filters.fromDate" />
-        </div>
-        <div class="filter-item">
-          <label for="to-date">To Date:</label>
-          <input type="date" id="to-date" v-model="filters.toDate" />
-        </div>
-        <div class="filter-item">
-          <label for="currency">Currency Pair:</label>
-          <select id="currency" v-model="filters.currency">
-            <option value="">Select Currency Pair</option>
-            <option value="EUR/USD">EUR/USD</option>
-            <option value="GBP/USD">GBP/USD</option>
-            <option value="USD/JPY">USD/JPY</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <label for="trade-type">Trade Type:</label>
-          <select id="trade-type" v-model="filters.tradeType">
-            <option value="">All</option>
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Trade History Table -->
-      <div class="history-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Currency Pair</th>
-              <th>Type</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="filteredTrades.length === 0">
-              <td colspan="5">No trades found using the specified filters.</td>
-            </tr>
-            <tr v-for="(trade, index) in filteredTrades" :key="index">
-              <td>{{ trade.date }}</td>
-              <td>{{ trade.currency }}</td>
-              <td>{{ trade.type }}</td>
-              <td>{{ trade.amount }}</td>
-              <td>{{ trade.status }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div v-if="activeTab === 'Cancelled Orders Log'">
-      <!-- Cancelled Orders Log Content -->
-      <p>No cancelled orders available.</p>
-    </div>
-
-    <div v-if="activeTab === 'Other History'">
-      <!-- Other History Content -->
-      <p>No other history records available.</p>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useTradeStore } from '@/stores/tradeData';
-import { useAccountStore }from '@/stores/account';
+import { computed, onMounted, onUnmounted } from "vue";
+import { useTradeStore } from "@/stores/tradeData";
+import { useAccountStore } from "@/stores/account";
 
-const tabs = ["Trade History Log", "Cancelled Orders Log", "Other History"];
-const activeTab = ref("Trade History Log");
+const tradeStore = useTradeStore();
+const trades = computed(() => tradeStore.tradeInfo);
 
-const tradeStore=useTradeStore();
-const trades=tradeStore.tradeInfo;
+const account = useAccountStore().accountInfo;
 
-const account=useAccountStore().accountInfo;
-
-onMounted(()=>{
+onMounted(() => {
   tradeStore.startListening(account.id);
-})
-
-onUnmounted(()=>{
-  tradeStore.stopListening(account.id);
-})
-
-
-const filters = ref({
-  fromDate: "",
-  toDate: "",
-  currency: "",
-  tradeType: "",
 });
 
-
-const filteredTrades = computed(() => {
-  return trades.filter((trade) => {
-    const matchesDate =
-      (!filters.value.fromDate || trade.date >= filters.value.fromDate) &&
-      (!filters.value.toDate || trade.date <= filters.value.toDate);
-    const matchesCurrency =
-      !filters.value.currency || trade.currency === filters.value.currency;
-    const matchesTradeType =
-      !filters.value.tradeType || trade.type === filters.value.tradeType;
-
-    return matchesDate && matchesCurrency && matchesTradeType;
-  });
+onUnmounted(() => {
+  tradeStore.stopListening(account.id);
 });
 </script>
 
+<template>
+  <div class="history">
+    <h2>Trade History</h2>
+    <table class="trade-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Symbol</th>
+          <th>Type</th>
+          <th>Price Open</th>
+          <th>Price Close</th>
+          <th>Profit</th>
+          <th>Date Open</th>
+          <th>Date Close</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="trade in trades"
+          :key="trade.id"
+          :class="{ closed: trade.closed }"
+        >
+          <td>{{ trade.id }}</td>
+          <td>{{ trade.symbol }}</td>
+          <td>{{ trade.type }}</td>
+          <td>{{ trade.priceOpen?.toFixed(2) ?? "--" }}</td>
+          <td>{{ trade.priceClose?.toFixed(2) ?? "--" }}</td>
+          <td :class="{ profit: trade.profit >= 0, loss: trade.profit < 0 }">
+            {{ trade.profit.toFixed(2) ?? "--" }}
+          </td>
+          <td>{{ trade.dateOpen }}</td>
+          <td>{{ trade.dateClose || "--" }}</td>
+          <td>{{ trade.closed ? "Closed" : "Open" }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
 <style scoped>
-.history-page {
+.history {
   padding: 20px;
 }
 
-.tabs {
-  display: flex;
-  gap: 10px;
+h2 {
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.tabs button {
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  background-color: #f0f0f0;
-  transition: background-color 0.3s;
-}
-
-.tabs button.active {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.tabs button:hover:not(.active) {
-  background-color: #e0e0e0;
-}
-
-.filters {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.filter-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.history-table {
-  margin-top: 20px;
-}
-
-.history-table table {
+.trade-table {
   width: 100%;
   border-collapse: collapse;
+  margin: 0 auto;
 }
 
-.history-table th,
-.history-table td {
-  border: 1px solid #ccc;
+.trade-table th,
+.trade-table td {
   padding: 10px;
-  text-align: left;
+  text-align: center;
+  border: 1px solid #ddd;
 }
 
-.history-table th {
-  background-color: #f8f8f8;
+.trade-table thead {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.trade-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.trade-table tbody tr.closed {
+  background-color: #e8f5e9;
+}
+
+.trade-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.trade-table td.profit {
+  color: green;
+}
+
+.trade-table td.loss {
+  color: red;
 }
 </style>
+
