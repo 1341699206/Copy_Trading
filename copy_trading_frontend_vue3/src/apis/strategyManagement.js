@@ -34,13 +34,13 @@ export const deleteStrategyById=(id)=>{
 }
 
 //a 通过id创建新的交易策略
-export const createStrategyById=({id,name,description,scriptContent})=>{
-    const url=`/strategies/create?traderId=${id}&name=${name}&description=${description}&scriptContent=${scriptContent}`;
+export const createStrategyById=({traderId,name,description,scriptContent})=>{
+    const url=`/strategies/create?traderId=${traderId}&name=${name}&description=${description}&scriptContent=${scriptContent}`;
     return request({
         url:url,
         method:'POST',
         data:{
-            id,
+            traderId,
             name,
             description,
             scriptContent,
