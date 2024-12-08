@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "accounts")
 @Data
@@ -40,6 +42,7 @@ public class Account {
     private double winRate; // 胜率
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Trade> trades; // 与 Trade 的双向关联
 
     @Column(nullable = false)
