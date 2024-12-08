@@ -1,7 +1,3 @@
-// Create a History subpage Vue component
-// This component is designed to implement a "History" subpage similar to ZuluTrade.
-// The page will include basic features like date filtering, currency pair selection, and trade type filtering, along with tabs to switch between different history views.
-
 <template>
   <div class="history-page">
     <!-- Title -->
@@ -89,64 +85,49 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "HistoryPage",
-  data() {
-    return {
-      // Tabs for switching between different views
-      tabs: ["Trade History Log", "Cancelled Orders Log", "Other History"],
-      activeTab: "Trade History Log",
-      // Filter conditions
-      filters: {
-        fromDate: "",
-        toDate: "",
-        currency: "",
-        tradeType: "",
-      },
-      // Sample trade data
-      trades: [
-        {
-          date: "2024-10-01",
-          currency: "EUR/USD",
-          type: "buy",
-          amount: 1000,
-          status: "closed",
-        },
-        {
-          date: "2024-10-15",
-          currency: "GBP/USD",
-          type: "sell",
-          amount: 2000,
-          status: "open",
-        },
-        {
-          date: "2024-10-20",
-          currency: "USD/JPY",
-          type: "buy",
-          amount: 1500,
-          status: "closed",
-        },
-      ],
-    };
-  },
-  computed: {
-    // Filter trades based on the conditions
-    filteredTrades() {
-      return this.trades.filter((trade) => {
-        const matchesDate =
-          (!this.filters.fromDate || trade.date >= this.filters.fromDate) &&
-          (!this.filters.toDate || trade.date <= this.filters.toDate);
-        const matchesCurrency =
-          !this.filters.currency || trade.currency === this.filters.currency;
-        const matchesTradeType =
-          !this.filters.tradeType || trade.type === this.filters.tradeType;
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useTradeStore } from '@/stores/tradeData';
+import { useAccountStore }from '@/stores/account';
 
-        return matchesDate && matchesCurrency && matchesTradeType;
-      });
-    },
-  },
-};
+const tabs = ["Trade History Log", "Cancelled Orders Log", "Other History"];
+const activeTab = ref("Trade History Log");
+
+const tradeStore=useTradeStore();
+const trades=tradeStore.tradeInfo;
+
+const account=useAccountStore().accountInfo;
+
+onMounted(()=>{
+  tradeStore.startListening(account.id);
+})
+
+onUnmounted(()=>{
+  tradeStore.stopListening(account.id);
+})
+
+
+const filters = ref({
+  fromDate: "",
+  toDate: "",
+  currency: "",
+  tradeType: "",
+});
+
+
+const filteredTrades = computed(() => {
+  return trades.filter((trade) => {
+    const matchesDate =
+      (!filters.value.fromDate || trade.date >= filters.value.fromDate) &&
+      (!filters.value.toDate || trade.date <= filters.value.toDate);
+    const matchesCurrency =
+      !filters.value.currency || trade.currency === filters.value.currency;
+    const matchesTradeType =
+      !filters.value.tradeType || trade.type === filters.value.tradeType;
+
+    return matchesDate && matchesCurrency && matchesTradeType;
+  });
+});
 </script>
 
 <style scoped>

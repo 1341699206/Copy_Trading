@@ -5,7 +5,7 @@ import webSocketManager from '@/utils/webSocketManager';  // 导入自定义的 
 
 // 定义 WebSocket 的基础 URL 和处理器路径
 const wsUrl = 'ws://localhost:9099/ws';  // 基础 WebSocket 地址
-const handler = '/trade';       // WebSocket 的处理器路径（具体业务）
+const handler = '/trades';       // WebSocket 的处理器路径（具体业务）
 
 export const useTradeStore = defineStore('trade', () => {
     const tradeInfo = ref({})
@@ -53,7 +53,7 @@ export const useTradeStore = defineStore('trade', () => {
         // 调用 webSocketManager 的 addDynamicListener 方法，建立 WebSocket 连接并开始监听
         webSocketManager.addDynamicListener(
             wsUrl,               // WebSocket 服务器的 URL
-            handler + '?accountId=' + accountId,             // WebSocket 的处理器路径（指定订阅的主题）
+            handler + '/'+ accountId,             // WebSocket 的处理器路径（指定订阅的主题）
             updateTradeData    // 接收到的数据会通过这个回调函数传递给 store
         );
     };
@@ -65,7 +65,7 @@ export const useTradeStore = defineStore('trade', () => {
     const stopListening = (accountId) => {
         // 调用 webSocketManager 的 removeDynamicListener 方法，停止监听
         webSocketManager.removeDynamicListener(
-            handler + '?accountId=' + accountId,            // WebSocket 的处理器路径（取消订阅的主题）
+            handler + '/' + accountId,            // WebSocket 的处理器路径（取消订阅的主题）
             updateTradeData    // 停止接收并更新 marketData 的回调
         );
     };
