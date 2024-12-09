@@ -41,7 +41,6 @@ export const useAccountStore = defineStore('account', () => {
      * 该方法调用 webSocketManager.addDynamicListener 来连接 WebSocket 并开始接收数据
      */
     const startListening = (userId) => {
-        
         // 调用 webSocketManager 的 addDynamicListener 方法，建立 WebSocket 连接并开始监听
         webSocketManager.addDynamicListener(
             wsUrl,               // WebSocket 服务器的 URL

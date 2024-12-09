@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useStrategyStore } from "@/stores/strategy";
 
@@ -8,9 +8,6 @@ const strategyStore = useStrategyStore();
 
 // 策略信息
 const strategy = computed(() => strategyStore.strategyInfo);
-onMounted(async () => {
-  await strategyStore.getStrategyInfo(strategyInfo.value.id);
-});
 
 const strategyInfo = ref({
   id: strategy.value?.id || 0,

@@ -6,7 +6,7 @@ import { useStrategyStore } from "@/stores/strategy";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 
-const account = useAccountStore().accountInfo;
+const account = (useAccountStore()).accountInfo;
 const tradeStore = useTradeStore();
 const strategy = useStrategyStore().strategyInfo;
 
@@ -26,7 +26,7 @@ const emit = defineEmits(["close"]);
 
 // 账户信息
 const tradeInfo = reactive({
-  accountId: account.accountId,
+  accountId: computed(()=>account.id),
   strategyId: computed(()=>strategy.id),
   symbol: computed(() => props.symbol),
   type: computed(() => props.type),
