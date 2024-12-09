@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { getStrategyById, updateStrategyById, createStrategyById, deleteStrategyById, getStrategyByTraderId } from "@/apis/strategyManagement";
+import { updateStrategyById, createStrategyById, deleteStrategyById, getStrategyByTraderId } from "@/apis/strategyManagement";
 
 export const useStrategyStore = defineStore('strategy', () => {
     const strategyInfo = ref({})
@@ -8,20 +8,11 @@ export const useStrategyStore = defineStore('strategy', () => {
     const getStrategyByTrader = async (traderId) => {
         try {
             const res = await getStrategyByTraderId(traderId);
-            strategyInfo.value = res[0];
-        } catch (error) {
-            console.error("Failed to fetch strategy info:", error);
-        }
-
-    }
-
-    const getStrategyInfo = async (traderId) => {
-        try {
-            const res = await getStrategyById(traderId);
             strategyInfo.value = res;
         } catch (error) {
             console.error("Failed to fetch strategy info:", error);
         }
+
     }
 
     const updateStrategy = async ({ traderId, name, description, scriptContent, isActive }) => {
@@ -54,7 +45,6 @@ export const useStrategyStore = defineStore('strategy', () => {
     return {
         strategyInfo,
         getStrategyByTrader,
-        getStrategyInfo,
         updateStrategy,
         createStrategy,
         deleteStrategy,

@@ -1,7 +1,8 @@
 <script setup>
 import { defineProps,computed } from "vue";
 import { useRouter } from "vue-router";
-import { generateAvatar } from "@/utils/avatar"
+import { generateAvatar } from "@/utils/avatar";
+//import { getAccountDetails } from '@/apis/accountManagement';
 
 // 定义组件的 props，接收父组件传递的 `item` 数据
 const props =defineProps({
@@ -23,7 +24,7 @@ const collect=()=>{
 }
 
 // 生成头像的逻辑
-const userAvatar = computed(() => generateAvatar(props.item.username || "Trader"));
+const userAvatar = computed(() => generateAvatar(props.item.user.username || "Trader"));
 
 // 计算百分比格式的 ROI
 const formattedWinRate = computed(() => {

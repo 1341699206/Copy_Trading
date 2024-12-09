@@ -1,7 +1,7 @@
 import request from "@/utils/http";
 
-//a 通过id获取交易策略
-export const getStrategyById=(traderId)=>{
+//a 通过traderId获取strategyId
+export const getStrategyIdByTradeId=(traderId)=>{
     const url=`/strategies/${traderId}`;
     return request({
         url:url

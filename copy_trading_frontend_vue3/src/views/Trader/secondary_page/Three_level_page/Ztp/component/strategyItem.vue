@@ -10,7 +10,7 @@ const strategyStore = useStrategyStore();
 const strategy = computed(() => strategyStore.strategyInfo);
 
 const strategyInfo = ref({
-  id: strategy.value?.id || 0,
+  traderId: userStore.userInfo.id,
   name: strategy.value?.name || "",
   description: strategy.value?.description || "",
   scriptContent: strategy.value?.scriptContent || "",
@@ -32,7 +32,7 @@ const formRef = ref(null);
 
 const doCreate = async () => {
   await strategyStore.createStrategy({
-    traderId: userStore.userInfo.id,
+    traderId: strategyInfo.value.traderId,
     name: strategyInfo.value.name,
     description: strategyInfo.value.description,
     scriptContent: strategyInfo.value.scriptContent,
@@ -44,10 +44,10 @@ const doUpdate = async () => {
 };
 
 const doDelete = async () => {
-  await strategyStore.deleteStrategy(strategyInfo.value.id);
+  await strategyStore.deleteStrategy(strategyInfo.value.traderId);
   // 清空数据
   strategyInfo.value = {
-    id: 0,
+    traderId: userStore.userInfo.id,
     name: "",
     description: "",
     scriptContent: "",
