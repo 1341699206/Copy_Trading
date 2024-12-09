@@ -1,67 +1,18 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { getTraderDetailInf } from "@/apis/followerManagement";
+import { ref } from "vue";
 import timeSelector from "@/views/Follower/TraderHomePage/component/Body/component/timeSelector.vue";
-import * as echarts from "echarts";
 
-const traderHistoryInfo = ref([]);
 const traderDetailInfo = ref(null);
 const chartRef = ref(null);
-let chart;
 const chartHeight = ref(400); // 设置图表的默认高度
 
-const selectedDays = ref(180); // 默认选中的天数
-
-// 接收天数信息
-const updateDays = (days) => {
-  selectedDays.value = days;
-  fetchTraderData(); // 重新获取数据并更新图表
-};
-
-const props = defineProps({
+defineProps({
   traderBasicInf: {
     type: Object,
     default: null,
   },
 });
 
-// 获取对应的traders数据并更新图表
-const fetchTraderData = async () => {
-  // 检查 traderBasicInf 是否存在
-  if (!props.traderBasicInf) return;
-
-  const res = await getTraderDetailInf({
-    id: props.traderBasicInf.traderId,
-    timePeriod: selectedDays.value,
-  });
-  traderDetailInfo.value = res.data;
-  traderHistoryInfo.value = traderDetailInfo.value.traderHistoryData;
-  console.log(traderHistoryInfo.value)
-  const options = {
-    xAxis: {
-      type: "category",
-      data: traderHistoryInfo.value.map((data) => data.timestamp),
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        data: traderHistoryInfo.value.map((data) => data.ROI),
-        type: "line",
-        smooth: true,
-      },
-    ],
-  };
-
-  chart.setOption(options);
-};
-
-// 初始化 ECharts 图表
-onMounted(async () => {
-  chart = echarts.init(chartRef.value);
-  await fetchTraderData();
-});
 </script>
 
 <template>

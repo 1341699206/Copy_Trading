@@ -5,10 +5,6 @@ import { follow, unfollow,checkIsFollow } from "@/apis/followerManagement";
 import { getAccountDetails } from "@/apis/accountManagement";
 import { useAccountStore } from "@/stores/account";
 
-const accountStore = useAccountStore();
-const account = computed(() => accountStore.accountInfo); // 获取登录信息
-const followerAccountId = computed(() => account.value?.id || null);
-
 const props = defineProps({
   traderBasicInf: {
     type: Object,
@@ -16,29 +12,31 @@ const props = defineProps({
   },
 });
 
+const accountStore = useAccountStore();
+const followerAccountId = accountStore.accountInfo.id;
+
+const traderAccountId=ref();
+
 const avatar = computed(() => generateAvatar(props.traderBasicInf.user.username));
-const traderAccountId = computed(() => {
-  const details = getAccountDetails(props.traderBasicInf.traderId);
-  return details ? details.id : null;
-});
 
 // 控制 follow 按钮的显示状态
 const isFollow = ref(false);
 const showDialog = ref(false); // 控制对话框的显示状态
 
 onMounted(async () => {
-  if(await checkIsFollow(followerAccountId.value,traderAccountId.value)){
+  traderAccountId.value= (await getAccountDetails(props.traderBasicInf.traderId)).id;
+  if(await checkIsFollow({followerAccountId:followerAccountId,traderAccountId:traderAccountId.value})){
     isFollow.value = true; // 根据实际逻辑更新
   }
 });
 
 const doFollow = async () => {
-  if (!followerAccountId.value) {
+  if (!followerAccountId) {
     showDialog.value = true; // 弹出提示对话框
     return;
   }
   try {
-    await follow({ followerAccountId: followerAccountId.value, traderAccountId: traderAccountId.value });
+    await follow({ followerAccountId: followerAccountId, traderAccountId: traderAccountId.value });
     isFollow.value = true;
   } catch (error) {
     console.error("关注失败", error);
@@ -47,7 +45,7 @@ const doFollow = async () => {
 
 const doUnfollow = async () => {
   try {
-    await unfollow({ followerAccountId: followerAccountId.value, traderAccountId: traderAccountId.value });
+    await unfollow({ followerAccountId: followerAccountId, traderAccountId: traderAccountId.value });
     isFollow.value = false;
   } catch (error) {
     console.error("取消关注失败", error);

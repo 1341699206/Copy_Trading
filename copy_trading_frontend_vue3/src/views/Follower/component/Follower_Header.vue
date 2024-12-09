@@ -9,8 +9,8 @@ const router = useRouter();
 
 //回调函数，完成退出登录操作
 const confirm = () => {
-  //清除用户信息
-  userStore.clearUserInfo();
+  // 清除会话存储内容
+  sessionStorage.clear();
   //跳转回到登录页
   router.push("/login");
 };

@@ -38,7 +38,7 @@ export const getFollowersStatistics=(followerId)=>{
 
 //a 获取User的基本信息
 export const getUserStatistics=({role,id})=>{
-    const url=`/stats/${role}/${id}`
+    const url=`/stats/${role.toLowerCase()}/${id}`
     return request({
         url:url,
     })

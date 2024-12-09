@@ -40,15 +40,12 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@/stores/user";
-const userStore = useUserStore();
-
 import { useRouter } from "vue-router";
 const router = useRouter();
 //回调函数，完成退出登录操作
 const confirm = () => {
-  //清除用户信息
-  userStore.clearUserInfo();
+  // 清除会话存储内容
+  sessionStorage.clear();
   //跳转回到登录页
   router.push("/login");
 };
@@ -146,7 +143,7 @@ const confirm = () => {
   font-size: 18px;
   margin-left: 5px;
 }
-.logOut a{
+.logOut a {
   text-decoration: none; /* 去掉下划线 */
   font-size: 16px; /* 字体大小 */
   color: black; /* 黑色文本 */
