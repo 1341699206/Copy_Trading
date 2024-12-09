@@ -2,17 +2,16 @@ package com.xtq_ymt.copy_trading_backend.service;
 
 import com.xtq_ymt.copy_trading_backend.model.Strategy;
 
-import java.util.List;
-
 public interface StrategyService {
 
     Strategy createStrategy(Long traderId, String name, String description, String scriptContent);
 
-    Strategy updateStrategy(Long id, String name, String description, String scriptContent, boolean isActive);
+    Strategy updateStrategyByTraderId(Long traderId, String name, String description, String scriptContent, boolean isActive);
 
-    void deleteStrategy(Long id);
+    void deleteStrategyByTraderId(Long traderId);
 
-    List<Strategy> getStrategiesByTraderId(Long traderId);
+    Strategy getStrategyByTraderId(Long traderId);
 
-    Strategy getStrategyById(Long id);
+    Long getStrategyIdByUserId(Long userId);
 }
+
