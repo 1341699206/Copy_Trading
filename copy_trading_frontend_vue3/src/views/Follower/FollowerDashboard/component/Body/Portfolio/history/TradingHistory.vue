@@ -1,44 +1,21 @@
 <script setup>
-import { getTraderTradesHistory } from "@/apis/followerManagement";
 import TradeHistoryItem from "./TradeHistoryItem.vue";
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useAccountStore } from "@/stores/account";
+import { useTradeStore } from "@/stores/tradeData";
+import { computed, onMounted, onUnmounted } from "vue";
 
-const route = useRoute();
-const traderId = route.params.id;
-const traderTradesHistory = ref([]);
-const currentPage = ref(1); // 当前页
-const pageSize = ref(10); // 每页数量
-const totalPages = ref(0); // 总页数
-const totalItems = ref(0); // 总条数
-const hasPrevPage = ref(false); // 是否有上一页
-const hasNextPage = ref(false); // 是否有下一页
+const tradeStore = useTradeStore();
+const tradesHistory = computed(() => tradeStore.tradeInfo);
 
-// 获取交易历史数据
-const fetchTraderTradesHistory = async () => {
-  try {
-    const response = await getTraderTradesHistory({
-      id: traderId,
-      pageSize: pageSize.value,
-      currentPage: currentPage.value,
-    });
+const account = useAccountStore().accountInfo;
 
-    // 确保数据为数组的类型
-    traderTradesHistory.value = Array.isArray(response.data.tradeHistory) ? response.data.tradeHistory : [];
-    totalPages.value = response.data.totalPages || 0;
-    totalItems.value = response.data.totalElements || 0;
-    hasPrevPage.value = response.data.isPrePage || currentPage.value > 1;
-    hasNextPage.value = response.data.isNextPage || currentPage.value < totalPages.value;
-  } catch (error) {
-    // 处理错误
-    console.error("Failed to fetch trade history:", error);
-  }
-};
+onMounted(() => {
+  tradeStore.startListening(account.id);
+});
 
-// 监听分页变化
-watch([currentPage, pageSize], fetchTraderTradesHistory);
-
-onMounted(fetchTraderTradesHistory);
+onUnmounted(() => {
+  tradeStore.stopListening(account.id);
+});
 </script>
 
 <template>
@@ -57,7 +34,7 @@ onMounted(fetchTraderTradesHistory);
     </div>
 
     <!-- 数据条目列表 -->
-    <div v-if="traderTradesHistory && traderTradesHistory.length > 0">
+    <div v-if="tradesHistory && tradesHistory.length > 0">
       <trade-history-item
         v-for="item in traderTradesHistory"
         :key="item.tradeId"
@@ -65,36 +42,6 @@ onMounted(fetchTraderTradesHistory);
       ></trade-history-item>
     </div>
     <div v-else class="not-found">Not Found</div>
-
-    <!-- 分页容器 -->
-    <div class="pagination-container">
-      <!-- 每页数量控制 -->
-      <el-select
-        v-model="pageSize"
-        size="small"
-        class="page-size-select"
-        @change="currentPage = 1"
-        style="max-width: 5%;"
-      >
-        <el-option label="10" value="10"></el-option>
-        <el-option label="20" value="20"></el-option>
-        <el-option label="30" value="30"></el-option>
-      </el-select>
-
-      <!-- 分页选项 -->
-      <el-pagination
-        size="small"
-        background
-        layout="prev, pager, next"
-        :total="totalItems"
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        :disabled-prev="!hasPrevPage"
-        :disabled-next="!hasNextPage"
-        @current-change="currentPage = $event"
-        class="mt-4"
-      />
-    </div>
   </div>
 </template>
 
