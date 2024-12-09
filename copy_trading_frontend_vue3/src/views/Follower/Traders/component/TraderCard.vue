@@ -23,7 +23,7 @@ const collect=()=>{
 }
 
 // 生成头像的逻辑
-const userAvatar = computed(() => generateAvatar(props.item.username));
+const userAvatar = computed(() => generateAvatar(props.item.username || "Trader"));
 
 // 计算百分比格式的 ROI
 const formattedWinRate = computed(() => {

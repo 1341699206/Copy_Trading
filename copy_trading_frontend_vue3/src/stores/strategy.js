@@ -15,18 +15,18 @@ export const useStrategyStore = defineStore('strategy', () => {
 
     }
 
-    const getStrategyInfo = async (strategyId) => {
+    const getStrategyInfo = async (traderId) => {
         try {
-            const res = await getStrategyById(strategyId);
+            const res = await getStrategyById(traderId);
             strategyInfo.value = res;
         } catch (error) {
             console.error("Failed to fetch strategy info:", error);
         }
     }
 
-    const updateStrategy = async ({ strategyId, name, description, scriptContent, isActive }) => {
+    const updateStrategy = async ({ traderId, name, description, scriptContent, isActive }) => {
         try {
-            const res = await updateStrategyById({ strategyId, name, description, scriptContent, isActive })
+            const res = await updateStrategyById({ traderId, name, description, scriptContent, isActive })
             strategyInfo.value = res
         } catch (error) {
             console.error("Failed to update strategy:", error)
@@ -42,9 +42,9 @@ export const useStrategyStore = defineStore('strategy', () => {
         }
     }
 
-    const deleteStrategy = async (strategyId) => {
+    const deleteStrategy = async (traderId) => {
         try {
-            const res = await deleteStrategyById(strategyId);
+            const res = await deleteStrategyById(traderId);
             strategyInfo.value = res;
         } catch (error) {
             console.error("Failed to delete strategy:", error);
