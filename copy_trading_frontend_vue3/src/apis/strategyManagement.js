@@ -1,21 +1,21 @@
 import request from "@/utils/http";
 
 //a 通过id获取交易策略
-export const getStrategyById=(id)=>{
-    const url=`/strategies/${id}`;
+export const getStrategyById=(traderId)=>{
+    const url=`/strategies/${traderId}`;
     return request({
         url:url
     })
 }
 
 //a 通过id更新交易策略
-export const updateStrategyById=({id,name,description,scriptContent,isActive})=>{
-    const url=`/strategies/${id}?traderId=${id}&name=${name}&description=${description}&scriptContent=${scriptContent}&isActive=${isActive}`;
+export const updateStrategyById=({traderId,name,description,scriptContent,isActive})=>{
+    const url=`/strategies/${traderId}?traderId=${traderId}&name=${name}&description=${description}&scriptContent=${scriptContent}&isActive=${isActive}`;
     return request({
         url:url,
         method:'PUT',
         data:{
-            id,
+            traderId,
             name,
             description,
             scriptContent,
@@ -25,8 +25,8 @@ export const updateStrategyById=({id,name,description,scriptContent,isActive})=>
 }
 
 //a 通过id删除交易策略
-export const deleteStrategyById=(id)=>{
-    const url=`/strategies/${id}`;
+export const deleteStrategyById=(traderId)=>{
+    const url=`/strategies/${traderId}`;
     return request({
         url:url,
         method:'DELETE'
