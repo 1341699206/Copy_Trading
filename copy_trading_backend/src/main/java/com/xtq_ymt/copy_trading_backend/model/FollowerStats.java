@@ -30,7 +30,6 @@ public class FollowerStats {
      */
     @OneToOne
     @JoinColumn(name = "followerId", referencedColumnName = "id", insertable = false, updatable = false)
-    @JsonIgnore // 避免序列化导致的问题
     private User user; // 关联的 User 实体
 
     @Column(nullable = false)
