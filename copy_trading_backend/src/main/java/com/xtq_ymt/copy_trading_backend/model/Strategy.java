@@ -21,7 +21,7 @@ public class Strategy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "trader_id", nullable = false)
     private User trader; // 关联交易员对象
 

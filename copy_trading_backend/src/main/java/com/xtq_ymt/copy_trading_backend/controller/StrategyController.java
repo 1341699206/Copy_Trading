@@ -9,25 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
- * 策略管理控制器，提供管理交易策略的API接口
+ * 策略管理控制器，提供基于交易员ID操作策略的API接口
  */
 @RestController
-@RequestMapping("/strategies")  // 基础路径为 /strategies
-@Tag(name = "Strategy Management", description = "APIs for managing trading strategies")
+@RequestMapping("/strategies")
+@Tag(name = "Strategy Management", description = "APIs for managing trading strategies using trader ID")
 public class StrategyController {
 
-    private final StrategyService strategyService;  // 策略服务的依赖注入
+    private final StrategyService strategyService;
 
     @Autowired
     public StrategyController(StrategyService strategyService) {
-        this.strategyService = strategyService;  // 初始化策略服务
+        this.strategyService = strategyService;
     }
 
     /**
      * 创建新的交易策略
+     *
      * @param traderId 交易员ID
      * @param name 策略名称
      * @param description 策略描述
@@ -37,68 +36,72 @@ public class StrategyController {
     @PostMapping("/create")
     @Operation(summary = "Create a new strategy", description = "Creates a new trading strategy for a trader.")
     public ResponseEntity<Strategy> createStrategy(
-            @RequestParam Long traderId,  // 交易员ID
-            @RequestParam String name,  // 策略名称
-            @RequestParam String description,  // 策略描述
-            @RequestParam String scriptContent) {  // 策略脚本内容
+            @RequestParam Long traderId,
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam String scriptContent) {
         Strategy strategy = strategyService.createStrategy(traderId, name, description, scriptContent);
-        return new ResponseEntity<>(strategy, HttpStatus.CREATED);  // 返回创建的策略及状态201
+        return new ResponseEntity<>(strategy, HttpStatus.CREATED);
     }
 
     /**
      * 更新现有的交易策略
-     * @param id 策略ID
+     *
+     * @param traderId 交易员ID
      * @param name 策略名称
      * @param description 策略描述
      * @param scriptContent 策略脚本内容
      * @param isActive 策略是否启用
      * @return 更新后的策略对象及HTTP状态200
      */
-    @PutMapping("/{id}")  // 路径中的 {id} 是策略的ID
-    @Operation(summary = "Update a strategy", description = "Updates an existing trading strategy.")
+    @PutMapping("/update")
+    @Operation(summary = "Update a strategy", description = "Updates an existing trading strategy using trader ID.")
     public ResponseEntity<Strategy> updateStrategy(
-            @PathVariable Long id,  // 策略ID
-            @RequestParam String name,  // 策略名称
-            @RequestParam String description,  // 策略描述
-            @RequestParam String scriptContent,  // 策略脚本内容
-            @RequestParam boolean isActive) {  // 策略是否启用
-        Strategy updatedStrategy = strategyService.updateStrategy(id, name, description, scriptContent, isActive);
-        return new ResponseEntity<>(updatedStrategy, HttpStatus.OK);  // 返回更新后的策略及状态200
+            @RequestParam Long traderId,
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam String scriptContent,
+            @RequestParam boolean isActive) {
+        Strategy updatedStrategy = strategyService.updateStrategyByTraderId(traderId, name, description, scriptContent, isActive);
+        return new ResponseEntity<>(updatedStrategy, HttpStatus.OK);
     }
 
     /**
      * 删除现有的交易策略
-     * @param id 策略ID
+     *
+     * @param traderId 交易员ID
      * @return 成功删除的消息及HTTP状态200
      */
-    @DeleteMapping("/{id}")  // 路径中的 {id} 是策略的ID
-    @Operation(summary = "Delete a strategy", description = "Deletes an existing trading strategy.")
-    public ResponseEntity<String> deleteStrategy(@PathVariable Long id) {  // 策略ID
-        strategyService.deleteStrategy(id);
-        return new ResponseEntity<>("Strategy deleted successfully", HttpStatus.OK);  // 返回成功消息及状态200
+    @DeleteMapping("/delete")
+    @Operation(summary = "Delete a strategy", description = "Deletes an existing trading strategy using trader ID.")
+    public ResponseEntity<String> deleteStrategy(@RequestParam Long traderId) {
+        strategyService.deleteStrategyByTraderId(traderId);
+        return new ResponseEntity<>("策略删除成功", HttpStatus.OK);
     }
 
     /**
-     * 根据交易员ID获取所有策略
+     * 根据交易员ID获取策略详情
+     *
      * @param traderId 交易员ID
-     * @return 交易员的策略列表及HTTP状态200
-     */
-    @GetMapping("/trader/{traderId}")  // 路径中的 {traderId} 是交易员的ID
-    @Operation(summary = "Get strategies by trader ID", description = "Fetches all strategies for a specific trader.")
-    public ResponseEntity<List<Strategy>> getStrategiesByTraderId(@PathVariable Long traderId) {  // 交易员ID
-        List<Strategy> strategies = strategyService.getStrategiesByTraderId(traderId);
-        return new ResponseEntity<>(strategies, HttpStatus.OK);  // 返回策略列表及状态200
-    }
-
-    /**
-     * 根据策略ID获取策略详情
-     * @param id 策略ID
      * @return 策略对象及HTTP状态200
      */
-    @GetMapping("/{id}")  // 路径中的 {id} 是策略的ID
-    @Operation(summary = "Get strategy by ID", description = "Fetches the details of a specific strategy by ID.")
-    public ResponseEntity<Strategy> getStrategyById(@PathVariable Long id) {  // 策略ID
-        Strategy strategy = strategyService.getStrategyById(id);
-        return new ResponseEntity<>(strategy, HttpStatus.OK);  // 返回策略对象及状态200
+    @GetMapping("/trader/{traderId}")
+    @Operation(summary = "Get strategy by trader ID", description = "Fetches the strategy for a specific trader.")
+    public ResponseEntity<Strategy> getStrategyByTraderId(@PathVariable Long traderId) {
+        Strategy strategy = strategyService.getStrategyByTraderId(traderId);
+        return new ResponseEntity<>(strategy, HttpStatus.OK);
+    }
+
+    /**
+     * 根据交易员ID获取策略ID
+     *
+     * @param traderId 交易员ID
+     * @return 策略ID及HTTP状态200
+     */
+    @GetMapping("/id")
+    @Operation(summary = "Get strategy ID by trader ID", description = "Fetches the strategy ID for a specific trader.")
+    public ResponseEntity<Long> getStrategyIdByTraderId(@RequestParam Long traderId) {
+        Long strategyId = strategyService.getStrategyIdByUserId(traderId);
+        return ResponseEntity.ok(strategyId);
     }
 }

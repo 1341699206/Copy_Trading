@@ -7,8 +7,6 @@ import com.xtq_ymt.copy_trading_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class StrategyServiceImpl implements StrategyService {
 
@@ -25,11 +23,9 @@ public class StrategyServiceImpl implements StrategyService {
     public Strategy createStrategy(Long traderId, String name, String description, String scriptContent) {
         User trader = userRepository.findById(traderId)
                 .orElseThrow(() -> new IllegalArgumentException("Trader not found with ID: " + traderId));
-
-        if (strategyRepository.existsByNameAndTraderId(name, traderId)) {
-            throw new IllegalArgumentException("Strategy with the same name already exists for this trader.");
+        if (strategyRepository.findByTraderId(traderId).isPresent()) {
+            throw new IllegalArgumentException("Trader already has a strategy.");
         }
-
         Strategy strategy = new Strategy();
         strategy.setTrader(trader);
         strategy.setName(name);
@@ -40,9 +36,9 @@ public class StrategyServiceImpl implements StrategyService {
     }
 
     @Override
-    public Strategy updateStrategy(Long id, String name, String description, String scriptContent, boolean isActive) {
-        Strategy strategy = strategyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Strategy not found."));
+    public Strategy updateStrategyByTraderId(Long traderId, String name, String description, String scriptContent, boolean isActive) {
+        Strategy strategy = strategyRepository.findByTraderId(traderId)
+                .orElseThrow(() -> new IllegalArgumentException("Strategy not found for trader ID: " + traderId));
         strategy.setName(name);
         strategy.setDescription(description);
         strategy.setScriptContent(scriptContent);
@@ -51,21 +47,22 @@ public class StrategyServiceImpl implements StrategyService {
     }
 
     @Override
-    public void deleteStrategy(Long id) {
-        if (!strategyRepository.existsById(id)) {
-            throw new IllegalArgumentException("Strategy not found.");
-        }
-        strategyRepository.deleteById(id);
+    public void deleteStrategyByTraderId(Long traderId) {
+        Strategy strategy = strategyRepository.findByTraderId(traderId)
+                .orElseThrow(() -> new IllegalArgumentException("Strategy not found for trader ID: " + traderId));
+        strategyRepository.delete(strategy);
     }
 
     @Override
-    public List<Strategy> getStrategiesByTraderId(Long traderId) {
-        return strategyRepository.findByTraderId(traderId);
+    public Strategy getStrategyByTraderId(Long traderId) {
+        return strategyRepository.findByTraderId(traderId)
+                .orElseThrow(() -> new IllegalArgumentException("Strategy not found for trader ID: " + traderId));
     }
 
     @Override
-    public Strategy getStrategyById(Long id) {
-        return strategyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Strategy not found."));
+    public Long getStrategyIdByUserId(Long userId) {
+        return strategyRepository.findByTraderId(userId)
+                .map(Strategy::getId)
+                .orElseThrow(() -> new IllegalArgumentException("Strategy not found for user ID: " + userId));
     }
 }
