@@ -7,6 +7,12 @@ import "element-plus/theme-chalk/el-message.css";
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 
+import { useTradeStore } from '@/stores/tradeData';
+const tradeStore=useTradeStore();
+
+import { useAccountStore } from '@/stores/account';
+const accountStore=useAccountStore();
+
 defineProps({
   show: {
     type: Boolean,
@@ -44,6 +50,8 @@ const doCreateAccount = () => {
       try {
         // 调用 createAccount
         await createAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
+        // 基于账户连接trade
+        tradeStore.startListening(accountStore.accountInfo.id);
         //创建成功提示
         ElMessage({ type: "success", message: "Create successful!" });
         //关闭弹窗
