@@ -3,12 +3,10 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/stores/user';
-import { useAccountStore } from '@/stores/account'
 import 'element-plus/theme-chalk/el-message.css';
 import { useRouter } from 'vue-router'; 
 
 const userStore = useUserStore();
-const accountStore=useAccountStore();
 
 // 用户注册信息
 const userInfo = ref({
@@ -41,8 +39,6 @@ const doLogin = async () => {
           username: userInfo.value.username, 
           password: userInfo.value.password 
         });
-
-        accountStore.startListening(userStore.userInfo.id);
         
         // 根据角色跳转页面并连接 WebSocket
         const { role } = userStore.userInfo;

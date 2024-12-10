@@ -1,5 +1,5 @@
 <script setup>
-import AccountDialog from "@/views/Trader/secondary_page/component/AccountDialog.vue"; // 使用同级目录路径导入组件
+import AccountDialog from "../secondary_page/component/AccountDialog.vue"; // 使用同级目录路径导入组件
 import { useTradeStore } from "@/stores/tradeData";
 import { useUserStore } from "@/stores/user";
 import { useRoleStore } from "@/stores/roleBasicData";
@@ -42,6 +42,7 @@ onMounted(async () => {
   await createFirstAccount(); //检测创建第一个账户
   await strategyStore.getStrategyByTrader(userStore.userInfo.id);
   tradeStore.startListening(accountStore.accountInfo.id); //对trade进行连接
+  accountStore.startListening(userStore.userInfo.id); //对account进行连接
   if (strategyStore.strategyInfo.id)
     await tradeStore.getTradesInfo(strategyStore.strategyInfo.id); //策略存在时，获取trade数据并进行存储
   await roleStore.getRoleInfo({
@@ -51,8 +52,8 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  accountStore.stopListening();
-  tradeStore.stopListening(accountStore.accountInfo.id);
+  accountStore.stopListening(); //停止account连接
+  tradeStore.stopListening(accountStore.accountInfo.id); //停止trade连接
 });
 </script>
 
