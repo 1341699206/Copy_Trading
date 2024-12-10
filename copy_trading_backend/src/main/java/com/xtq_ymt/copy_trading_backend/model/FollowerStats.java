@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * FollowerStats 实体：用于保存每个跟随者的统计信息

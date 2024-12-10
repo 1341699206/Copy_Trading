@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * TraderStats 实体：用于保存每个交易员的统计信息
