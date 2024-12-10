@@ -120,32 +120,71 @@ public class TradeServiceImpl implements TradeService {
     /**
      * 平仓操作，带有事务管理
      */
-    @Override
     @Transactional
+    @Override
     public Trade closeTrade(Long tradeId) {
+        // 获取交易信息
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new IllegalArgumentException("Trade not found with ID: " + tradeId));
 
+        // 检查交易是否已经平仓
         if (trade.isClosed()) {
             throw new IllegalStateException("Trade is already closed");
         }
 
+        // 获取当前市场价格
         double currentPrice = marketDataService.getCurrentPrice(trade.getSymbol());
+
+        // 更新交易信息
         trade.setPriceClose(currentPrice);
         trade.setProfit(calculateProfit(trade));
         trade.setClosed(true);
         trade.setDateClose(LocalDateTime.now());
         tradeRepository.save(trade);
 
+        // 更新交易员统计信息
         updateTraderStats(trade.getAccount().getUser().getId(), trade);
 
-        if (trade.getAccount().getUser().getRole() == User.Role.FOLLOWER) {
-            updateFollowerStats(trade.getAccount().getUser().getId(), trade);
+        // 如果是交易员，则同步其所有跟随者的平仓
+        if (trade.getAccount().getUser().getRole() == User.Role.TRADER) {
+            List<FollowerTrader> followers = followerTraderRepository.findByTraderAccountId(trade.getAccount().getId());
+            for (FollowerTrader follower : followers) {
+                try {
+                    Account followerAccount = accountRepository.findById(follower.getFollowerAccountId())
+                            .orElseThrow(() -> new IllegalArgumentException("Follower account not found with ID: " + follower.getFollowerAccountId()));
+
+                    Trade followerTrade = tradeRepository.findByAccountIdAndSymbolAndIsClosedFalse(followerAccount.getId(), trade.getSymbol())
+                            .stream()
+                            .findFirst()
+                            .orElse(null);
+
+                    if (followerTrade != null) {
+                        // 同步更新跟随者交易
+                        followerTrade.setPriceClose(currentPrice);
+                        followerTrade.setProfit(calculateProfit(followerTrade));
+                        followerTrade.setClosed(true);
+                        followerTrade.setDateClose(LocalDateTime.now());
+                        tradeRepository.save(followerTrade);
+
+                        // 更新跟随者统计
+                        updateFollowerStats(followerAccount.getUser().getId(), followerTrade);
+
+                        // 推送WebSocket通知
+                        tradeWebSocketHandler.broadcastTradeUpdate(followerAccount.getId(), followerTrade);
+                    }
+                } catch (Exception e) {
+                    // 捕获并记录异常，但不会中断其他跟随者交易
+                    System.err.println("Error closing trade for follower " + follower.getFollowerAccountId() + ": " + e.getMessage());
+                }
+            }
         }
 
+        // 推送WebSocket通知
         tradeWebSocketHandler.broadcastTradeUpdate(trade.getAccount().getId(), trade);
         return trade;
     }
+
+
 
     @Override
     public List<Trade> getAllTradesByAccountId(Long accountId) {
