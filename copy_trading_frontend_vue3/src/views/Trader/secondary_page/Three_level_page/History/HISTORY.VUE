@@ -1,20 +1,9 @@
 <script setup>
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed } from "vue";
 import { useTradeStore } from "@/stores/tradeData";
-import { useAccountStore } from "@/stores/account";
 
 const tradeStore = useTradeStore();
 const trades = computed(() => tradeStore.tradeInfo);
-
-const account = useAccountStore().accountInfo;
-
-onMounted(() => {
-  tradeStore.startListening(account.id);
-});
-
-onUnmounted(() => {
-  tradeStore.stopListening(account.id);
-});
 </script>
 
 <template>
