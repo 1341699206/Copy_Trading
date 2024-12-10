@@ -6,7 +6,7 @@ import { useStrategyStore } from "@/stores/strategy";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 
-const account = (useAccountStore()).accountInfo;
+const account = useAccountStore().accountInfo;
 const tradeStore = useTradeStore();
 const strategy = useStrategyStore().strategyInfo;
 
@@ -26,8 +26,8 @@ const emit = defineEmits(["close"]);
 
 // 账户信息
 const tradeInfo = reactive({
-  accountId: computed(()=>account.id),
-  strategyId: computed(()=>strategy.id),
+  accountId: computed(() => account.id),
+  strategyId: computed(() => strategy.id),
   symbol: computed(() => props.symbol),
   type: computed(() => props.type),
   lotSize: 0,
@@ -50,35 +50,48 @@ const formRef = ref(null);
 
 // 执行开仓操作
 const doOpenTrade = () => {
-  formRef.value.validate(async (valid) => {
-    if (valid) {
-      try {
-        await tradeStore.openATrade({
-          accountId: tradeInfo.accountId,
-          strategyId: tradeInfo.strategyId,
-          symbol: tradeInfo.symbol,
-          type: tradeInfo.type,
-          lotSize: tradeInfo.lotSize,
+  if (strategy.id)
+    formRef.value.validate(async (valid) => {
+      if (valid) {
+        try {
+          await tradeStore.openATrade({
+            accountId: tradeInfo.accountId,
+            strategyId: tradeInfo.strategyId,
+            symbol: tradeInfo.symbol,
+            type: tradeInfo.type,
+            lotSize: tradeInfo.lotSize,
+          });
+          ElMessage({ type: "success", message: "Trade opened successfully!" });
+          emit("close");
+          formRef.value?.resetFields();
+        } catch (error) {
+          ElMessage({ type: "error", message: "Failed to open trade!" });
+        }
+      } else {
+        ElMessage({
+          type: "error",
+          message: "Please fill out the form correctly!",
         });
-        ElMessage({ type: "success", message: "Trade opened successfully!" });
-        emit("close");
-        formRef.value?.resetFields();
-      } catch (error) {
-        ElMessage({ type: "error", message: "Failed to open trade!" });
       }
-    } else {
-      ElMessage({
-        type: "error",
-        message: "Please fill out the form correctly!",
-      });
-    }
-  });
+    });
+  else
+    ElMessage({ type: "warn", message: "Please create strategy first!" });
 };
 </script>
 
 <template>
-  <el-dialog :model-value="show" title="New Trade" width="500" @close="emit('close')">
-    <el-form ref="formRef" :model="tradeInfo" :rules="rules" label-width="100px">
+  <el-dialog
+    :model-value="show"
+    title="New Trade"
+    width="500"
+    @close="emit('close')"
+  >
+    <el-form
+      ref="formRef"
+      :model="tradeInfo"
+      :rules="rules"
+      label-width="100px"
+    >
       <el-form-item label="Symbol">
         <el-input v-model="tradeInfo.symbol" disabled></el-input>
       </el-form-item>

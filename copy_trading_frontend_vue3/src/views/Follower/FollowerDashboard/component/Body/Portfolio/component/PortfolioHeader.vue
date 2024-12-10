@@ -14,10 +14,10 @@ const updateContent = (item) => {
         <el-button text @click="updateContent('open')">Open</el-button>
       </li>
       <li>
-        <el-button text @click="updateContent('Pending')">Pending</el-button>
+        <el-button text @click="updateContent('pending')">Pending</el-button>
       </li>
       <li>
-        <el-button text @click="updateContent('History')">History</el-button>
+        <el-button text @click="updateContent('history')">History</el-button>
       </li>
     </ul>
   </div>

@@ -1,7 +1,3 @@
-// Create a Positions subpage Vue component
-// This component is designed to implement a "Positions" subpage similar to ZuluTrade.
-// The page will include tabs for switching between "Open Positions" and "Orders" views, each displaying relevant trade data.
-
 <template>
   <div class="positions-page">
     <!-- Title -->

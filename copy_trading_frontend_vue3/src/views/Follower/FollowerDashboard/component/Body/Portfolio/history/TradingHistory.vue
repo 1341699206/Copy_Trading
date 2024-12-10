@@ -1,21 +1,11 @@
 <script setup>
 import TradeHistoryItem from "./TradeHistoryItem.vue";
 import { useAccountStore } from "@/stores/account";
-import { useTradeStore } from "@/stores/tradeData";
-import { computed, onMounted, onUnmounted } from "vue";
-
-const tradeStore = useTradeStore();
-const tradesHistory = computed(() => tradeStore.tradeInfo);
+import { computed } from "vue";
 
 const account = useAccountStore().accountInfo;
+const tradesHistory = computed(() => account.trades);
 
-onMounted(() => {
-  tradeStore.startListening(account.id);
-});
-
-onUnmounted(() => {
-  tradeStore.stopListening(account.id);
-});
 </script>
 
 <template>

@@ -1,30 +1,31 @@
 <script setup>
-import { reactive,computed } from "vue";
+import { computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useRoleStore } from "@/stores/roleBasicData";
 import { useAccountStore } from "@/stores/account";
-import { generateAvatar } from "@/utils/avatar"
+import { generateAvatar } from "@/utils/avatar";
 
-const userStore=useUserStore();
-const user = userStore.userInfo;
-
+// 加载 stores
+const userStore = useUserStore();
 const roleStore = useRoleStore();
-roleStore.getRoleInfo({role:user.role,id:user.id});
-const role=computed(()=>roleStore.roleInfo);
+const accountStore = useAccountStore();
 
-const accountStore=useAccountStore();
-const account =accountStore.accountInfo;
+// 计算属性
+const user = computed(() => userStore.userInfo);
+const role = computed(() => roleStore.roleInfo);
+const account = computed(() => accountStore.accountInfo);
 
-// 定义 followerInfo，同时监听 userInfo 的变化
-const followerInfo = reactive({
-  id: user.id || null,
-  username: user.username || "N/A",
-  value:  account.balance || 0,
-  profitLoss:  role.value.totalProfit || 0,
+// 定义 followerInfo 为动态计算属性
+const followerInfo = computed(() => ({
+  id: user.value.id || null,
+  username: user.value.username || "User",
+  value: account.value.balance || 0,
+  profitLoss: role.value.totalProfit || 0,
   copying: role.value.totalTrades || 0,
-  following:  role.value.totalFollowedTraders || 0,
-});
-const userAvatar = computed(() => generateAvatar(followerInfo.username));
+  following: role.value.totalFollowedTraders || 0,
+}));
+
+const userAvatar = computed(() => generateAvatar(followerInfo.value.username));
 </script>
 
 <template>
@@ -36,8 +37,12 @@ const userAvatar = computed(() => generateAvatar(followerInfo.username));
       </div>
       <div class="trade_information">
         <ul>
-          <li>Total portfolio value: <span class="highlight">{{ followerInfo.value }}</span></li>
-          <li>Total PnL: <span class="highlight">{{ followerInfo.profitLoss }}</span></li>
+          <li>
+            Total portfolio value: <span class="highlight">{{ followerInfo.value }}</span>
+          </li>
+          <li>
+            Total PnL: <span class="highlight">{{ followerInfo.profitLoss }}</span>
+          </li>
         </ul>
       </div>
     </div>
@@ -45,14 +50,19 @@ const userAvatar = computed(() => generateAvatar(followerInfo.username));
     <div class="right-section">
       <div class="trades">
         <ul>
-          <li>Copying: <span class="highlight">{{ followerInfo.copying }}</span></li>
-          <li>Following: <span class="highlight">{{ followerInfo.following }}</span></li>
+          <li>
+            Copying: <span class="highlight">{{ followerInfo.copying }}</span>
+          </li>
+          <li>
+            Following: <span class="highlight">{{ followerInfo.following }}</span>
+          </li>
         </ul>
       </div>
     </div>
   </div>
   <hr class="separator" />
 </template>
+
 
 <style scoped>
 /* 样式保持不变 */
