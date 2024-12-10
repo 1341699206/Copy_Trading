@@ -29,4 +29,12 @@ public interface FollowerTraderRepository extends JpaRepository<FollowerTrader, 
      * @return 如果存在这样的跟随关系，返回 true；否则，返回 false
      */
     boolean existsByFollowerAccountIdAndTraderAccountId(Long followerAccountId, Long traderAccountId);
+
+    /**
+     * 根据交易者的账户ID查找所有与之相关的跟随关系记录。
+     *
+     * @param traderAccountId 交易者的账户ID
+     * @return 返回一个包含所有匹配的 FollowerTrader 实体的列表
+     */
+    List<FollowerTrader> findByTraderAccountId(Long traderAccountId);
 }
