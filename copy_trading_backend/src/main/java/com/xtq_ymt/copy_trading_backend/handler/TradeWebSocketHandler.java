@@ -94,31 +94,47 @@ public class TradeWebSocketHandler extends TextWebSocketHandler {
     @Transactional
     public void broadcastTradeUpdate(Long accountId, Trade trade) {
         Set<WebSocketSession> sessions = accountSessions.get(accountId);
+
         if (sessions != null && !sessions.isEmpty()) {
             try {
+                // 日志：打印准备推送的 Trade 信息
+                logger.info("Broadcasting trade update for accountId: {}, Trade: {}", accountId, trade);
+
+                // 确保序列化 Trade 对象时访问其必要字段，避免延迟加载问题
                 trade.getAccount().getId();
                 if (trade.getStrategy() != null) {
                     trade.getStrategy().getId();
                 }
-                
+
+                // 将 Trade 转换为 JSON 消息
                 String message = objectMapper.writeValueAsString(trade);
                 TextMessage textMessage = new TextMessage(message);
-                
+
+                // 推送消息到每个会话
                 for (WebSocketSession session : sessions) {
                     try {
                         if (session.isOpen()) {
                             session.sendMessage(textMessage);
+                            logger.info("Message sent to session: {}", session.getId());
+                        } else {
+                            logger.warn("Skipped closed session: {}", session.getId());
                         }
                     } catch (Exception e) {
-                        logger.error("Error sending message to session: ", e);
+                        // 日志：记录发送失败的情况
+                        logger.error("Error sending message to session: {}, removing session.", session.getId(), e);
                         sessions.remove(session);
                     }
                 }
             } catch (Exception e) {
-                logger.error("Error broadcasting trade update: ", e);
+                // 日志：记录序列化或整体推送失败的情况
+                logger.error("Error broadcasting trade update for accountId: {}", accountId, e);
             }
+        } else {
+            // 日志：当没有可用的会话时记录
+            logger.warn("No active WebSocket sessions found for accountId: {}", accountId);
         }
     }
+
 
     private Long extractAccountId(String uri) {
         if (uri != null) {
