@@ -1,26 +1,14 @@
 <script setup>
-import { computed } from "vue";
 import { useTradeStore } from "@/stores/tradeData";
-import { useAccountStore } from '@/stores/account';
+import { useMarketDataStore } from '@/stores/marketDataStore';
 import openPosition from "./component/openPosition";
+import { computed, onMounted, onUnmounted } from "vue";
 //import orderPosition from './component/orderPosition';
 
-const accountStore=useAccountStore();
+const marketDataStore=useMarketDataStore();
 
 const tradeStore=useTradeStore();
-const openTrades=tradeStore.getOpenedTradeInfo(accountStore.accountInfo.id);
-
-// 计算总利润
-const totalProfit = computed(() =>
-  openTrades
-    .reduce((acc, position) => acc + position.profit, 0)
-    .toFixed(2)
-);
-
-// 计算总手数
-const totalLots = computed(() =>
-  openTrades.reduce((acc, position) => acc + position.stdLots, 0)
-);
+const openTrades=computed(()=>tradeStore.openedTradeInfo);
 
 // 关闭所有仓位
 const closeAllPositions = () => {
@@ -31,19 +19,20 @@ const closeAllPositions = () => {
 const cancelAllOrders = () => {
   alert("All pending orders have been cancelled.");
 };
+
+onMounted(()=>{
+  marketDataStore.startListening();
+})
+
+onUnmounted(()=>{
+  marketDataStore.stopListening();
+})
 </script>
 
 <template>
   <div class="positions-page">
     <!-- Title -->
     <h1>Positions</h1>
-    <div class="overview">
-      <p>
-        <strong>${{ totalProfit }}</strong> PROFIT
-      </p>
-      <p>{{ tradeTrade.length }} OPEN POSITIONS</p>
-      <p>{{ totalLots }} STD LOTS</p>
-    </div>
     <div>
       <open-position :openPositions="openTrades"></open-position>
     </div>

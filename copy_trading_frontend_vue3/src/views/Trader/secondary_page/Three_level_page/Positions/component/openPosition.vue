@@ -1,9 +1,28 @@
 <script setup>
-defineProps({
+import { useMarketDataStore } from '@/stores/marketDataStore';
+import { computed } from 'vue';
+const marketDataStore=useMarketDataStore();
+const marketData=computed(()=>marketDataStore.marketData);
+
+const props=defineProps({
   openPositions: {
     type: Object,
   },
 });
+
+// 计算每个 position 的 current 值
+const positionsWithCurrent = computed(() => {
+  return props.openPositions.map(position => {
+    const matchingMarketData = marketData.value.find(
+      data => data.symbol === position.symbol
+    );
+    return {
+      ...position,
+      current: matchingMarketData ? matchingMarketData.current : "--",
+    };
+  });
+});
+
 </script>
 
 <template>
@@ -13,7 +32,6 @@ defineProps({
       <thead>
         <tr>
           <th>Trader</th>
-          <th>Currency</th>
           <th>Type</th>
           <th>Std Lots</th>
           <th>Date Opened</th>
@@ -28,15 +46,14 @@ defineProps({
         <tr v-if="openPositions.length === 0">
           <td colspan="10">You don't have any open positions.</td>
         </tr>
-        <tr v-for="(position, index) in openPositions" :key="index">
-          <td>{{ position.trader }}</td>
-          <td>{{ position.currency }}</td>
+        <tr v-for="(position, index) in positionsWithCurrent" :key="index">
+          <td>{{ position.symbol }}</td>
           <td>{{ position.type }}</td>
-          <td>{{ position.stdLots }}</td>
-          <td>{{ position.dateOpened }}</td>
-          <td>{{ position.entry }}</td>
-          <td>{{ position.stop }}</td>
-          <td>{{ position.limit }}</td>
+          <td>{{ position.lotSize }}</td>
+          <td>{{ position.dateOpen }}</td>
+          <td>{{ position.priceOpen.toFixed(2) }}</td>
+          <td>{{ position?.stop ?? "--" }}</td>
+          <td>{{ position?.limit ?? "--" }}</td>
           <td>{{ position.current }}</td>
           <td>{{ position.profit }}</td>
         </tr>
