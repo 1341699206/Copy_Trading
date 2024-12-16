@@ -7,6 +7,9 @@ import "element-plus/theme-chalk/el-message.css";
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 
+import { useAccountStore } from "@/stores/account";
+const accountStore=useAccountStore();
+
 defineProps({
   show: {
     type: Boolean,
@@ -62,7 +65,7 @@ const doCreateAccount = () => {
       });
     }
   });
-
+  accountStore.getAccountInfo(userStore.userInfo.id);
 };
 </script>
 

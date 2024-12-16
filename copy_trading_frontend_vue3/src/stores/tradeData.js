@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
-import{ openTrade,closeTrade,getOpenTrades,getTradesByStrategy } from '@/apis/tradeManagement';
+import { openTrade, closeTrade, getOpenTrades, getTradesByStrategy } from '@/apis/tradeManagement';
 import webSocketManager from '@/utils/webSocketManager';  // 导入自定义的 WebSocket 管理器
 
 // 定义 WebSocket 的基础 URL 和处理器路径
@@ -8,10 +8,10 @@ const wsUrl = 'ws://localhost:9099/ws';  // 基础 WebSocket 地址
 const handler = '/trades';       // WebSocket 的处理器路径（具体业务）
 
 export const useTradeStore = defineStore('trade', () => {
-    const tradeInfo = ref({})
-    const openedTradeInfo = ref({})
+    const tradeInfo = ref([])
+    const openedTradeInfo = ref([])
 
-    const getTradesInfo=async(strategyId)=>{
+    const getTradesInfo = async (strategyId) => {
         try {
             const res = await getTradesByStrategy(strategyId);
             // 将其他返回的数据存储到 tradeInfo 中
@@ -32,7 +32,7 @@ export const useTradeStore = defineStore('trade', () => {
     }
 
     // 平仓
-    const closeATrade =async(tradeId)=>{
+    const closeATrade = async (tradeId) => {
         try {
             await closeTrade(tradeId);
         } catch (error) {
@@ -41,17 +41,27 @@ export const useTradeStore = defineStore('trade', () => {
     }
 
     // 开仓
-    const openATrade =async({accountId,strategyId,symbol,type,lotSize})=>{
-        try{
-            await openTrade({accountId,strategyId,symbol,type,lotSize})
-        }catch(error){
-            console.error("Failed to open the position:",error)
+    const openATrade = async ({ accountId, strategyId, symbol, type, lotSize }) => {
+        try {
+            await openTrade({ accountId, strategyId, symbol, type, lotSize })
+        } catch (error) {
+            console.error("Failed to open the position:", error)
         }
     }
 
     // 更新 trade 的方法
     const updateTradeData = (data) => {
-        tradeInfo.value = data; // 更新 marketData 数据
+        // 动态更新 tradeInfo
+        tradeInfo.value.push(data);
+
+        // 根据 closed 字段处理 openedTradeInfo
+        if (data.closed === false) {
+            // 如果是未平仓数据，添加到 openedTradeInfo
+            openedTradeInfo.value.push(data);
+        } else if (data.closed === true) {
+            // 如果是已平仓数据，从 openedTradeInfo 移除
+            openedTradeInfo.value = openedTradeInfo.value.filter(trade => trade.tradeId !== data.tradeId);
+        }
     };
 
     /**
@@ -63,7 +73,7 @@ export const useTradeStore = defineStore('trade', () => {
         // 调用 webSocketManager 的 addDynamicListener 方法，建立 WebSocket 连接并开始监听
         webSocketManager.addDynamicListener(
             wsUrl,               // WebSocket 服务器的 URL
-            handler + '/'+ accountId,             // WebSocket 的处理器路径（指定订阅的主题）
+            handler + '/' + accountId,             // WebSocket 的处理器路径（指定订阅的主题）
             updateTradeData    // 接收到的数据会通过这个回调函数传递给 store
         );
     };
@@ -80,7 +90,7 @@ export const useTradeStore = defineStore('trade', () => {
         );
     };
 
-    return{
+    return {
         tradeInfo,
         openedTradeInfo,
         getTradesInfo,
@@ -90,7 +100,7 @@ export const useTradeStore = defineStore('trade', () => {
         closeATrade,
         openATrade
     };
-},{
+}, {
     persist: {
         key: 'trade', // 自定义存储的键名
         storage: sessionStorage // 指定存储方式为 sessionStorage

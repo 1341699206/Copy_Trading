@@ -45,6 +45,8 @@ onMounted(async () => {
   accountStore.startListening(userStore.userInfo.id); //对account进行连接
   if (strategyStore.strategyInfo.id)
     await tradeStore.getTradesInfo(strategyStore.strategyInfo.id); //策略存在时，获取trade数据并进行存储
+  if (accountStore.accountInfo.id)
+    await tradeStore.getOpenedTradeInfo(accountStore.accountInfo.id);
   await roleStore.getRoleInfo({
     role: userStore.userInfo.role,
     id: userStore.userInfo.id,
