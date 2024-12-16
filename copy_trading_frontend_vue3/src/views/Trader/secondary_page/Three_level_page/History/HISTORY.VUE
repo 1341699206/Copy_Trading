@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useTradeStore } from "@/stores/tradeData";
 
 const tradeStore = useTradeStore();
-const trades = computed(() => tradeStore.tradeInfo || []);
+const trades = computed(() => tradeStore.tradeInfo);
 </script>
 
 <template>

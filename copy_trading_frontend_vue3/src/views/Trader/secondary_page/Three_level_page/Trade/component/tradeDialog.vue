@@ -39,7 +39,7 @@ const rules = {
     { required: true, message: "Lot size cannot be empty." },
     {
       type: "number",
-      min: 0,
+      min: 0.1,
       max: account.balance,
       message: "The number of lots needs to be between 0 and account balance.",
     },
@@ -99,7 +99,7 @@ const doOpenTrade = () => {
         <el-input v-model="tradeInfo.type" disabled></el-input>
       </el-form-item>
       <el-form-item label="Lot Size" prop="lotSize">
-        <el-input-number v-model="tradeInfo.lotSize" :step="100" :min="0" />
+        <el-input-number v-model="tradeInfo.lotSize" :step="0.01" :min="0.01" />
       </el-form-item>
     </el-form>
     <template #footer>

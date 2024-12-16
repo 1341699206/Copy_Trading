@@ -52,7 +52,14 @@ export const useTradeStore = defineStore('trade', () => {
     // 更新 trade 的方法
     const updateTradeData = (data) => {
         // 动态更新 tradeInfo
-        tradeInfo.value.push(data);
+        if (data.closed === false) {
+            tradeInfo.value.push(data);
+        } else if (data.closed === true) {
+            // 找到 tradeInfo 中的对应条目
+            const tradeIndex = tradeInfo.value.findIndex(trade => trade.id === data.id);
+            // 更新现有数据
+            tradeInfo.value[tradeIndex] = { ...tradeInfo.value[tradeIndex], ...data };
+        }
 
         // 根据 closed 字段处理 openedTradeInfo
         if (data.closed === false) {
@@ -60,7 +67,7 @@ export const useTradeStore = defineStore('trade', () => {
             openedTradeInfo.value.push(data);
         } else if (data.closed === true) {
             // 如果是已平仓数据，从 openedTradeInfo 移除
-            openedTradeInfo.value = openedTradeInfo.value.filter(trade => trade.tradeId !== data.tradeId);
+            openedTradeInfo.value = openedTradeInfo.value.filter(trade => trade.id !== data.id);
         }
     };
 

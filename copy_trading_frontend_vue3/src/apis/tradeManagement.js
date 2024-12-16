@@ -1,14 +1,13 @@
 import request from "@/utils/http";
 
 //a 结束一项交易
-export const closeTrade=({tradeId,priceClose})=>{
+export const closeTrade=(tradeId)=>{
     const url=`/trades/${tradeId}/close`
     return request({
         url:url,
         method:'PUT',
         data:{
-            tradeId,
-            priceClose
+            tradeId
         }
     })
 }

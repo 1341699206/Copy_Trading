@@ -1,6 +1,5 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { createAccount } from "@/apis/accountManagement";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 
@@ -46,7 +45,7 @@ const doCreateAccount = () => {
     if (valid) {
       try {
         // 调用 createAccount
-        await createAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
+        await accountStore.createAAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
         //创建成功提示
         ElMessage({ type: "success", message: "Create successful!" });
         //关闭弹窗
@@ -65,7 +64,6 @@ const doCreateAccount = () => {
       });
     }
   });
-  accountStore.getAccountInfo(userStore.userInfo.id);
 };
 </script>
 
@@ -74,7 +72,7 @@ const doCreateAccount = () => {
     <el-form ref="formRef" :model="accountInfo" :rules="rules">
       <!-- 选择金额 -->
       <el-form-item label="Balance" prop="balance">
-        <el-input-number v-model="accountInfo.balance" :step="100" />
+        <el-input-number v-model="accountInfo.balance" :step="1" />
       </el-form-item>
     </el-form>
     <template #footer>

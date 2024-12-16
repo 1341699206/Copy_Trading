@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from 'vue';
-import { updateAccount, getAccountDetails } from "@/apis/accountManagement";
+import { updateAccount, getAccountDetails, createAccount } from "@/apis/accountManagement";
 import webSocketManager from '@/utils/webSocketManager';  // 导入自定义的 WebSocket 管理器
 
 // 定义 WebSocket 的基础 URL 和处理器路径
@@ -19,6 +19,15 @@ export const useAccountStore = defineStore('account', () => {
         } catch (error) {
             console.error("Failed to fetch account info:", error);
             throw error;
+        }
+    }
+
+    const createAAccount = async ({userId,initialBalance}) => {
+        try {
+            const res = await createAccount({userId,initialBalance})
+            accountInfo.value = res
+        } catch (error) {
+            console.error("Failed to create account:", error);
         }
     }
 
@@ -64,6 +73,7 @@ export const useAccountStore = defineStore('account', () => {
     return {
         accountInfo,
         getAccountInfo,
+        createAAccount,
         updateAccountInfo,
         startListening,
         stopListening
