@@ -1,16 +1,12 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { createAccount } from "@/apis/accountManagement";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 
-import { useTradeStore } from '@/stores/tradeData';
-const tradeStore=useTradeStore();
-
-import { useAccountStore } from '@/stores/account';
+import { useAccountStore } from "@/stores/account";
 const accountStore=useAccountStore();
 
 defineProps({
@@ -34,9 +30,9 @@ const rules = {
     { required: true, message: "Simulation amount cannot be empty." },
     {
       type: "number",
-      min: 200,
-      max: 10000,
-      message: "The simulation amount needs to be between 200 and 10000.",
+      min: 1000,
+      max: 100000,
+      message: "The simulation amount needs to be between 1000 and 100000.",
     },
   ],
 };
@@ -49,9 +45,7 @@ const doCreateAccount = () => {
     if (valid) {
       try {
         // 调用 createAccount
-        await createAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
-        // 基于账户连接trade
-        tradeStore.startListening(accountStore.accountInfo.id);
+        await accountStore.createAAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
         //创建成功提示
         ElMessage({ type: "success", message: "Create successful!" });
         //关闭弹窗
@@ -70,7 +64,6 @@ const doCreateAccount = () => {
       });
     }
   });
-
 };
 </script>
 
@@ -79,7 +72,7 @@ const doCreateAccount = () => {
     <el-form ref="formRef" :model="accountInfo" :rules="rules">
       <!-- 选择金额 -->
       <el-form-item label="Balance" prop="balance">
-        <el-input-number v-model="accountInfo.balance" :step="100" />
+        <el-input-number v-model="accountInfo.balance" :step="1000" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -90,3 +83,4 @@ const doCreateAccount = () => {
     </template>
   </el-dialog>
 </template>
+

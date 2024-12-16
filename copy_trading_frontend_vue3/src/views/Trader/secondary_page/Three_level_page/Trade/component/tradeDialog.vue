@@ -39,7 +39,7 @@ const rules = {
     { required: true, message: "Lot size cannot be empty." },
     {
       type: "number",
-      min: 0.1,
+      min: 0.01,
       max: account.balance,
       message: "The number of lots needs to be between 0 and account balance.",
     },

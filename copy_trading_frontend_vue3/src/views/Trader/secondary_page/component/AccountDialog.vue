@@ -30,9 +30,9 @@ const rules = {
     { required: true, message: "Simulation amount cannot be empty." },
     {
       type: "number",
-      min: 200,
-      max: 10000,
-      message: "The simulation amount needs to be between 200 and 10000.",
+      min: 1000,
+      max: 100000,
+      message: "The simulation amount needs to be between 1000 and 100000.",
     },
   ],
 };
@@ -72,7 +72,7 @@ const doCreateAccount = () => {
     <el-form ref="formRef" :model="accountInfo" :rules="rules">
       <!-- 选择金额 -->
       <el-form-item label="Balance" prop="balance">
-        <el-input-number v-model="accountInfo.balance" :step="1" />
+        <el-input-number v-model="accountInfo.balance" :step="1000" />
       </el-form-item>
     </el-form>
     <template #footer>

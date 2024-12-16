@@ -36,8 +36,11 @@ const createFirstAccount = async () => {
 // 启动函数
 onMounted(async () => {
   await createFirstAccount();
-  if (accountStore.accountInfo.id)
+  if (accountStore.accountInfo.id){
     tradeStore.startListening(accountStore.accountInfo.id); //对trade进行连接
+    await tradeStore.getOpenedTradeInfo(accountStore.accountInfo.id);
+    tradeStore.tradeInfo=accountStore.accountInfo.trades;
+  }
   accountStore.startListening(userStore.userInfo.id); //对account进行连接
 });
 

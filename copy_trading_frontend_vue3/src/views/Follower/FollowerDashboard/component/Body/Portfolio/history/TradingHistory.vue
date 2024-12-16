@@ -1,66 +1,101 @@
 <script setup>
-import TradeHistoryItem from "./TradeHistoryItem.vue";
-import { useAccountStore } from "@/stores/account";
 import { computed } from "vue";
+import { useTradeStore } from "@/stores/tradeData";
 
-const account = useAccountStore().accountInfo;
-const tradesHistory = computed(() => account.trades);
-
+const tradeStore = useTradeStore();
+const trades = computed(() => tradeStore.tradeInfo);
 </script>
 
 <template>
-  <div>
-    <!-- 标签栏 -->
-    <div class="table-header">
-      <div class="header-item">Name</div>
-      <div class="header-item">Date Closed</div>
-      <div class="header-item">STD LOTS</div>
-      <div class="header-item">OPEN / CLOSE</div>
-      <div class="header-item">HIGH</div>
-      <div class="header-item">LOW</div>
-      <div class="header-item">ROLL</div>
-      <div class="header-item">PROFIT</div>
-      <div class="header-item">TOTAL</div>
+  <div class="history" v-if="trades && trades.length > 0">
+    <div class="trade-table-container">
+      <table class="trade-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Symbol</th>
+            <th>Type</th>
+            <th>Price Open</th>
+            <th>Price Close</th>
+            <th>Profit</th>
+            <th>Date Open</th>
+            <th>Date Close</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="trade in trades"
+            :key="trade.id"
+            :class="{ closed: trade.closed }"
+          >
+            <td>{{ trade.id }}</td>
+            <td>{{ trade.symbol }}</td>
+            <td>{{ trade.type }}</td>
+            <td>{{ trade.priceOpen !== undefined ? trade.priceOpen.toFixed(2) : "--" }}</td>
+            <td>{{ trade.priceClose !== undefined ? trade.priceClose.toFixed(2) : "--" }}</td>
+            <td :class="{ profit: trade.profit >= 0, loss: trade.profit < 0 }">
+              {{ trade.profit !== undefined ? trade.profit.toFixed(2) : "--" }}
+            </td>
+            <td>{{ trade.dateOpen }}</td>
+            <td>{{ trade.dateClose || "--" }}</td>
+            <td>{{ trade.closed ? "Closed" : "Open" }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <!-- 数据条目列表 -->
-    <div v-if="tradesHistory && tradesHistory.length > 0">
-      <trade-history-item
-        v-for="item in traderTradesHistory"
-        :key="item.tradeId"
-        :item="item"
-      ></trade-history-item>
-    </div>
-    <div v-else class="not-found">Not Found</div>
+  </div>
+  <div v-else>
+    <p>Loading trade data...</p>
   </div>
 </template>
 
-<style scoped lang="scss">
-.table-header {
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr 2fr 1fr 1fr 1fr 2fr 2fr;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 2px solid #f0f0f0;
+<style scoped>
+.history {
+  padding: -5px;
+}
+
+.trade-table-container {
+  max-height: 400px; /* 设置容器最大高度 */
+  overflow-y: auto; /* 启用垂直滚动条 */
+  border: 1px solid #ddd; /* 添加边框方便识别滚动区域 */
+}
+
+.trade-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.trade-table th,
+.trade-table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.trade-table thead {
+  background-color: #f4f4f4;
   font-weight: bold;
-  color: #666;
+}
+
+.trade-table tbody tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
 
-.header-item {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #333;
+.trade-table tbody tr.closed {
+  background-color: #e8f5e9;
 }
 
-.pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
+.trade-table tbody tr:hover {
+  background-color: #f1f1f1;
 }
 
-.page-size-select {
-  margin-left: 10px;
+.trade-table td.profit {
+  color: green;
+}
+
+.trade-table td.loss {
+  color: red;
 }
 </style>
