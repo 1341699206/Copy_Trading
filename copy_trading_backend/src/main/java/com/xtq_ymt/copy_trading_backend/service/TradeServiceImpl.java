@@ -112,8 +112,8 @@ public class TradeServiceImpl implements TradeService {
             }
         }
 
-        // 通过WebSocket推送交易更新
-        tradeWebSocketHandler.broadcastTradeUpdate(accountId, trade);
+        // 推送新增交易记录到 WebSocket
+        tradeWebSocketHandler.broadcastNewTradeUpdate(accountId, trade);
         return trade;
     }
 
@@ -169,8 +169,8 @@ public class TradeServiceImpl implements TradeService {
                         // 更新跟随者统计
                         updateFollowerStats(followerAccount.getUser().getId(), followerTrade);
 
-                        // 推送WebSocket通知
-                        tradeWebSocketHandler.broadcastTradeUpdate(followerAccount.getId(), followerTrade);
+                        // 推送新增交易记录到 WebSocket
+                        tradeWebSocketHandler.broadcastNewTradeUpdate(followerAccount.getId(), followerTrade);
                     }
                 } catch (Exception e) {
                     // 捕获并记录异常，但不会中断其他跟随者交易
@@ -179,39 +179,31 @@ public class TradeServiceImpl implements TradeService {
             }
         }
 
-        // 推送WebSocket通知
-        tradeWebSocketHandler.broadcastTradeUpdate(trade.getAccount().getId(), trade);
+        // 推送新增交易记录到 WebSocket
+        tradeWebSocketHandler.broadcastNewTradeUpdate(trade.getAccount().getId(), trade);
         return trade;
     }
-
-
 
     @Override
     public List<Trade> getAllTradesByAccountId(Long accountId) {
         List<Trade> trades = tradeRepository.findByAccountId(accountId);
-        trades.forEach(trade -> tradeWebSocketHandler.broadcastTradeUpdate(accountId, trade));
+        tradeWebSocketHandler.broadcastFullTradeList(accountId, trades);
         return trades;
     }
 
     @Override
     public List<Trade> getOpenTradesByAccountId(Long accountId) {
-        List<Trade> trades = tradeRepository.findByAccountIdAndIsClosedFalse(accountId);
-        trades.forEach(trade -> tradeWebSocketHandler.broadcastTradeUpdate(accountId, trade));
-        return trades;
+        return tradeRepository.findByAccountIdAndIsClosedFalse(accountId);
     }
 
     @Override
     public List<Trade> getClosedTradesByAccountId(Long accountId) {
-        List<Trade> trades = tradeRepository.findByAccountIdAndIsClosedTrue(accountId);
-        trades.forEach(trade -> tradeWebSocketHandler.broadcastTradeUpdate(accountId, trade));
-        return trades;
+        return tradeRepository.findByAccountIdAndIsClosedTrue(accountId);
     }
 
     @Override
     public List<Trade> getTradesByStrategyId(Long strategyId) {
-        List<Trade> trades = tradeRepository.findByStrategyId(strategyId);
-        trades.forEach(trade -> tradeWebSocketHandler.broadcastTradeUpdate(trade.getAccount().getId(), trade));
-        return trades;
+        return tradeRepository.findByStrategyId(strategyId);
     }
 
     @Override
@@ -224,8 +216,6 @@ public class TradeServiceImpl implements TradeService {
         if (trade.getAccount().getUser().getRole() == User.Role.FOLLOWER) {
             updateFollowerStats(trade.getAccount().getUser().getId(), trade);
         }
-
-        tradeWebSocketHandler.broadcastTradeUpdate(trade.getAccount().getId(), trade);
     }
 
     private double calculateProfit(Trade trade) {

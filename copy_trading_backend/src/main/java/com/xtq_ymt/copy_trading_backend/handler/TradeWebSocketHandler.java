@@ -13,8 +13,8 @@ import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorato
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.transaction.Transactional;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class TradeWebSocketHandler extends TextWebSocketHandler {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(TradeWebSocketHandler.class);
     private static final Pattern ACCOUNT_ID_PATTERN = Pattern.compile("/trades/(\\d+)");
     private static final int SEND_TIME_LIMIT = 1000;
@@ -52,11 +52,14 @@ public class TradeWebSocketHandler extends TextWebSocketHandler {
         if (accountId != null) {
             WebSocketSession decoratedSession = new ConcurrentWebSocketSessionDecorator(
                 session, SEND_TIME_LIMIT, BUFFER_SIZE_LIMIT);
-            
+
             accountSessions.computeIfAbsent(accountId, k -> new CopyOnWriteArraySet<>())
                           .add(decoratedSession);
-            
+
             logger.info("WebSocket connection established for account ID: {}", accountId);
+
+            // Send the full list of trades to the connected session
+            sendFullTradeList(accountId, decoratedSession);
         } else {
             logger.error("Failed to establish WebSocket connection: Invalid account ID");
             session.close(CloseStatus.BAD_DATA.withReason("Invalid account ID"));
@@ -91,26 +94,19 @@ public class TradeWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    @Transactional
-    public void broadcastTradeUpdate(Long accountId, Trade trade) {
+    public void broadcastNewTradeUpdate(Long accountId, Trade trade) {
         Set<WebSocketSession> sessions = accountSessions.get(accountId);
 
         if (sessions != null && !sessions.isEmpty()) {
             try {
-                // 日志：打印准备推送的 Trade 信息
-                logger.info("Broadcasting trade update for accountId: {}, Trade: {}", accountId, trade);
-
-                // 确保序列化 Trade 对象时访问其必要字段，避免延迟加载问题
                 trade.getAccount().getId();
                 if (trade.getStrategy() != null) {
                     trade.getStrategy().getId();
                 }
 
-                // 将 Trade 转换为 JSON 消息
                 String message = objectMapper.writeValueAsString(trade);
                 TextMessage textMessage = new TextMessage(message);
 
-                // 推送消息到每个会话
                 for (WebSocketSession session : sessions) {
                     try {
                         if (session.isOpen()) {
@@ -120,21 +116,73 @@ public class TradeWebSocketHandler extends TextWebSocketHandler {
                             logger.warn("Skipped closed session: {}", session.getId());
                         }
                     } catch (Exception e) {
-                        // 日志：记录发送失败的情况
                         logger.error("Error sending message to session: {}, removing session.", session.getId(), e);
                         sessions.remove(session);
                     }
                 }
             } catch (Exception e) {
-                // 日志：记录序列化或整体推送失败的情况
                 logger.error("Error broadcasting trade update for accountId: {}", accountId, e);
             }
         } else {
-            // 日志：当没有可用的会话时记录
             logger.warn("No active WebSocket sessions found for accountId: {}", accountId);
         }
     }
 
+    public void broadcastFullTradeList(Long accountId, List<Trade> trades) {
+        Set<WebSocketSession> sessions = accountSessions.get(accountId);
+
+        if (sessions != null && !sessions.isEmpty()) {
+            try {
+                for (Trade trade : trades) {
+                    trade.getAccount().getId();
+                    if (trade.getStrategy() != null) {
+                        trade.getStrategy().getId();
+                    }
+                }
+
+                String message = objectMapper.writeValueAsString(trades);
+                TextMessage textMessage = new TextMessage(message);
+
+                for (WebSocketSession session : sessions) {
+                    try {
+                        if (session.isOpen()) {
+                            session.sendMessage(textMessage);
+                            logger.info("Full trade list sent to session: {}", session.getId());
+                        } else {
+                            logger.warn("Skipped closed session: {}", session.getId());
+                        }
+                    } catch (Exception e) {
+                        logger.error("Error sending full trade list to session: {}, removing session.", session.getId(), e);
+                        sessions.remove(session);
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Error broadcasting full trade list for accountId: {}", accountId, e);
+            }
+        } else {
+            logger.warn("No active WebSocket sessions found for accountId: {}", accountId);
+        }
+    }
+
+    private void sendFullTradeList(Long accountId, WebSocketSession session) {
+        try {
+            List<Trade> trades = fetchTradesForAccount(accountId);
+            if (trades != null) {
+                for (Trade trade : trades) {
+                    trade.getAccount().getId();
+                    if (trade.getStrategy() != null) {
+                        trade.getStrategy().getId();
+                    }
+                }
+
+                String message = objectMapper.writeValueAsString(trades);
+                session.sendMessage(new TextMessage(message));
+                logger.info("Sent full trade list to session: {}", session.getId());
+            }
+        } catch (Exception e) {
+            logger.error("Error sending full trade list to session: {}", session.getId(), e);
+        }
+    }
 
     private Long extractAccountId(String uri) {
         if (uri != null) {
@@ -148,5 +196,11 @@ public class TradeWebSocketHandler extends TextWebSocketHandler {
             }
         }
         return null;
+    }
+
+    private List<Trade> fetchTradesForAccount(Long accountId) {
+        // Placeholder for fetching trades from the database or service
+        // Replace with actual logic to retrieve trades for the given account ID
+        return List.of();
     }
 }
