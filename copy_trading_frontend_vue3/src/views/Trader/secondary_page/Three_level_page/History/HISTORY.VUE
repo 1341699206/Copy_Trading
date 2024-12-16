@@ -3,11 +3,11 @@ import { computed } from "vue";
 import { useTradeStore } from "@/stores/tradeData";
 
 const tradeStore = useTradeStore();
-const trades = computed(() => tradeStore.tradeInfo);
+const trades = computed(() => tradeStore.tradeInfo || []);
 </script>
 
 <template>
-  <div class="history">
+  <div class="history" v-if="trades && trades.length > 0">
     <h2>Trade History</h2>
     <table class="trade-table">
       <thead>
@@ -32,10 +32,10 @@ const trades = computed(() => tradeStore.tradeInfo);
           <td>{{ trade.id }}</td>
           <td>{{ trade.symbol }}</td>
           <td>{{ trade.type }}</td>
-          <td>{{ trade.priceOpen?.toFixed(2) ?? "--" }}</td>
-          <td>{{ trade.priceClose?.toFixed(2) ?? "--" }}</td>
+          <td>{{ trade.priceOpen !== undefined ? trade.priceOpen.toFixed(2) : "--" }}</td>
+          <td>{{ trade.priceClose !== undefined ? trade.priceClose.toFixed(2) : "--" }}</td>
           <td :class="{ profit: trade.profit >= 0, loss: trade.profit < 0 }">
-            {{ trade.profit.toFixed(2) ?? "--" }}
+            {{ trade.profit !== undefined ? trade.profit.toFixed(2) : "--" }}
           </td>
           <td>{{ trade.dateOpen }}</td>
           <td>{{ trade.dateClose || "--" }}</td>
@@ -44,7 +44,11 @@ const trades = computed(() => tradeStore.tradeInfo);
       </tbody>
     </table>
   </div>
+  <div v-else>
+    <p>Loading trade data...</p>
+  </div>
 </template>
+
 
 <style scoped>
 .history {
