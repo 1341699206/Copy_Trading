@@ -10,6 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * TradeServiceImpl 实现了 TradeService 接口，
+ * 负责处理交易的开启、关闭和统计数据更新等核心业务逻辑。
+ * 包含账户余额检查、保证金计算、利润计算、统计更新和 WebSocket 推送功能。
+ */
 @Service
 public class TradeServiceImpl implements TradeService {
 
@@ -17,60 +22,130 @@ public class TradeServiceImpl implements TradeService {
     private final AccountRepository accountRepository;
     private final StrategyRepository strategyRepository;
     private final TraderStatsRepository traderStatsRepository;
-    private final FollowerStatsRepository followerStatsRepository;
-    private final FollowerTraderRepository followerTraderRepository;
     private final MarketDataService marketDataService;
     private final TradeWebSocketHandler tradeWebSocketHandler;
+    private final AccountService accountService;
 
+    /**
+     * 依赖注入构造函数。
+     *
+     * @param tradeRepository        交易数据访问层
+     * @param accountRepository      账户数据访问层
+     * @param strategyRepository     策略数据访问层
+     * @param traderStatsRepository  交易员统计数据访问层
+     * @param marketDataService      市场数据服务
+     * @param tradeWebSocketHandler  WebSocket 推送处理器
+     * @param accountService         账户服务接口
+     */
     @Autowired
     public TradeServiceImpl(
             TradeRepository tradeRepository,
             AccountRepository accountRepository,
             StrategyRepository strategyRepository,
             TraderStatsRepository traderStatsRepository,
-            FollowerStatsRepository followerStatsRepository,
-            FollowerTraderRepository followerTraderRepository,
             MarketDataService marketDataService,
-            TradeWebSocketHandler tradeWebSocketHandler) {
+            TradeWebSocketHandler tradeWebSocketHandler,
+            AccountService accountService) {
         this.tradeRepository = tradeRepository;
         this.accountRepository = accountRepository;
         this.strategyRepository = strategyRepository;
         this.traderStatsRepository = traderStatsRepository;
-        this.followerStatsRepository = followerStatsRepository;
-        this.followerTraderRepository = followerTraderRepository;
         this.marketDataService = marketDataService;
         this.tradeWebSocketHandler = tradeWebSocketHandler;
+        this.accountService = accountService;
     }
 
     /**
-     * 开仓操作，带有边界条件检查和事务管理
-     * @param accountId 账户ID
-     * @param strategyId 策略ID（可选）
-     * @param symbol 交易品种
-     * @param type 交易类型（买入/卖出）
-     * @param lotSize 交易手数
-     * @return 创建的交易对象
+     * 获取指定账户下已平仓的交易记录。
+     *
+     * @param accountId 账户 ID
+     * @return 已平仓的交易列表
+     */
+    @Override
+    public List<Trade> getClosedTradesByAccountId(Long accountId) {
+        System.out.println("Fetching closed trades for accountId: " + accountId);
+        return tradeRepository.findByAccountIdAndIsClosedTrue(accountId);
+    }
+
+    /**
+     * 获取指定账户下未平仓的交易记录。
+     *
+     * @param accountId 账户 ID
+     * @return 未平仓的交易列表
+     */
+    @Override
+    public List<Trade> getOpenTradesByAccountId(Long accountId) {
+        System.out.println("Fetching open trades for accountId: " + accountId);
+        return tradeRepository.findByAccountIdAndIsClosedFalse(accountId);
+    }
+
+    /**
+     * 获取指定账户下所有的交易记录。
+     *
+     * @param accountId 账户 ID
+     * @return 所有交易列表
+     */
+    @Override
+    public List<Trade> getAllTradesByAccountId(Long accountId) {
+        System.out.println("Fetching all trades for accountId: " + accountId);
+        return tradeRepository.findByAccountId(accountId);
+    }
+
+    /**
+     * 根据策略 ID 获取相关的交易记录。
+     *
+     * @param strategyId 策略 ID
+     * @return 相关交易列表
+     */
+    @Override
+    public List<Trade> getTradesByStrategyId(Long strategyId) {
+        System.out.println("Fetching trades for strategyId: " + strategyId);
+        return tradeRepository.findByStrategyId(strategyId);
+    }
+
+    /**
+     * 更新交易员和跟随者的统计数据。
+     *
+     * @param tradeId 交易 ID
+     */
+    @Override
+    public void updateTraderAndFollowerStats(Long tradeId) {
+        System.out.println("Updating stats for tradeId: " + tradeId);
+        Trade trade = tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found with ID: " + tradeId));
+        updateTraderStats(trade.getAccount().getUser().getId(), trade);
+    }
+
+    /**
+     * 开启一笔新交易。
+     *
+     * @param accountId  账户 ID
+     * @param strategyId 策略 ID（可选）
+     * @param symbol     交易品种
+     * @param type       交易类型（买入/卖出）
+     * @param lotSize    交易手数
+     * @return 新创建的交易对象
      */
     @Override
     @Transactional
     public Trade openTrade(Long accountId, Long strategyId, String symbol, String type, double lotSize) {
+        System.out.println("Opening trade for accountId: " + accountId + ", symbol: " + symbol + ", type: " + type + ", lotSize: " + lotSize);
         double currentPrice = marketDataService.getCurrentPrice(symbol);
 
-        // 获取交易员账户信息
+        // 获取账户信息
         Account traderAccount = accountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Trader account not found with ID: " + accountId));
+                .orElseThrow(() -> new IllegalArgumentException("Trader account not found"));
 
-        // 检查交易员账户余额
-        double requiredMargin = lotSize * currentPrice * 0.1; // 假设 10% 的保证金
-        if (traderAccount.getBalance() < requiredMargin) {
-            throw new IllegalArgumentException("Insufficient balance in trader account.");
+        // 检查账户的可用保证金
+        double requiredMargin = lotSize * currentPrice * 0.1;
+        if (traderAccount.getFreeMargin() < requiredMargin) {
+            throw new IllegalArgumentException("Insufficient free margin");
         }
 
-        // 创建交易员交易
+        // 创建交易对象
         Trade trade = new Trade();
         trade.setAccount(traderAccount);
-        trade.setStrategy(strategyId != null ? strategyRepository.findById(strategyId)
-                .orElseThrow(() -> new IllegalArgumentException("Strategy not found with ID: " + strategyId)) : null);
+        trade.setStrategy(strategyId != null ? strategyRepository.findById(strategyId).orElse(null) : null);
         trade.setSymbol(symbol);
         trade.setType(type);
         trade.setLotSize(lotSize);
@@ -78,167 +153,73 @@ public class TradeServiceImpl implements TradeService {
         trade.setClosed(false);
         tradeRepository.save(trade);
 
-        // 更新交易员统计数据
+        System.out.println("Trade successfully opened with ID: " + trade.getId());
+        accountService.updateAccount(traderAccount);
         updateTraderStats(traderAccount.getUser().getId(), trade);
 
-        // 获取所有跟随者
-        List<FollowerTrader> followers = followerTraderRepository.findByTraderAccountId(accountId);
-        for (FollowerTrader follower : followers) {
-            try {
-                Account followerAccount = accountRepository.findById(follower.getFollowerAccountId())
-                        .orElseThrow(() -> new IllegalArgumentException("Follower account not found with ID: " + follower.getFollowerAccountId()));
-
-                // 检查跟随者账户余额
-                if (followerAccount.getBalance() < requiredMargin) {
-                    System.err.println("Skipping follower account " + follower.getFollowerAccountId() + " due to insufficient balance.");
-                    continue; // 跳过余额不足的跟随者
-                }
-
-                // 创建跟随者交易
-                Trade followerTrade = new Trade();
-                followerTrade.setAccount(followerAccount);
-                followerTrade.setStrategy(null); // 跟随者不使用独立策略
-                followerTrade.setSymbol(symbol);
-                followerTrade.setType(type);
-                followerTrade.setLotSize(lotSize);
-                followerTrade.setPriceOpen(currentPrice);
-                followerTrade.setClosed(false);
-                tradeRepository.save(followerTrade);
-
-                // 更新跟随者统计数据
-                updateFollowerStats(followerAccount.getUser().getId(), followerTrade);
-            } catch (Exception e) {
-                System.err.println("Error processing follower with account ID " + follower.getFollowerAccountId() + ": " + e.getMessage());
-            }
-        }
-
-        // 推送新增交易记录到 WebSocket
         tradeWebSocketHandler.broadcastNewTradeUpdate(accountId, trade);
         return trade;
     }
 
     /**
-     * 平仓操作，带有事务管理
+     * 平仓指定交易。
+     *
+     * @param tradeId 交易 ID
+     * @return 平仓后的交易对象
      */
-    @Transactional
     @Override
+    @Transactional
     public Trade closeTrade(Long tradeId) {
-        // 获取交易信息
+        System.out.println("Closing trade with ID: " + tradeId);
         Trade trade = tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found with ID: " + tradeId));
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found"));
 
-        // 检查交易是否已经平仓
-        if (trade.isClosed()) {
-            throw new IllegalStateException("Trade is already closed");
-        }
-
-        // 获取当前市场价格
         double currentPrice = marketDataService.getCurrentPrice(trade.getSymbol());
-
-        // 更新交易信息
         trade.setPriceClose(currentPrice);
         trade.setProfit(calculateProfit(trade));
         trade.setClosed(true);
         trade.setDateClose(LocalDateTime.now());
         tradeRepository.save(trade);
 
-        // 更新交易员统计信息
+        System.out.println("Trade closed with profit: " + trade.getProfit());
+        accountService.updateAccount(trade.getAccount());
         updateTraderStats(trade.getAccount().getUser().getId(), trade);
 
-        // 如果是交易员，则同步其所有跟随者的平仓
-        if (trade.getAccount().getUser().getRole() == User.Role.TRADER) {
-            List<FollowerTrader> followers = followerTraderRepository.findByTraderAccountId(trade.getAccount().getId());
-            for (FollowerTrader follower : followers) {
-                try {
-                    Account followerAccount = accountRepository.findById(follower.getFollowerAccountId())
-                            .orElseThrow(() -> new IllegalArgumentException("Follower account not found with ID: " + follower.getFollowerAccountId()));
-
-                    Trade followerTrade = tradeRepository.findByAccountIdAndSymbolAndIsClosedFalse(followerAccount.getId(), trade.getSymbol())
-                            .stream()
-                            .findFirst()
-                            .orElse(null);
-
-                    if (followerTrade != null) {
-                        // 同步更新跟随者交易
-                        followerTrade.setPriceClose(currentPrice);
-                        followerTrade.setProfit(calculateProfit(followerTrade));
-                        followerTrade.setClosed(true);
-                        followerTrade.setDateClose(LocalDateTime.now());
-                        tradeRepository.save(followerTrade);
-
-                        // 更新跟随者统计
-                        updateFollowerStats(followerAccount.getUser().getId(), followerTrade);
-
-                        // 推送新增交易记录到 WebSocket
-                        tradeWebSocketHandler.broadcastNewTradeUpdate(followerAccount.getId(), followerTrade);
-                    }
-                } catch (Exception e) {
-                    // 捕获并记录异常，但不会中断其他跟随者交易
-                    System.err.println("Error closing trade for follower " + follower.getFollowerAccountId() + ": " + e.getMessage());
-                }
-            }
-        }
-
-        // 推送新增交易记录到 WebSocket
         tradeWebSocketHandler.broadcastNewTradeUpdate(trade.getAccount().getId(), trade);
         return trade;
     }
 
-    @Override
-    public List<Trade> getAllTradesByAccountId(Long accountId) {
-        List<Trade> trades = tradeRepository.findByAccountId(accountId);
-        tradeWebSocketHandler.broadcastFullTradeList(accountId, trades);
-        return trades;
-    }
-
-    @Override
-    public List<Trade> getOpenTradesByAccountId(Long accountId) {
-        return tradeRepository.findByAccountIdAndIsClosedFalse(accountId);
-    }
-
-    @Override
-    public List<Trade> getClosedTradesByAccountId(Long accountId) {
-        return tradeRepository.findByAccountIdAndIsClosedTrue(accountId);
-    }
-
-    @Override
-    public List<Trade> getTradesByStrategyId(Long strategyId) {
-        return tradeRepository.findByStrategyId(strategyId);
-    }
-
-    @Override
-    public void updateTraderAndFollowerStats(Long tradeId) {
-        Trade trade = tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found with ID: " + tradeId));
-
-        updateTraderStats(trade.getAccount().getUser().getId(), trade);
-
-        if (trade.getAccount().getUser().getRole() == User.Role.FOLLOWER) {
-            updateFollowerStats(trade.getAccount().getUser().getId(), trade);
-        }
-    }
-
+    /**
+     * 计算交易的利润。
+     *
+     * @param trade 交易对象
+     * @return 交易的利润
+     */
     private double calculateProfit(Trade trade) {
         double priceChange = trade.getPriceClose() - trade.getPriceOpen();
-        if (trade.getType().equals("SELL")) {
+        if ("SELL".equalsIgnoreCase(trade.getType())) {
             priceChange = -priceChange;
         }
-        return priceChange * trade.getLotSize();
+        double profit = priceChange * trade.getLotSize();
+        System.out.println("Calculated profit for trade ID: " + trade.getId() + " is: " + profit);
+        return profit;
     }
 
-    public void updateTraderStats(Long traderId, Trade trade) {
+    /**
+     * 更新交易员的统计数据。
+     *
+     * @param traderId 交易员 ID
+     * @param trade    交易对象
+     */
+    private void updateTraderStats(Long traderId, Trade trade) {
+        System.out.println("Updating trader stats for traderId: " + traderId);
         TraderStats stats = traderStatsRepository.findByTraderId(traderId);
         if (stats == null) {
             stats = new TraderStats();
             stats.setTraderId(traderId);
-            User user = trade.getAccount().getUser();
-            stats.setUser(user);
             stats.setTotalProfit(0.0);
-            stats.setWinRate(0.0);
-            stats.setMaxDrawdown(0.0);
             stats.setTotalTrades(0);
             stats.setWinningTrades(0);
-            stats.setTotalFollowers(0);
         }
 
         stats.setTotalProfit(stats.getTotalProfit() + trade.getProfit());
@@ -247,36 +228,10 @@ public class TradeServiceImpl implements TradeService {
             stats.setWinningTrades(stats.getWinningTrades() + 1);
         }
 
-        stats.setWinRate(stats.getTotalTrades() > 0 ?
-                ((double) stats.getWinningTrades() / stats.getTotalTrades()) * 100 : 0.0);
+        stats.setWinRate(stats.getTotalTrades() > 0
+                ? (double) stats.getWinningTrades() / stats.getTotalTrades() * 100 : 0.0);
 
-        if (trade.getProfit() < stats.getMaxDrawdown()) {
-            stats.setMaxDrawdown(trade.getProfit());
-        }
-
+        System.out.println("Updated trader stats: TotalProfit = " + stats.getTotalProfit() + ", WinRate = " + stats.getWinRate());
         traderStatsRepository.save(stats);
-    }
-
-    public void updateFollowerStats(Long followerId, Trade trade) {
-        FollowerStats stats = followerStatsRepository.findByFollowerId(followerId);
-        if (stats == null) {
-            stats = new FollowerStats();
-            stats.setFollowerId(followerId);
-            User user = trade.getAccount().getUser();
-            stats.setUser(user);
-            stats.setTotalProfit(0.0);
-            stats.setMaxDrawdown(0.0);
-            stats.setTotalFollowedTraders(0);
-            stats.setTotalTrades(0);
-        }
-
-        stats.setTotalProfit(stats.getTotalProfit() + trade.getProfit());
-        stats.setTotalTrades(stats.getTotalTrades() + 1);
-
-        if (trade.getProfit() < stats.getMaxDrawdown()) {
-            stats.setMaxDrawdown(trade.getProfit());
-        }
-
-        followerStatsRepository.save(stats);
     }
 }

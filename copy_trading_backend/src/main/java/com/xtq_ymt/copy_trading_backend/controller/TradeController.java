@@ -67,4 +67,16 @@ public class TradeController {
         List<Trade> trades = tradeService.getTradesByStrategyId(strategyId);
         return new ResponseEntity<>(trades, HttpStatus.OK);
     }
+
+    // 在 TradeController 中新增接口
+    @GetMapping("/account/{accountId}")
+    @Operation(
+        summary = "Get all trades for an account",
+        description = "Fetches all trades for the given account ID. This can be used for both trader and follower accounts."
+    )
+    public ResponseEntity<List<Trade>> getTradesByAccount(@PathVariable Long accountId) {
+        // 调用 Service 层方法获取交易记录
+        List<Trade> trades = tradeService.getAllTradesByAccountId(accountId);
+        return ResponseEntity.ok(trades);
+    }
 }
