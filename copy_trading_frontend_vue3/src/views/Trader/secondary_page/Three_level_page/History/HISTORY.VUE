@@ -17,6 +17,7 @@ const trades = computed(() => tradeStore.tradeInfo);
           <th>Type</th>
           <th>Price Open</th>
           <th>Price Close</th>
+          <th>STD Lot</th>
           <th>Profit</th>
           <th>Date Open</th>
           <th>Date Close</th>
@@ -34,6 +35,7 @@ const trades = computed(() => tradeStore.tradeInfo);
           <td>{{ trade.type }}</td>
           <td>{{ trade.priceOpen !== undefined ? trade.priceOpen.toFixed(2) : "--" }}</td>
           <td>{{ trade.priceClose !== undefined ? trade.priceClose.toFixed(2) : "--" }}</td>
+          <td>{{trade.lotSize}}</td>
           <td :class="{ profit: trade.profit >= 0, loss: trade.profit < 0 }">
             {{ trade.profit !== undefined ? trade.profit.toFixed(2) : "--" }}
           </td>
