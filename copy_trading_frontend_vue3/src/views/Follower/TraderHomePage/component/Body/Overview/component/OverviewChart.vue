@@ -1,17 +1,104 @@
 <script setup>
-import { ref } from "vue";
-import timeSelector from "@/views/Follower/TraderHomePage/component/Body/component/timeSelector.vue";
+import { ref, watch, onMounted } from "vue";
+import * as echarts from "echarts";
+import { getAccountDetails } from "@/apis/accountManagement";
 
-const traderDetailInfo = ref(null);
-const chartRef = ref(null);
-const chartHeight = ref(400); // 设置图表的默认高度
+const chartRef = ref(null); // 图表容器引用
+const chartInstance = ref(null); // ECharts 实例
+const chartHeight = ref(400); // 图表高度
 
-defineProps({
+// 接收从父组件传递的 traderBasicInf
+const props = defineProps({
   traderBasicInf: {
     type: Object,
     default: null,
   },
 });
+
+// trades 数据
+const trades = ref([]);
+
+// 页面挂载时获取数据
+onMounted(async () => {
+  if (props.traderBasicInf?.user?.id) {
+    const accountDetails = await getAccountDetails(props.traderBasicInf.user.id);
+    trades.value = accountDetails.trades || [];
+    updateChart();
+  }
+});
+
+// 数据处理函数：生成累进盈亏和日期数组
+const processData = () => {
+  if (!trades.value.length) return { dates: [], cumulativeProfit: [] };
+
+  // 按开仓时间排序
+  const sortedTrades = trades.value.sort((a, b) => new Date(a.dateOpen) - new Date(b.dateOpen));
+  const dates = [];
+  const cumulativeProfit = [];
+  let totalProfit = 0;
+
+  // 累计盈亏计算
+  for (const trade of sortedTrades) {
+    dates.push(trade.dateOpen);
+    totalProfit += trade.profit || 0;
+    cumulativeProfit.push(totalProfit);
+  }
+
+  return { dates, cumulativeProfit };
+};
+
+// 更新图表
+const updateChart = () => {
+  const { dates, cumulativeProfit } = processData();
+
+  if (!chartInstance.value) {
+    chartInstance.value = echarts.init(chartRef.value);
+  }
+
+  const option = {
+    title: {
+      text: "Cumulative Profit Over Time",
+      left: "center",
+    },
+    tooltip: {
+      trigger: "axis",
+    },
+    xAxis: {
+      type: "category",
+      data: dates,
+      name: "Date Open",
+      axisLabel: {
+        rotate: 45, // 旋转轴标签
+      },
+    },
+    yAxis: {
+      type: "value",
+      name: "Cumulative Profit",
+    },
+    series: [
+      {
+        name: "Cumulative Profit",
+        type: "line",
+        data: cumulativeProfit,
+        smooth: true, // 平滑曲线
+        lineStyle: {
+          width: 2,
+        },
+        areaStyle: {
+          color: "rgba(120, 180, 255, 0.2)", // 区域填充颜色
+        },
+      },
+    ],
+  };
+
+  chartInstance.value.setOption(option);
+};
+
+// 监听 trades 数据变化以更新图表
+watch(trades, updateChart);
+
+const avgProfit =
+  props.traderBasicInf.totalProfit / props.traderBasicInf.totalTrades;
 
 </script>
 
@@ -41,13 +128,19 @@ defineProps({
         </li>
         <li>
           <div class="copiers">
-            <span class="value black">{{ traderBasicInf?.copiers ?? 0 }}</span>
+            <span class="value black">{{
+              traderBasicInf?.totalFollowers ?? 0
+            }}</span>
             <span class="label">COPIERS</span>
           </div>
         </li>
       </ul>
     </div>
-    <div class="chart" ref="chartRef" :style="{ height: chartHeight + 'px' }"></div>
+    <div
+      class="chart"
+      ref="chartRef"
+      :style="{ height: chartHeight + 'px' }"
+    ></div>
     <div class="timeSelector">
       <time-selector @update:days="updateDays"></time-selector>
     </div>
@@ -57,48 +150,48 @@ defineProps({
         <div class="data-item profit">
           <span class="label">PROFIT</span>
           <span class="value green">{{
-            traderDetailInfo?.profit ? traderDetailInfo.profit.toFixed(3) : 0
+            traderBasicInf?.totalProfit
+              ? traderBasicInf.totalProfit.toFixed(3)
+              : 0
           }}</span>
         </div>
         <div class="data-item trades">
           <span class="label">TRADES</span>
-          <span class="value black">{{ traderDetailInfo?.trades ?? 0 }}</span>
+          <span class="value black">{{
+            traderBasicInf?.totalTrades ?? 0
+          }}</span>
         </div>
         <div class="data-item maxOpenTrades">
           <span class="label">MAX OPEN TRADES</span>
           <span class="value black">{{
-            traderDetailInfo?.maxOpenTrades ?? 0
+            traderBasicInf?.maxOpenTrades ?? 0
           }}</span>
         </div>
         <div class="data-item avgProfit">
           <span class="label">AVG PROFIT</span>
-          <span class="value black">{{
-            traderDetailInfo?.avgProfit
-              ? traderDetailInfo.avgProfit.toFixed(3)
-              : 0
-          }}</span>
+          <span class="value black">{{ avgProfit }}</span>
         </div>
         <div class="data-item winTrades">
           <span class="label">WIN TRADES</span>
           <span class="value black">{{
-            traderDetailInfo?.winTrades ?? 0
+            traderBasicInf?.winningTrades ?? 0
           }}</span>
         </div>
         <div class="data-item recommendedMinInvestment">
           <span class="label">RECOMMENDED MIN INVESTMENT</span>
           <span class="value black">{{
-            traderDetailInfo?.recommendedMinInvestment ?? 0
+            traderBasicInf?.recommendedMinInvestment ?? 0
           }}</span>
         </div>
         <div class="data-item maxDrawDown">
           <span class="label">MAX DRAWDOWN</span>
           <span class="value black">{{
-            traderDetailInfo?.maxDrawDown ?? 0
+            traderBasicInf?.maxDrawdown ?? 0
           }}</span>
         </div>
         <div class="data-item avgPips">
           <span class="label">AVG PIPS</span>
-          <span class="value black">{{ traderDetailInfo?.avgPips ?? 0 }}</span>
+          <span class="value black">{{ traderBasicInf?.avgPips ?? 0 }}</span>
         </div>
       </div>
     </div>
@@ -144,9 +237,9 @@ li {
   color: black;
 }
 .chart {
-  width: 100%;  /* 根据需要调整宽度 */
-  min-height: 200px;  /* 保证至少有 200px 的高度 */
-  background-color: #f5f5f5;  /* 可选：当没有数据时，给图表背景添加颜色，便于区分 */
+  width: 100%; /* 根据需要调整宽度 */
+  min-height: 200px; /* 保证至少有 200px 的高度 */
+  background-color: #f5f5f5; /* 可选：当没有数据时，给图表背景添加颜色，便于区分 */
 }
 
 .data {

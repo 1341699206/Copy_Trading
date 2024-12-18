@@ -42,3 +42,11 @@ export const getOpenTrades=(accountId)=>{
         url:url
     })
 }
+
+// 获取该账户下的所有交易数据
+export const getAllTrade=(accountId)=>{
+    const url=`/trades/account/${accountId}`
+    return request({
+        url:url
+    })
+}
