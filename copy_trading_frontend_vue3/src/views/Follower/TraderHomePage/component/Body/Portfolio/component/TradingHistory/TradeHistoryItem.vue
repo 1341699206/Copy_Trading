@@ -1,3 +1,5 @@
+//这个是未使用的！！
+
 <script setup>
 import { defineProps } from "vue";
 // 定义组件的 props，接收父组件传递的 `item` 数据
@@ -21,7 +23,7 @@ defineProps({
       </ul>
     </div>
     <div class="DataClosed">{{ item.dateClose ?? "--" }}</div>
-    <div class="STDLots">{{ item.standardLots ?? "--" }}</div>
+    <div class="STDLots">{{ item.lotSize ?? "--" }}</div>
     <div class="OpenClose">
       <ul>
         <li class="open">{{ item.priceOpen ?? "--" }}</li>
