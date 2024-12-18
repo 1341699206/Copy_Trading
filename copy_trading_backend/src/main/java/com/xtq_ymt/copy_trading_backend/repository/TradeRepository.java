@@ -34,44 +34,43 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
             @Param("accountId") Long accountId,
             @Param("symbol") String symbol);
 
-
-    // 获取交易员的总收益
-    @Query("SELECT SUM(t.profit) FROM Trade t WHERE t.account.id = :accountId AND t.isClosed = true")
+    // 获取交易员的总收益，防止 null 返回值
+    @Query("SELECT COALESCE(SUM(t.profit), 0.0) FROM Trade t WHERE t.account.id = :accountId AND t.isClosed = true")
     Double getTotalProfitByTraderId(@Param("accountId") Long accountId);
 
-    // 获取交易员的总交易数量
-    @Query("SELECT COUNT(t) FROM Trade t WHERE t.account.id = :accountId")
+    // 获取交易员的总交易数量，防止 null 返回值
+    @Query("SELECT COALESCE(COUNT(t), 0) FROM Trade t WHERE t.account.id = :accountId")
     Integer getTotalTradesByTraderId(@Param("accountId") Long accountId);
 
-    // 获取交易员的盈利交易数量
-    @Query("SELECT COUNT(t) FROM Trade t WHERE t.account.id = :accountId AND t.profit > 0")
+    // 获取交易员的盈利交易数量，防止 null 返回值
+    @Query("SELECT COALESCE(COUNT(t), 0) FROM Trade t WHERE t.account.id = :accountId AND t.profit > 0")
     Integer getWinningTradesByTraderId(@Param("accountId") Long accountId);
 
-    // 获取交易员的最大回撤
-    @Query("SELECT MAX(t.profit) - MIN(t.profit) FROM Trade t WHERE t.account.id = :accountId AND t.isClosed = true")
+    // 获取交易员的最大回撤，防止 null 返回值
+    @Query("SELECT COALESCE(MAX(t.profit) - MIN(t.profit), 0.0) FROM Trade t WHERE t.account.id = :accountId AND t.isClosed = true")
     Double getMaxDrawdownByTraderId(@Param("accountId") Long accountId);
 
-    // 获取跟随者的总收益
-    @Query("SELECT SUM(t.profit) FROM Trade t WHERE t.account.id = :followerId AND t.isClosed = true")
+    // 获取跟随者的总收益，防止 null 返回值
+    @Query("SELECT COALESCE(SUM(t.profit), 0.0) FROM Trade t WHERE t.account.id = :followerId AND t.isClosed = true")
     Double getTotalProfitByFollowerId(@Param("followerId") Long followerId);
 
-    // 获取跟随者的总交易数量
-    @Query("SELECT COUNT(t) FROM Trade t WHERE t.account.id = :followerId")
+    // 获取跟随者的总交易数量，防止 null 返回值
+    @Query("SELECT COALESCE(COUNT(t), 0) FROM Trade t WHERE t.account.id = :followerId")
     Integer getTotalTradesByFollowerId(@Param("followerId") Long followerId);
 
-    // 获取跟随者的最大回撤
-    @Query("SELECT MAX(t.profit) - MIN(t.profit) FROM Trade t WHERE t.account.id = :followerId AND t.isClosed = true")
+    // 获取跟随者的最大回撤，防止 null 返回值
+    @Query("SELECT COALESCE(MAX(t.profit) - MIN(t.profit), 0.0) FROM Trade t WHERE t.account.id = :followerId AND t.isClosed = true")
     Double getMaxDrawdownByFollowerId(@Param("followerId") Long followerId);
 
-    // 获取跟随者总共跟随的交易员数量
-    @Query("SELECT COUNT(DISTINCT t.strategy.id) FROM Trade t WHERE t.account.id = :followerId")
+    // 获取跟随者总共跟随的交易员数量，防止 null 返回值
+    @Query("SELECT COALESCE(COUNT(DISTINCT t.strategy.id), 0) FROM Trade t WHERE t.account.id = :followerId")
     Integer getTotalFollowedTraders(@Param("followerId") Long followerId);
 
     // 获取利润最高的前 N 名交易员
-    @Query("SELECT t.account.id, SUM(t.profit) FROM Trade t GROUP BY t.account.id ORDER BY SUM(t.profit) DESC")
+    @Query("SELECT t.account.id, COALESCE(SUM(t.profit), 0.0) FROM Trade t GROUP BY t.account.id ORDER BY SUM(t.profit) DESC")
     List<Object[]> getTopTradersByProfit(Pageable pageable);
 
     // 获取利润最高的前 N 名跟随者
-    @Query("SELECT t.account.id, SUM(t.profit) FROM Trade t GROUP BY t.account.id ORDER BY SUM(t.profit) DESC")
+    @Query("SELECT t.account.id, COALESCE(SUM(t.profit), 0.0) FROM Trade t GROUP BY t.account.id ORDER BY SUM(t.profit) DESC")
     List<Object[]> getTopFollowersByProfit(Pageable pageable);
 }
