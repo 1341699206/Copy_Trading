@@ -9,6 +9,9 @@ const userStore = useUserStore();
 import { useAccountStore } from "@/stores/account";
 const accountStore=useAccountStore();
 
+import { useTradeStore } from '@/stores/tradeData';
+const tradeStore=useTradeStore();
+
 defineProps({
   show: {
     type: Boolean,
@@ -46,6 +49,7 @@ const doCreateAccount = () => {
       try {
         // 调用 createAccount
         await accountStore.createAAccount({userId:accountInfo.id,initialBalance:accountInfo.balance});
+        tradeStore.startListening(accountStore.accountInfo.id); //对trade进行连接
         //创建成功提示
         ElMessage({ type: "success", message: "Create successful!" });
         //关闭弹窗

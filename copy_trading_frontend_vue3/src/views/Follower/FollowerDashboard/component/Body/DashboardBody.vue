@@ -31,7 +31,7 @@ const selectedItem = ref("portfolio"); // 管理当前选中的模块
 
 .left-side {
   flex: 7; /* 左侧占3份宽度 */
-  height: 430px;
+  height: 500px;
   border: 2px solid #4caf50; /* 绿色边框 */
   padding: 10px; /* 内边距 */
   margin-right: 40px; /* 增加左右两部分之间的距离 */

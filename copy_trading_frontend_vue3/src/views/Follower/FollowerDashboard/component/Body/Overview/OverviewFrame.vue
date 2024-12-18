@@ -1,3 +1,9 @@
+<script setup>
+import OverviewChart from "./component/OverviewChart";
+</script>
+
 <template>
-    <div>Overview</div>
+  <div>
+    <overview-chart></overview-chart>
+  </div>
 </template>
