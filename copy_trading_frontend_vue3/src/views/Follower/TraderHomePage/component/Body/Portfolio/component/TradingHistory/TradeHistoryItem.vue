@@ -15,27 +15,36 @@ defineProps({
       <ul>
         <li>{{ item.currency }}</li>
         <li>
-          <div class="time">{{ item.dateOpen }}</div>
-          <div :class="['type', item.type]">{{ item.type }}</div>
+          <div class="time">{{ item.dateOpen ?? "--" }}</div>
+          <div :class="['type', item.type]">{{ item.type ?? "--" }}</div>
         </li>
       </ul>
     </div>
-    <div class="DataClosed">{{ item.dateClose }}</div>
-    <div class="STDLots">{{ item.standardLots }}</div>
+    <div class="DataClosed">{{ item.dateClose ?? "--" }}</div>
+    <div class="STDLots">{{ item.standardLots ?? "--" }}</div>
     <div class="OpenClose">
       <ul>
-        <li class="open">{{ item.priceOpen }}</li>
-        <li class="close">{{ item.priceClose }}</li>
+        <li class="open">{{ item.priceOpen ?? "--" }}</li>
+        <li class="close">{{ item.priceClose ?? "--" }}</li>
       </ul>
     </div>
-    <div class="High">{{ item.highestProfit }}</div>
-    <div class="Low">{{ item.worstDrawdown }}</div>
-    <div class="Roll">{{ item.interest }}</div>
-    <div :class="['Profit', item.profit > 0 ? 'profit-positive' : 'profit-negative']">
-      ${{ item.profit }}<br />
-      <span :class="item.profit > 0 ? 'pips-positive' : 'pips-negative'">{{ item.pips }} pips</span>
+    <div class="High">{{ item.highestProfit ?? "--" }}</div>
+    <div class="Low">{{ item.worstDrawdown ?? "--" }}</div>
+    <div class="Roll">{{ item.interest ?? "--" }}</div>
+    <div
+      :class="[
+        'Profit',
+        item.profit > 0 ? 'profit-positive' : 'profit-negative',
+      ]"
+    >
+      ${{ item.profit ?? "--" }}<br />
+      <span :class="item.profit > 0 ? 'pips-positive' : 'pips-negative'"
+        >{{ item.pips ?? "--" }} pips</span
+      >
     </div>
-    <div class="Total">${{ item.total }}<br />{{ item.totalPips }} pips</div>
+    <div class="Total">
+      ${{ item.total }}<br />{{ item.totalPips ?? "--" }} pips
+    </div>
   </div>
 </template>
 

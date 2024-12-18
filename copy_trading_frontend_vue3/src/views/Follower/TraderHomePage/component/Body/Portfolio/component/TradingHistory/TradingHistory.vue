@@ -1,129 +1,102 @@
 <script setup>
-import { getTraderTradesHistory } from "@/apis/followerManagement";
-import TradeHistoryItem from "./TradeHistoryItem.vue";
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed } from "vue";
+import { useTradeStore } from "@/stores/tradeData";
 
-const route = useRoute();
-const traderId = route.params.id;
-const traderTradesHistory = ref([]);
-const currentPage = ref(1); // 当前页
-const pageSize = ref(10); // 每页数量
-const totalPages = ref(0); // 总页数
-const totalItems = ref(0); // 总条数
-const hasPrevPage = ref(false); // 是否有上一页
-const hasNextPage = ref(false); // 是否有下一页
-
-// 获取交易历史数据
-const fetchTraderTradesHistory = async () => {
-  try {
-    const response = await getTraderTradesHistory({
-      id: traderId,
-      pageSize: pageSize.value,
-      currentPage: currentPage.value,
-    });
-
-    // 确保数据为数组的类型
-    traderTradesHistory.value = Array.isArray(response.data.tradeHistory) ? response.data.tradeHistory : [];
-    totalPages.value = response.data.totalPages || 0;
-    totalItems.value = response.data.totalElements || 0;
-    hasPrevPage.value = response.data.isPrePage || currentPage.value > 1;
-    hasNextPage.value = response.data.isNextPage || currentPage.value < totalPages.value;
-  } catch (error) {
-    // 处理错误
-    console.error("Failed to fetch trade history:", error);
-  }
-};
-
-// 监听分页变化
-watch([currentPage, pageSize], fetchTraderTradesHistory);
-
-onMounted(fetchTraderTradesHistory);
+const tradeStore = useTradeStore();
+const trades = computed(() => tradeStore.tradeInfo);
 </script>
 
 <template>
-  <div>
-    <!-- 标签栏 -->
-    <div class="table-header">
-      <div class="header-item">Name</div>
-      <div class="header-item">Date Closed</div>
-      <div class="header-item">STD LOTS</div>
-      <div class="header-item">OPEN / CLOSE</div>
-      <div class="header-item">HIGH</div>
-      <div class="header-item">LOW</div>
-      <div class="header-item">ROLL</div>
-      <div class="header-item">PROFIT</div>
-      <div class="header-item">TOTAL</div>
+  <div class="history" v-if="trades && trades.length > 0">
+    <div class="trade-table-container">
+      <table class="trade-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Symbol</th>
+            <th>Type</th>
+            <th>Price Open</th>
+            <th>Price Close</th>
+            <th>Profit</th>
+            <th>Date Open</th>
+            <th>Date Close</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="trade in trades"
+            :key="trade.id"
+            :class="{ closed: trade.closed }"
+          >
+            <td>{{ trade.id }}</td>
+            <td>{{ trade.symbol }}</td>
+            <td>{{ trade.type }}</td>
+            <td>{{ trade.priceOpen !== undefined ? trade.priceOpen.toFixed(2) : "--" }}</td>
+            <td>{{ trade.priceClose !== undefined ? trade.priceClose.toFixed(2) : "--" }}</td>
+            <td :class="{ profit: trade.profit >= 0, loss: trade.profit < 0 }">
+              {{ trade.profit !== undefined ? trade.profit.toFixed(2) : "--" }}
+            </td>
+            <td>{{ trade.dateOpen }}</td>
+            <td>{{ trade.dateClose || "--" }}</td>
+            <td>{{ trade.closed ? "Closed" : "Open" }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <!-- 数据条目列表 -->
-    <div v-if="traderTradesHistory && traderTradesHistory.length > 0">
-      <trade-history-item
-        v-for="item in traderTradesHistory"
-        :key="item.tradeId"
-        :item="item"
-      ></trade-history-item>
-    </div>
-    <div v-else class="not-found">Not Found</div>
-
-    <!-- 分页容器 -->
-    <div class="pagination-container">
-      <!-- 每页数量控制 -->
-      <el-select
-        v-model="pageSize"
-        size="small"
-        class="page-size-select"
-        @change="currentPage = 1"
-        style="max-width: 5%;"
-      >
-        <el-option label="10" value="10"></el-option>
-        <el-option label="20" value="20"></el-option>
-        <el-option label="30" value="30"></el-option>
-      </el-select>
-
-      <!-- 分页选项 -->
-      <el-pagination
-        size="small"
-        background
-        layout="prev, pager, next"
-        :total="totalItems"
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        :disabled-prev="!hasPrevPage"
-        :disabled-next="!hasNextPage"
-        @current-change="currentPage = $event"
-        class="mt-4"
-      />
-    </div>
+  </div>
+  <div v-else>
+    <p>Loading trade data...</p>
   </div>
 </template>
 
-<style scoped lang="scss">
-.table-header {
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr 2fr 1fr 1fr 1fr 2fr 2fr;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 2px solid #f0f0f0;
+<style scoped>
+.history {
+  padding: -5px;
+}
+
+.trade-table-container {
+  max-height: 400px; /* 设置容器最大高度 */
+  overflow-y: auto; /* 启用垂直滚动条 */
+  border: 1px solid #ddd; /* 添加边框方便识别滚动区域 */
+}
+
+.trade-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.trade-table th,
+.trade-table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.trade-table thead {
+  background-color: #f4f4f4;
   font-weight: bold;
-  color: #666;
+}
+
+.trade-table tbody tr:nth-child(odd) {
   background-color: #f9f9f9;
 }
 
-.header-item {
-  text-align: center;
-  font-size: 0.8rem;
-  color: #333;
+.trade-table tbody tr.closed {
+  background-color: #e8f5e9;
 }
 
-.pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
+.trade-table tbody tr:hover {
+  background-color: #f1f1f1;
 }
 
-.page-size-select {
-  margin-left: 10px;
+.trade-table td.profit {
+  color: green;
+}
+
+.trade-table td.loss {
+  color: red;
 }
 </style>
+

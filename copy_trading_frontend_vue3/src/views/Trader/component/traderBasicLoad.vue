@@ -41,12 +41,13 @@ const closeDialog = () => {
 onMounted(async () => {
   await createFirstAccount(); //检测创建第一个账户
   await strategyStore.getStrategyByTrader(userStore.userInfo.id);
-  tradeStore.startListening(accountStore.accountInfo.id); //对trade进行连接
   accountStore.startListening(userStore.userInfo.id); //对account进行连接
   if (strategyStore.strategyInfo.id)
     await tradeStore.getTradesInfo(strategyStore.strategyInfo.id); //策略存在时，获取trade数据并进行存储
-  if (accountStore.accountInfo.id)
+  if (accountStore.accountInfo.id){
     await tradeStore.getOpenedTradeInfo(accountStore.accountInfo.id);
+    tradeStore.startListening(accountStore.accountInfo.id); //对trade进行连接
+  }
   await roleStore.getRoleInfo({
     role: userStore.userInfo.role,
     id: userStore.userInfo.id,
