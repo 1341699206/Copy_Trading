@@ -73,4 +73,12 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     // 获取利润最高的前 N 名跟随者
     @Query("SELECT t.account.id, COALESCE(SUM(t.profit), 0.0) FROM Trade t GROUP BY t.account.id ORDER BY SUM(t.profit) DESC")
     List<Object[]> getTopFollowersByProfit(Pageable pageable);
+
+    @Query("SELECT t FROM Trade t WHERE t.account.id = :accountId AND t.symbol = :symbol AND t.lotSize = :lotSize AND t.priceOpen = :priceOpen AND t.isClosed = false")
+    List<Trade> findByAccountIdAndSymbolAndLotSizeAndPriceOpenAndIsClosedFalse(
+            @Param("accountId") Long accountId,
+            @Param("symbol") String symbol,
+            @Param("lotSize") double lotSize,
+            @Param("priceOpen") double priceOpen);
+
 }

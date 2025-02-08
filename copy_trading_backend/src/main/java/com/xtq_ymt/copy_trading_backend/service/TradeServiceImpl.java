@@ -103,21 +103,63 @@ public class TradeServiceImpl implements TradeService {
     @Override
     @Transactional
     public Trade closeTrade(Long tradeId) {
+        // 1. 获取主交易者的交易信息
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new IllegalArgumentException("Trade not found"));
 
+        // 2. 获取当前市场价格
         double currentPrice = marketDataService.getCurrentPrice(trade.getSymbol());
+        
+        // 3. 计算并设置主交易者的平仓信息
         trade.setPriceClose(currentPrice);
         trade.setProfit(calculateProfit(trade));
         trade.setClosed(true);
         trade.setDateClose(LocalDateTime.now());
         tradeRepository.save(trade);
 
+        // 4. 更新主交易者的统计信息
         updateStats(trade.getAccount());
 
+        // 5. 同步跟单者的平仓操作
+        syncFollowerTradesClose(trade);
+
+        // 6. 通过 WebSocket 广播更新
         tradeWebSocketHandler.broadcastNewTradeUpdate(trade.getAccount().getId(), trade);
+        
         return trade;
     }
+
+    private void syncFollowerTradesClose(Trade trade) {
+        // 1. 查找所有跟随该交易者的跟随者关系记录
+        List<FollowerTrader> followers = followerTraderRepository.findByTraderAccountId(trade.getAccount().getId());
+
+        // 2. 遍历每个跟随者
+        for (FollowerTrader follower : followers) {
+            // 3. 获取跟随者账户
+            Account followerAccount = accountRepository.findById(follower.getFollowerAccountId())
+                    .orElseThrow(() -> new IllegalArgumentException("Follower account not found"));
+
+            // 4. 根据主交易的唯一条件匹配跟随者的交易
+            List<Trade> followerTrades = tradeRepository.findByAccountIdAndSymbolAndLotSizeAndPriceOpenAndIsClosedFalse(
+                    followerAccount.getId(), trade.getSymbol(), trade.getLotSize(), trade.getPriceOpen());
+
+            // 5. 平仓对应的跟随者交易
+            for (Trade followerTrade : followerTrades) {
+                double followerCurrentPrice = marketDataService.getCurrentPrice(followerTrade.getSymbol());
+                followerTrade.setPriceClose(followerCurrentPrice);
+                followerTrade.setProfit(calculateProfit(followerTrade));  // 计算收益
+                followerTrade.setClosed(true);
+                followerTrade.setDateClose(LocalDateTime.now());
+                tradeRepository.save(followerTrade);
+
+                // 6. 更新跟随者的统计信息
+                updateFollowerStats(followerAccount);
+            }
+        }
+    }
+
+
+
 
     private void updateStats(Account account) {
         User.Role role = account.getUser().getRole();
@@ -150,7 +192,7 @@ public class TradeServiceImpl implements TradeService {
         if ("SELL".equalsIgnoreCase(trade.getType())) {
             priceChange = -priceChange;
         }
-        return priceChange * trade.getLotSize();
+        return priceChange * 100000 * trade.getLotSize();
     }
 
     private void updateTraderStats(Account account) {
